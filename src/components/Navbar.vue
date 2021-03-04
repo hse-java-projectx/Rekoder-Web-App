@@ -1,8 +1,8 @@
 <template>
   <div class="comp-navbar">
-    <b-navbar toggleable="lg" type="dark" variant="info">
+    <b-navbar toggleable="lg" type="dark" variant="primary">
       <b-navbar-brand>
-        <router-link to="/" class="header-item">Recoder</router-link>
+        <router-link to="/" class="header-item"><h3>Recoder</h3></router-link>
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -21,6 +21,7 @@
 </template>
 
 <style scoped lang="sass">
+@import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
 
 .header-item
