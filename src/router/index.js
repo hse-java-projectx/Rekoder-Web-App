@@ -20,6 +20,21 @@ const routes = [
     name: 'Profile',
     component: () => import('../views/Profile.vue'),
   },
+  {
+    path: '/feed',
+    name: 'Feed',
+    component: () => import('../views/Feed.vue'),
+  },
+  {
+    path: '/archive',
+    name: 'Archive',
+    component: () => import('../views/Archive.vue'),
+  },
+  {
+    path: '/explore',
+    name: 'Explore',
+    component: () => import('@/views/Explore.vue'),
+  },
 ];
 
 const router = new VueRouter({

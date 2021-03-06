@@ -1,14 +1,14 @@
 <template>
   <div>
     <b-container>
-      <hr/>
+      <hr />
     </b-container>
     <b-container class="footer my-3">
-      <ul class="footer-links-list">
-        <li>Contact us</li>
-        <li>About</li>
-        <li>Report issue</li>
-      </ul>
+      <b-row class="justify-content-md-center text-center">
+        <b-col cols="12" md="3" lg="2"> About </b-col>
+        <b-col cols="12" md="3" lg="2"> Contact us </b-col>
+        <b-col cols="12" md="3" lg="2"> Report issue </b-col>
+      </b-row>
     </b-container>
   </div>
 </template>
@@ -20,7 +20,4 @@
   text-align: center
   height: fill
   color: $secondary
-
-.footer-links-list
-  list-style-type: none
 </style>
