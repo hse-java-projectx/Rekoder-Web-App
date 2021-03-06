@@ -49,3 +49,7 @@ $theme-colors: map-merge(
   ),
   $theme-colors
 );
+
+.bg-white {
+  background-color: $white;
+}

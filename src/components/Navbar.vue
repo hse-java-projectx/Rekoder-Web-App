@@ -1,8 +1,10 @@
 <template>
   <div class="comp-navbar">
-    <b-navbar toggleable="lg" type="dark" variant="primary">
+    <b-navbar toggleable="md" type="dark" variant="primary">
       <b-navbar-brand>
-        <router-link to="/" class="header-item"><h3>Recoder</h3></router-link>
+        <router-link to="/" class="header-item d-inline-block d-md-none"
+          ><h3>Recoder</h3></router-link
+        >
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
