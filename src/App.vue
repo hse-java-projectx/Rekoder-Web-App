@@ -3,8 +3,10 @@
     <Header />
     <div class="app-wrapper">
       <Navbar />
-      <b-container class="router-wrapper py-sm-4 py-3 my-sm-3">
-        <router-view />
+      <b-container class="nav-router-wrapper p-0 m-auto">
+        <b-container class="router-wrapper my-0 my-sm-2 my-md-4 py-3">
+          <router-view />
+        </b-container>
       </b-container>
       <Footer />
     </div>
@@ -37,6 +39,8 @@ export default {
 .app-wrapper
   background-color: $gray-150
   min-height: 100vh
+
+.nav-router-wrapper
 
 .router-wrapper
   background-color: $white

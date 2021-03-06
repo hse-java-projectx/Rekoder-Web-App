@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="text-center bg-gray-150">
     <b-container class="py-md-2 py-lg-3 d-none d-md-inline-block text-left">
       <b-row>
         <b-col>
