@@ -1,6 +1,6 @@
 <template>
   <div class="comp-navbar">
-    <b-navbar toggleable="md" type="dark" variant="primary" class="px-md-4">
+    <b-navbar toggleable="md" type="dark" variant="primary">
       <b-navbar-brand>
         <router-link to="/feed" class="header-item d-inline-block d-md-none"
           ><h3>Recoder</h3></router-link
@@ -31,6 +31,10 @@
 <style scoped lang="sass">
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
+
+.comp-navbar
+  position: sticky
+  top: 0
 
 .header-item
   color: $light
