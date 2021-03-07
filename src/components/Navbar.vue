@@ -15,7 +15,7 @@
             <b-row class="w-100">
               <b-col md="8">
                 <b-row>
-                  <b-col class="p-md-0" cols="12" md="3" xl="2">
+                  <b-col class="navbar-item p-md-0" cols="12" md="3" xl="2">
                     <b-nav-item>
                       <router-link to="/feed" class="header-item">
                         <b-icon
@@ -26,7 +26,7 @@
                       </router-link>
                     </b-nav-item>
                   </b-col>
-                  <b-col class="p-md-0" cols="12" md="3" xl="2">
+                  <b-col class="navbar-item p-md-0" cols="12" md="3" xl="2">
                     <b-nav-item>
                       <router-link to="/explore" class="header-item">
                         <b-icon
@@ -45,7 +45,13 @@
 
               <b-col md="4">
                 <b-row align-h="end">
-                  <b-col class="p-md-0" cols="12" md="4" lg="6" xl="4">
+                  <b-col
+                    class="navbar-item p-md-0"
+                    cols="12"
+                    md="4"
+                    lg="6"
+                    xl="4"
+                  >
                     <b-nav-item>
                       <router-link to="/profile" class="header-item">
                         <b-icon
@@ -56,7 +62,13 @@
                       </router-link>
                     </b-nav-item>
                   </b-col>
-                  <b-col class="p-md-0" cols="12" md="4" lg="6" xl="4">
+                  <b-col
+                    class="navbar-item p-md-0"
+                    cols="12"
+                    md="4"
+                    lg="6"
+                    xl="4"
+                  >
                     <b-nav-item>
                       <router-link to="/archive" class="header-item">
                         <b-icon
@@ -86,6 +98,9 @@
 .comp-navbar-wrapper
   position: sticky
   top: 0
+
+.navbar-item
+  max-width: 80pt
 
 .header-item
   color: $light
