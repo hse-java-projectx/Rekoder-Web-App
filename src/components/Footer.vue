@@ -1,6 +1,15 @@
 <template>
   <div>
-    <b-container class="footer my-3"> This is a footer </b-container>
+    <b-container>
+      <hr />
+    </b-container>
+    <b-container class="footer my-3">
+      <b-row class="justify-content-md-center text-center">
+        <b-col cols="12" md="3" lg="2"> About </b-col>
+        <b-col cols="12" md="3" lg="2"> Contact us </b-col>
+        <b-col cols="12" md="3" lg="2"> Report issue </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 

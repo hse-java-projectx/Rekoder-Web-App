@@ -1,7 +1,7 @@
 // Base grayscale colors definitions
 $white: #fff !default;
 $gray-100: #f8f9fa !default;
-$gray-150: hsl(0, 0%, 94%) !default;
+$gray-150: #f5f5f5 !default;
 $gray-200: #e9ecef !default;
 $gray-300: #dee2e6 !default;
 $gray-400: #ced4da !default;
@@ -26,6 +26,7 @@ $cyan: #17a2b8 !default;
 
 // Theme color default definitions
 $primary: $indigo !default;
+$second-primary: $orange !default;
 $secondary: $gray-600 !default;
 $success: $green !default;
 $info: $cyan !default;
@@ -39,6 +40,7 @@ $theme-colors: () !default;
 $theme-colors: map-merge(
   (
     'primary': $primary,
+    'second-primary': $second-primary,
     'secondary': $secondary,
     'success': $success,
     'info': $info,
@@ -49,3 +51,15 @@ $theme-colors: map-merge(
   ),
   $theme-colors
 );
+
+.bg-white {
+  background-color: $white;
+}
+
+.bg-second-primary {
+  background-color: $second-primary;
+}
+
+.bg-gray-150 {
+  background-color: $gray-150;
+}

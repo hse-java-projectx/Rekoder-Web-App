@@ -1,11 +1,15 @@
 <template>
-  <div class="app-wrapper">
+  <div class="page-wrapper">
     <Header />
-    <Navbar />
-    <b-container class="router-wrapper py-sm-4 py-3 my-sm-3">
-      <router-view />
-    </b-container>
-    <Footer />
+    <div class="app-wrapper">
+      <Navbar />
+      <b-container class="nav-router-wrapper p-0 m-auto">
+        <b-container class="router-wrapper my-0 my-sm-2 my-md-4 py-3">
+          <router-view />
+        </b-container>
+      </b-container>
+      <Footer />
+    </div>
   </div>
 </template>
 
@@ -29,10 +33,14 @@ export default {
 @import "../node_modules/bootstrap/scss/bootstrap"
 @import "../node_modules/bootstrap-vue/src/index.scss"
 
-.app-wrapper
+.page-wrapper
   font-family: "Ubuntu"
+
+.app-wrapper
   background-color: $gray-150
   min-height: 100vh
+
+.nav-router-wrapper
 
 .router-wrapper
   background-color: $white
