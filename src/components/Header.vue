@@ -5,21 +5,15 @@
   >
     <b-row>
       <b-col>
-        <router-link to="/feed" class="header-logo"
-          ><h1><b>Rekoder</b></h1></router-link
-        >
+        <router-link to="/feed" class="header-logo">
+          <b>Rekoder <v-icon name="code-branch" scale="2" /></b>
+        </router-link>
       </b-col>
       <b-col>
         <b-container class="header-additional-info text-secondary">
           <ul class="list-unstyled text-right my-auto">
-            <li>
-              About
-              <b-icon icon="question-circle"></b-icon>
-            </li>
-            <li>
-              Contact us
-              <b-icon icon="telephone"></b-icon>
-            </li>
+            <li>About</li>
+            <li>Contact us</li>
           </ul>
         </b-container>
       </b-col>
@@ -36,10 +30,8 @@ export default {
 <style lang="sass" scoped>
 @import "@/style/bootstrap-custom.scss"
 
-.header-links-list
-  list-style-type: none
-
 .header-logo
+  font-size: 24pt
   &:hover
     color: $primary
     text-decoration: none

@@ -5,10 +5,10 @@
         to="/feed"
         class="navbar-brand-text d-inline-block d-md-none"
       >
-        <b>Rekoder</b>
+        <b>Rekoder <v-icon name="code-branch" scale="1.5" /></b>
       </router-link>
     </b-navbar-brand>
-    <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+    <b-navbar-toggle size="sm" target="nav-collapse" />
     <b-collapse id="nav-collapse" is-nav class="w-100">
       <b-container fluid>
         <b-navbar-nav class="w-100">
@@ -19,7 +19,7 @@
                   <NavbarLink name="Feed" link="/feed" icon="newspaper" />
                 </b-col>
                 <b-col class="navbar-link" cols="12" md="3" xl="2">
-                  <NavbarLink name="Explore" link="/explore" icon="signpost" />
+                  <NavbarLink name="Explore" link="/explore" icon="compass" />
                 </b-col>
                 <b-col cols="12" md="6" class="my-auto">
                   <b-form-input size="sm" placeholder="Search" />
@@ -35,7 +35,7 @@
                   lg="6"
                   xl="4"
                 >
-                  <NavbarLink name="Profile" link="/profile" icon="person" />
+                  <NavbarLink name="Profile" link="/profile" icon="user-alt" />
                 </b-col>
                 <b-col
                   class="navbar-link p-md-0"
@@ -44,11 +44,7 @@
                   lg="6"
                   xl="4"
                 >
-                  <NavbarLink
-                    name="Archive"
-                    link="/archive"
-                    icon="collection"
-                  />
+                  <NavbarLink name="Archive" link="/archive" icon="archive" />
                 </b-col>
               </b-row>
             </b-col>
