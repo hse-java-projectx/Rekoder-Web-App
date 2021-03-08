@@ -1,35 +1,35 @@
 # Rekoder web application
 
+This web application is the interface for interacting with the Rekoder task submission service.
+
+You can see latest released version at [rekoder-64172.web.app]
+
 ## Project setup
+
+First, update your `npm` version to `6.*.*`. 
+
+Then setup `npm`
 
 ```bash
 npm install
 ```
 
-### Compiles and hot-reloads for development
+Then, to
+
+Build development version
 
 ```bash
 npm run serve
 ```
 
-### Compiles and minifies for production
+Build release version
 
 ```bash
 npm run build
 ```
 
-### Run your unit tests
-
-```bash
-npm run test:unit
-```
-
-### Lints and fixes files
-
-```bash
-npm run lint
-```
-
 ### Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+[rekoder-64172.web.app]: https://rekoder-64172.web.app
