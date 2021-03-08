@@ -1,6 +1,6 @@
 # Rekoder web application
 
-https://github.com/hse-java-projectx/web-app/actions/workflows/firebase-hosting-merge.yml/badge.svg?branch=release&event=push
+[![Deploy to Firebase Hosting on merge](https://github.com/hse-java-projectx/web-app/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/hse-java-projectx/web-app/actions/workflows/firebase-hosting-merge.yml)
 
 This web application is the interface for interacting with the Rekoder task submission service.
 
