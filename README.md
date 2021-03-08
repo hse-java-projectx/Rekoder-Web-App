@@ -1,4 +1,4 @@
-# Recoder web application
+# Rekoder web application
 
 ## Project setup
 
