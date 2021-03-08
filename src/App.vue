@@ -27,20 +27,22 @@ export default {
 };
 </script>
 
-<style lang="sass">
-@import src/style/bootstrap-custom.scss
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
 
+html {
+  font-family: 'Roboto', sans-serif;
+}
+</style>
+
+<style lang="sass">
+@import "src/style/bootstrap-custom.scss"
 @import "../node_modules/bootstrap/scss/bootstrap"
 @import "../node_modules/bootstrap-vue/src/index.scss"
-
-.page-wrapper
-  font-family: "Ubuntu"
 
 .app-wrapper
   background-color: $gray-150
   min-height: 100vh
-
-.nav-router-wrapper
 
 .router-wrapper
   background-color: $white

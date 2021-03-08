@@ -1,12 +1,5 @@
 <template>
-  <div class="page-profile">
-    <h1>This is Profile Page</h1>
+  <div>
+    <h1>This is Profile Page of {{ user.name }}</h1>
   </div>
 </template>
-
-<script>
-export default {
-  name: 'Profile',
-  components: {},
-};
-</script>

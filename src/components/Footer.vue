@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-container>
+    <b-container fluid class="px-0 px-md-5">
       <hr />
     </b-container>
     <b-container class="footer my-3">

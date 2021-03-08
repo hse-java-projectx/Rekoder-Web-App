@@ -1,5 +1,5 @@
 {
-  "name": "web-app",
+  "name": "rekoder-web-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,7 +22,7 @@
     "@vue/cli-plugin-router": "~4.5.0",
     "@vue/cli-plugin-unit-jest": "~4.5.0",
     "@vue/cli-plugin-vuex": "~4.5.0",
-    "@vue/cli-service": "~4.5.0",
+    "@vue/cli-service": "^4.5.11",
     "@vue/eslint-config-airbnb": "^5.0.2",
     "@vue/test-utils": "^1.0.3",
     "babel-eslint": "^10.1.0",

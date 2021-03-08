@@ -1,31 +1,30 @@
 <template>
-  <div class="text-center bg-gray-150">
-    <b-container class="py-md-2 py-lg-3 d-none d-md-inline-block text-left">
-      <b-row>
-        <b-col>
-          <h1>
-            <router-link to="/feed" class="header-logo"
-              ><h1>Rekoder</h1></router-link
-            >
-          </h1>
-        </b-col>
-        <b-col>
-          <b-container class="header-additional-info text-secondary">
-            <ul class="list-unstyled text-right">
-              <li>
-                About
-                <b-icon icon="question-circle"></b-icon>
-              </li>
-              <li>
-                Contact us
-                <b-icon icon="telephone"></b-icon>
-              </li>
-            </ul>
-          </b-container>
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+  <b-container
+    fluid
+    class="bg-gray-150 px-5 py-md-2 d-none d-md-inline-block text-left"
+  >
+    <b-row>
+      <b-col>
+        <router-link to="/feed" class="header-logo"
+          ><h1>Rekoder</h1></router-link
+        >
+      </b-col>
+      <b-col>
+        <b-container class="header-additional-info text-secondary">
+          <ul class="list-unstyled text-right my-auto">
+            <li>
+              About
+              <b-icon icon="question-circle"></b-icon>
+            </li>
+            <li>
+              Contact us
+              <b-icon icon="telephone"></b-icon>
+            </li>
+          </ul>
+        </b-container>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
