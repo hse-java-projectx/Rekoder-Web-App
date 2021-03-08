@@ -6,7 +6,7 @@ You can see latest released version at [rekoder-64172.web.app]
 
 ## Project setup
 
-First, update your `npm` version to `6.*.*`. 
+First, update your `npm` version to `6.*.*`.
 
 Then setup `npm`
 
