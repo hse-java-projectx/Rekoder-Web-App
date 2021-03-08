@@ -26,7 +26,6 @@
                 </b-col>
               </b-row>
             </b-col>
-
             <b-col md="4">
               <b-row align-h="end">
                 <b-col
