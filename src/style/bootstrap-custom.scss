@@ -63,3 +63,10 @@ $theme-colors: map-merge(
 .bg-gray-150 {
   background-color: $gray-150;
 }
+
+$grid-xs: 0;
+$grid-sm: 576px;
+$grid-md: 768px;
+$grid-lg: 992px;
+$grid-xl: 1200px;
+$grid-xxl: 1400px;
