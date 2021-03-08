@@ -28,10 +28,10 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap');
 
-html {
-  font-family: 'Roboto', sans-serif;
+.page-wrapper {
+  font-family: 'Rubik', sans-serif;
 }
 </style>
 

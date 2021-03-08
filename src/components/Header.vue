@@ -6,7 +6,7 @@
     <b-row>
       <b-col>
         <router-link to="/feed" class="header-logo"
-          ><h1>Rekoder</h1></router-link
+          ><h1><b>Rekoder</b></h1></router-link
         >
       </b-col>
       <b-col>
