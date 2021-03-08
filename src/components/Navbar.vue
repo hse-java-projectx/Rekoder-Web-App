@@ -5,7 +5,7 @@
         to="/feed"
         class="navbar-brand-text d-inline-block d-md-none"
       >
-        Rekoder
+        <b>Rekoder</b>
       </router-link>
     </b-navbar-brand>
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
