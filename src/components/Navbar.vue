@@ -5,7 +5,7 @@
         to="/feed"
         class="navbar-brand-text d-inline-block d-md-none"
       >
-        <b>Rekoder <v-icon name="code-branch" scale="1.5" /></b>
+        <b>Rekoder</b>
       </router-link>
     </b-navbar-brand>
     <b-navbar-toggle size="sm" target="nav-collapse" />
@@ -71,7 +71,7 @@ export default {
 
 @media (min-width: $grid-md)
   .navbar-link
-    max-width: 80pt
+    max-width: 60pt
 
 .navbar-link-text
   color: $light

@@ -6,7 +6,7 @@
     <b-row>
       <b-col>
         <router-link to="/feed" class="header-logo">
-          <b>Rekoder <v-icon name="code-branch" scale="2" /></b>
+          <b>Rekoder</b>
         </router-link>
       </b-col>
       <b-col>

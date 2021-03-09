@@ -2,7 +2,6 @@
   <router-link :to="link">
     <b-nav-text class="navbar-link-text text-light">
       {{ name }}
-      <v-icon :name="icon" class="d-none d-lg-inline"/>
     </b-nav-text>
   </router-link>
 </template>

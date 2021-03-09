@@ -70,3 +70,16 @@ $grid-md: 768px;
 $grid-lg: 992px;
 $grid-xl: 1200px;
 $grid-xxl: 1400px;
+
+.page-item-container {
+  background-color: $white;
+  border-radius: 4pt;
+  padding: 4pt;
+  padding-top: 6pt;
+  border-right-color: $gray-200;
+  border-bottom-color: $gray-200;
+  border-left-color: $gray-150;
+  border-top-color: $gray-150;
+  border-style:double;
+  border-width: 2pt;
+}
