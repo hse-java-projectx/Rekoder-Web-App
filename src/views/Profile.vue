@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ProfileTemplate
+    <ProfileLayout
       :links="links"
       name="Gleb Marin"
       avatarAlt="Profile avatar"
@@ -8,15 +8,15 @@
       :information="userInfo"
       :bio="description"
     >
-    </ProfileTemplate>
+    </ProfileLayout>
   </div>
 </template>
 
 <script>
-import ProfileTemplate from '@/components/profile/ProfileTemplate.vue';
+import ProfileLayout from '@/components/profile/ProfileLayout.vue';
 
 export default {
-  components: { ProfileTemplate },
+  components: { ProfileLayout },
   data() {
     return {
       description: 'National Research University HSE SPb. Applied Mathematics and Computer Science',

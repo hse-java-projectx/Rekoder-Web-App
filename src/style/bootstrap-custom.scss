@@ -73,13 +73,16 @@ $grid-xxl: 1400px;
 
 .page-item-container {
   background-color: $white;
-  border-radius: 4pt;
+  border-radius: 5pt;
   padding: 4pt;
-  padding-top: 6pt;
+  padding-top: 8pt;
+  padding-bottom: 8pt;
   border-right-color: $gray-200;
   border-bottom-color: $gray-200;
   border-left-color: $gray-150;
   border-top-color: $gray-150;
-  border-style:double;
+  border-style: double;
   border-width: 2pt;
+  height: fit-content;
+  margin-bottom: 3pt;
 }
