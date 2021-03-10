@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <b-img :src="src" :alt="alt" class="image-icon"></b-img>
-  </div>
+  <b-container class="image-wrapper px-0">
+    <b-img
+      :src="src"
+      :alt="alt"
+      fluid-grow
+      class="image-icon px-0"
+    ></b-img>
+  </b-container>
 </template>
 
 <script>
@@ -18,13 +23,21 @@ export default {
 @import bootstrap/scss/bootstrap
 
 .image-icon
-  height: 60pt
-  width: 60pt
-  border-radius: 50%
   object-fit: cover
+  min-width: 100pt
 
-@media (min-width: $grid-sm)
-  .image-icon
-    height: 70pt
-    width: 70pt
+.image-wrapper
+  padding-bottom: 100%
+  padding-left: 100%
+  position: relative
+  left: -50%
+
+  & img
+    position: absolute
+    width: auto
+    min-width: 100%
+    min-height: 100%
+    border-radius: 50%
+    border-style: double
+    border-color: $gray-300
 </style>

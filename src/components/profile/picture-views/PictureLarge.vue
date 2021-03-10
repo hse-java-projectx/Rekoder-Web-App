@@ -1,7 +1,14 @@
 <template>
-  <div>
-    <b-img :src="src" fluid rounded :alt="alt" class="image-large"></b-img>
-  </div>
+  <b-container>
+    <b-img
+      :src="src"
+      :alt="alt"
+      rounded
+      fluid-grow
+      circle
+      class="image-icon"
+    ></b-img>
+  </b-container>
 </template>
 
 <script>
@@ -12,3 +19,11 @@ export default {
   },
 };
 </script>
+
+<style lang="sass" scoped>
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
+
+.image-icon
+  min-width: 100pt
+</style>

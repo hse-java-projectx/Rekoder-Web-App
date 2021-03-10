@@ -4,7 +4,7 @@
       <Header />
       <Navbar />
       <b-container
-        fluid
+        fluid="xl"
         class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5"
       >
         <router-view />

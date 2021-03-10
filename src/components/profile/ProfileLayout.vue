@@ -4,7 +4,7 @@
       <b-col cols="12" md="4" class="p-1">
         <div class="page-item-container">
           <b-row>
-            <b-col cols="3" md="12" class="text-center">
+            <b-col cols="3" md="12" class="text-center pr-0 px-md-3">
               <PictureIcon :alt="avatarAlt" :src="avatarPath" />
             </b-col>
             <b-col cols="9" md="12">
@@ -84,7 +84,7 @@ export default {
     font-size: 20pt
 
   .profile-bio
-    font-size: 13pt
+    font-size: 12pt
 
   .profile-numbers
     font-size: 12pt
