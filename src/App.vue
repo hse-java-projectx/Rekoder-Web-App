@@ -1,12 +1,13 @@
 <template>
   <div class="page-wrapper">
-    <Header />
     <div class="app-wrapper">
+      <Header />
       <Navbar />
-      <b-container class="nav-router-wrapper p-0 m-auto">
-        <b-container class="router-wrapper my-0 my-sm-2 my-md-4 py-3">
-          <router-view />
-        </b-container>
+      <b-container
+        fluid="xl"
+        class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5"
+      >
+        <router-view />
       </b-container>
       <Footer />
     </div>
@@ -28,10 +29,10 @@ export default {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Rubik:wght@400;600&display=swap");
 
 .page-wrapper {
-  font-family: 'Rubik', sans-serif;
+  font-family: "Rubik", sans-serif;
 }
 </style>
 
@@ -43,8 +44,4 @@ export default {
 .app-wrapper
   background-color: $gray-150
   min-height: 100vh
-
-.router-wrapper
-  background-color: $white
-  border-radius: 3pt
 </style>
