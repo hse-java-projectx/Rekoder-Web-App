@@ -121,9 +121,6 @@ export default {
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
 
-.path-way
-  font-size: 18pt
-
 .path-way-link
   color: $secondary
   &:hover
