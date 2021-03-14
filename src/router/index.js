@@ -31,12 +31,17 @@ const routes = [
     component: () => import('../views/Explore.vue'),
   },
   {
-    path: '/profile/:username/archive/:folderId',
+    path: '/profile/:userId/archive/:folderId',
     name: 'archive',
     component: () => import('../views/Archive.vue'),
   },
   {
-    path: '/profile/:username',
+    path: '/profile/:userId/problem/:problemId',
+    name: 'problem',
+    component: () => import('../views/Problem.vue'),
+  },
+  {
+    path: '/profile/:userId',
     name: 'profile',
     component: () => import('../views/Profile.vue'),
   },

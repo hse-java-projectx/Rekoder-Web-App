@@ -5,16 +5,16 @@
     </SubNavbar>
     <div class="page-item-container">
       <b-form @submit="onSubmit">
-        <b-form-group label="Username:" label-for="form-input-username">
+        <b-form-group label="User Id:" label-for="form-input-userId">
           <b-form-input
-            id="form-input-username"
-            v-model="form.username"
-            placeholder="Enter username"
+            id="form-input-userId"
+            v-model="form.userId"
+            placeholder="Enter userId"
             :state="validation"
             required
           ></b-form-input>
         </b-form-group>
-        <b-form-group label="Username:" label-for="form-input-password">
+        <b-form-group label="Password:" label-for="form-input-password">
           <b-form-input
             id="form-input-password"
             v-model="form.password"
@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       form: {
-        username: '',
+        userId: '',
         password: '',
       },
       validation: null,
@@ -52,18 +52,19 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      const access = Backend.getUserAccess(this.form.username, this.form.password);
+      const access = Backend.getUserAccess(this.form.userId, this.form.password);
       if (access.success) {
         this.commitSignin(access.user);
         return;
       }
-      this.signinError = 'Invalid username or password';
+      this.signinError = 'Invalid user id or password';
       this.validation = false;
+      this.onReset();
     },
 
     onReset() {
-      this.form.username = '';
-      this.form.username = '';
+      this.form.userId = '';
+      this.form.password = '';
     },
 
     commitSignin(userData) {

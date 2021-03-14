@@ -86,12 +86,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isSigned', 'username', 'archiveRoot']),
+    ...mapGetters(['isSigned', 'userid', 'archiveRoot']),
     profileLink() {
-      return `/profile/${this.username}`;
+      return `/profile/${this.userid}`;
     },
     archiveLink() {
-      return `/profile/${this.username}/archive/${this.archiveRoot}`;
+      return `/profile/${this.userid}/archive/${this.archiveRoot}`;
     },
   },
 };

@@ -2,7 +2,6 @@
   <div>
     <ProfileLayout
       :links="links"
-      :username="username"
       name="Gleb Marin"
       avatarAlt="Profile avatar"
       avatarPath="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg"
@@ -25,7 +24,6 @@ export default {
   components: { ProfileLayout },
   data() {
     return {
-      username: this.$route.params.username,
       description: 'National Research University HSE SPb. Applied Mathematics and Computer Science',
       links: [
         {

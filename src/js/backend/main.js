@@ -1,13 +1,13 @@
 import db from '@/js/backend/db';
 
 const Backend = {
-  getUserAccess(username, password) {
+  getUserAccess(userid, password) {
     let accessGranted = false;
     let userFound = false;
     let userData = null;
     db.users.forEach(
       (user) => {
-        if (user.username === username) {
+        if (user.id === userid) {
           userFound = true;
           userData = user;
           accessGranted = user.password === password;
@@ -31,16 +31,6 @@ const Backend = {
         }
       },
     );
-    return userFound;
-  },
-
-  getUserByUsername(username) {
-    let userFound = null;
-    db.users.forEach((user) => {
-      if (user.username === username) {
-        userFound = user;
-      }
-    });
     return userFound;
   },
 
@@ -72,12 +62,7 @@ const Backend = {
     return foundFolder;
   },
 
-  getFolderContent(username, folderId) {
-    const user = this.getUserByUsername(username);
-    if (!user) {
-      return null;
-    }
-    const userId = user.id;
+  getFolderContent(userId, folderId) {
     const items = []; // { name, isDirectory, solved, id }
     this.getFolder(folderId).items.forEach((dir) => {
       let name = 'undefinedName';

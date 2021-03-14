@@ -9,9 +9,6 @@
             </b-col>
             <b-col cols="9" md="12">
               <div class="mt-md-1 text-dark text-center" style="font-size: 16pt">
-                <b>{{ username }}</b>
-              </div>
-              <div class="mt-md-1 text-secondary text-center">
                 <b>{{ name }}</b>
               </div>
 
@@ -60,7 +57,6 @@ export default {
     links: Array[Object],
     information: Array[Object],
     name: String,
-    username: String,
     avatarAlt: String,
     avatarPath: String,
     bio: String,
@@ -75,10 +71,6 @@ export default {
 
 .profile-name
   font-size: 14pt
-  text-align: center
-
-.profile-username
-  font-size: 18pt
   text-align: center
 
 .profile-bio

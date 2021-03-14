@@ -1,7 +1,6 @@
 const users = [
   {
     id: 'userid1',
-    username: 'Glebanister',
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
@@ -103,7 +102,6 @@ const users = [
   },
   {
     id: 'userid2',
-    username: 'KaperD',
     registrationDate: new Date(),
     name: 'Danil Bubnov',
     password: 'password',
@@ -119,7 +117,6 @@ const users = [
   },
   {
     id: 'userid3',
-    username: 'IlyaOnOff',
     registrationDate: new Date(),
     name: 'Ilya Onofriychuk',
     password: 'password',
@@ -135,7 +132,6 @@ const users = [
   },
   {
     id: 'userid4',
-    username: 'alex99999',
     registrationDate: new Date(),
     name: 'Alexey Luchinin',
     password: 'password',
@@ -179,7 +175,7 @@ const folders = [
     id: 'folderid1',
     parent: null,
     visibility: 'public',
-    name: 'Glebanister',
+    name: 'userid1',
     items: [
       { isFolder: true, id: 'folderid2' },
       { isFolder: true, id: 'folderid3' },
@@ -203,7 +199,6 @@ const folders = [
     visibility: 'public',
     name: 'my collections',
     items: [
-      { isFolder: false, id: 'problemid2' },
       { isFolder: false, id: 'problemid3' },
       { isFolder: false, id: 'problemid4' },
     ],

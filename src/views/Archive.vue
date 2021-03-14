@@ -34,7 +34,7 @@ export default {
   name: 'Archive',
   data() {
     return {
-      routeUsername: this.$route.params.username,
+      routeUserId: this.$route.params.userId,
       routeFolderId: this.$route.params.folderId,
     };
   },
@@ -50,7 +50,7 @@ export default {
       Backend.getPathToRoot(this.routeFolderId).forEach((folder) => {
         result.push({
           name: folder.name,
-          link: `/profile/${this.routeUsername}/archive/${folder.id}`,
+          link: `/profile/${this.routeUserId}/archive/${folder.id}`,
         });
       });
       return result;
@@ -58,15 +58,15 @@ export default {
 
     directions() {
       const dirs = [];
-      Backend.getFolderContent(this.routeUsername, this.routeFolderId).forEach(
+      Backend.getFolderContent(this.routeUserId, this.routeFolderId).forEach(
         (dir) => {
           dirs.push({
             name: dir.name,
             isDirectory: dir.isDirectory,
             solved: dir.solved,
             link: dir.isDirectory
-              ? `/profile/${this.routeUsername}/archive/${dir.id}`
-              : `/profile/${this.routeUsername}/problem/${dir.id}`,
+              ? `/profile/${this.routeUserId}/archive/${dir.id}`
+              : `/profile/${this.routeUserId}/problem/${dir.id}`,
           });
         },
       );
