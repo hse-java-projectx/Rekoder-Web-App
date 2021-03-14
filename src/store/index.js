@@ -21,6 +21,7 @@ export default new Vuex.Store({
   },
   getters: {
     isSigned: (state) => !(typeof state.user === 'undefined' || state.user === null),
-    user: (state) => state.user,
+    username: (state) => state.user.username,
+    archiveRoot: (state) => state.user.root,
   },
 });

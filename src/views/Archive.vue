@@ -12,7 +12,7 @@
       <b-list-group>
         <DirectoryItem
           v-for="item in directions"
-          :key="item.name"
+          :key="item.link"
           :name="item.name"
           :isDirectory="item.isDirectory"
           :link="item.link"
@@ -24,51 +24,52 @@
 </template>
 
 <script>
+import Backend from '@/js/backend/main';
+
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import SubNavbar from '@/components/SubNavbar.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
-import BackendMixin from '@/mixins/backend/main';
 
 export default {
-  mixins: [BackendMixin],
   name: 'Archive',
-  data() {},
+  data() {
+    return {
+      routeUsername: this.$route.params.username,
+      routeFolderId: this.$route.params.folderId,
+    };
+  },
   components: {
     DirectoryItem,
     SubNavbar,
     HeaderPath,
   },
+
   computed: {
-    routeUsername() {
-      return this.$route.params.username;
-    },
-
-    routeFolderId() {
-      return this.$route.params.folderId;
-    },
-
     path() {
       const result = [];
-      this.backend.getPathToRoot(this.routeFolderId()).forEach((name, id) => {
-        result.push({ name, link: `/profile/${this.routeUsername()}/archive/${id}` });
+      Backend.getPathToRoot(this.routeFolderId).forEach((folder) => {
+        result.push({
+          name: folder.name,
+          link: `/profile/${this.routeUsername}/archive/${folder.id}`,
+        });
       });
       return result;
     },
 
     directions() {
       const dirs = [];
-      this.backend
-        .getFolderContent(this.routeUsername(), this.routeFolderId())
-        .forEach((name, isDirectory, solved, id) => {
+      Backend.getFolderContent(this.routeUsername, this.routeFolderId).forEach(
+        (dir) => {
           dirs.push({
-            name,
-            isDirectory,
-            solved,
-            link: isDirectory
-              ? `/profile/${this.routeUsername()}/archive/${id}`
-              : `/profile/${this.routeUsername()}/submission/${id}`,
+            name: dir.name,
+            isDirectory: dir.isDirectory,
+            solved: dir.solved,
+            link: dir.isDirectory
+              ? `/profile/${this.routeUsername}/archive/${dir.id}`
+              : `/profile/${this.routeUsername}/problem/${dir.id}`,
           });
-        });
+        },
+      );
       return dirs;
     },
   },

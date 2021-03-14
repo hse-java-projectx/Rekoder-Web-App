@@ -1,13 +1,15 @@
-import db from '@/mixins/backend/db';
+import db from '@/js/backend/db';
 
 const Backend = {
   getUserAccess(username, password) {
     let accessGranted = false;
     let userFound = false;
+    let userData = null;
     db.users.forEach(
       (user) => {
         if (user.username === username) {
           userFound = true;
+          userData = user;
           accessGranted = user.password === password;
         }
       },
@@ -15,7 +17,31 @@ const Backend = {
     if (!userFound) {
       return { success: false, error: 'User not found' };
     }
-    return accessGranted ? { success: true, error: '' } : { success: false, error: 'Invalid password' };
+    return accessGranted
+      ? { success: true, user: userData }
+      : { success: false, error: 'Invalid password' };
+  },
+
+  getUser(userId) {
+    let userFound = null;
+    db.users.forEach(
+      (user) => {
+        if (user.id === userId) {
+          userFound = user;
+        }
+      },
+    );
+    return userFound;
+  },
+
+  getUserByUsername(username) {
+    let userFound = null;
+    db.users.forEach((user) => {
+      if (user.username === username) {
+        userFound = user;
+      }
+    });
+    return userFound;
   },
 
   getProblem(userId, problemId) {
@@ -46,23 +72,28 @@ const Backend = {
     return foundFolder;
   },
 
-  getFolderContent(userId, folderId) {
+  getFolderContent(username, folderId) {
+    const user = this.getUserByUsername(username);
+    if (!user) {
+      return null;
+    }
+    const userId = user.id;
     const items = []; // { name, isDirectory, solved, id }
-    this.getFolder(folderId).items.forEach((isFolder, id) => {
+    this.getFolder(folderId).items.forEach((dir) => {
       let name = 'undefinedName';
       let isSolved = null;
-      if (isFolder) {
-        name = this.getFolder(folderId).name;
+      if (dir.isFolder) {
+        name = this.getFolder(dir.id).name;
       } else {
-        const problem = this.getProblem(userId, folderId);
+        const problem = this.getProblem(userId, dir.id);
         name = problem.name;
         isSolved = problem.ok;
       }
       items.push({
         name,
-        isDirectory: isFolder,
+        isDirectory: dir.isFolder,
         solved: isSolved,
-        id,
+        id: dir.id,
       });
     });
     return items;
@@ -75,16 +106,8 @@ const Backend = {
       path.push({ name: curFolder.name, id: curFolder.id });
       curFolder = this.getFolder(curFolder.parent);
     }
-    return path;
+    return path.reverse();
   },
 };
 
-const BackendMixin = {
-  data() {
-    return {
-      backend: Backend,
-    };
-  },
-};
-
-export default BackendMixin;
+export default Backend;

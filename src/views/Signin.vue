@@ -1,38 +1,44 @@
 <template>
   <div>
-    <b-form @submit="onSubmit">
-      <b-form-group label="Username:" label-for="form-input-username">
-        <b-form-input
-          id="form-input-username"
-          v-model="form.username"
-          placeholder="Enter username"
-          :state="validation"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-form-group label="Username:" label-for="form-input-password">
-        <b-form-input
-          id="form-input-password"
-          v-model="form.password"
-          type="password"
-          placeholder="Enter password"
-          :state="validation"
-          required
-        ></b-form-input>
-      </b-form-group>
-      <b-button type="submit" variant="primary">Submit</b-button>
-      <b-form-invalid-feedback :state="validation">
-        {{ signinError }}
-      </b-form-invalid-feedback>
-    </b-form>
+    <SubNavbar>
+      <template #left> Sign in </template>
+    </SubNavbar>
+    <div class="page-item-container">
+      <b-form @submit="onSubmit">
+        <b-form-group label="Username:" label-for="form-input-username">
+          <b-form-input
+            id="form-input-username"
+            v-model="form.username"
+            placeholder="Enter username"
+            :state="validation"
+            required
+          ></b-form-input>
+        </b-form-group>
+        <b-form-group label="Username:" label-for="form-input-password">
+          <b-form-input
+            id="form-input-password"
+            v-model="form.password"
+            type="password"
+            placeholder="Enter password"
+            :state="validation"
+            required
+          ></b-form-input>
+        </b-form-group>
+        <b-button type="submit" variant="primary">Submit</b-button>
+        <b-form-invalid-feedback :state="validation">
+          {{ signinError }}
+        </b-form-invalid-feedback>
+      </b-form>
+    </div>
   </div>
 </template>
 
 <script>
-import BackendMixin from '@/mixins/backend/main';
+import Backend from '@/js/backend/main';
+import SubNavbar from '@/components/SubNavbar.vue';
 
 export default {
-  mixins: [BackendMixin],
+  components: { SubNavbar },
   data() {
     return {
       form: {
@@ -46,9 +52,9 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      const access = this.backend.getUserAccess(this.form.username, this.form.password);
+      const access = Backend.getUserAccess(this.form.username, this.form.password);
       if (access.success) {
-        this.commitSignin();
+        this.commitSignin(access.user);
         return;
       }
       this.signinError = 'Invalid username or password';
@@ -60,8 +66,8 @@ export default {
       this.form.username = '';
     },
 
-    commitSignin() {
-      this.$store.commit('signin', this.form.username);
+    commitSignin(userData) {
+      this.$store.commit('signin', userData);
       this.$router.push({ path: '/' });
     },
   },

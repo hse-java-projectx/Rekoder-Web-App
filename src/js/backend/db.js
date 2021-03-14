@@ -179,7 +179,7 @@ const folders = [
     id: 'folderid1',
     parent: null,
     visibility: 'public',
-    name: 'codeforces',
+    name: 'Glebanister',
     items: [
       { isFolder: true, id: 'folderid2' },
       { isFolder: true, id: 'folderid3' },
