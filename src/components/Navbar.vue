@@ -16,10 +16,10 @@
             <b-col md="8">
               <b-row>
                 <b-col class="navbar-link" cols="12" md="3" xl="2">
-                  <NavbarLink name="Feed" link="/feed" icon="newspaper" />
+                  <NavbarLink name="Feed" link="/feed" />
                 </b-col>
                 <b-col class="navbar-link" cols="12" md="3" xl="2">
-                  <NavbarLink name="Explore" link="/explore" icon="compass" />
+                  <NavbarLink name="Explore" link="/explore" />
                 </b-col>
                 <b-col cols="12" md="6" class="my-auto">
                   <b-form-input size="sm" placeholder="Search" />
@@ -28,24 +28,45 @@
             </b-col>
             <b-col md="4">
               <b-row align-h="end">
-                <b-col
-                  class="navbar-link p-md-0"
-                  cols="12"
-                  md="4"
-                  lg="6"
-                  xl="4"
-                >
-                  <NavbarLink name="Profile" link="/profile" icon="user-alt" />
-                </b-col>
-                <b-col
-                  class="navbar-link p-md-0"
-                  cols="12"
-                  md="4"
-                  lg="6"
-                  xl="4"
-                >
-                  <NavbarLink name="Archive" link="/archive" icon="archive" />
-                </b-col>
+                <template v-if="isSigned">
+                  <b-col
+                    class="navbar-link p-md-0"
+                    cols="12"
+                    md="4"
+                    lg="6"
+                    xl="4"
+                  >
+                    <NavbarLink
+                      name="Profile"
+                      :link="profileLink"
+                      icon="user-alt"
+                    />
+                  </b-col>
+                  <b-col
+                    class="navbar-link p-md-0"
+                    cols="12"
+                    md="4"
+                    lg="6"
+                    xl="4"
+                  >
+                    <NavbarLink
+                      name="Archive"
+                      :link="archiveLink"
+                      icon="archive"
+                    />
+                  </b-col>
+                </template>
+                <template v-else>
+                  <b-col
+                    class="navbar-link p-md-0"
+                    cols="12"
+                    md="4"
+                    lg="6"
+                    xl="4"
+                  >
+                    <NavbarLink name="Sign in" link="/signin" />
+                  </b-col>
+                </template>
               </b-row>
             </b-col>
           </b-row>
@@ -56,11 +77,22 @@
 </template>
 
 <script>
-import NavbarLink from '@/components/NavbarLink.vue';
+import NavbarLink from '@/components/links/NavbarLink.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   components: {
     NavbarLink,
+  },
+
+  computed: {
+    ...mapGetters(['isSigned', 'userid', 'archiveRoot']),
+    profileLink() {
+      return `/profile/${this.userid}`;
+    },
+    archiveLink() {
+      return `/profile/${this.userid}/archive/${this.archiveRoot}`;
+    },
   },
 };
 </script>

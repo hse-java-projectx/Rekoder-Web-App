@@ -3,11 +3,8 @@
     <div class="app-wrapper">
       <Header />
       <Navbar />
-      <b-container
-        fluid="xl"
-        class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5"
-      >
-        <router-view />
+      <b-container fluid="xl" class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5">
+        <router-view :key="$route.fullPath" />
       </b-container>
       <Footer />
     </div>

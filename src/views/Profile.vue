@@ -16,6 +16,11 @@
 import ProfileLayout from '@/components/profile/ProfileLayout.vue';
 
 export default {
+  beforeCreate() {
+    if (!this.$store.getters.isSigned) {
+      this.$router.push({ path: '/signin' });
+    }
+  },
   components: { ProfileLayout },
   data() {
     return {
