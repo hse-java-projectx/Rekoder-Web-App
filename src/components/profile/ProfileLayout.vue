@@ -8,7 +8,10 @@
               <PictureIcon :alt="avatarAlt" :src="avatarPath" />
             </b-col>
             <b-col cols="9" md="12">
-              <div class="profile-name mt-md-1">
+              <div class="mt-md-1 text-dark text-center" style="font-size: 16pt">
+                <b>{{ username }}</b>
+              </div>
+              <div class="mt-md-1 text-secondary text-center">
                 <b>{{ name }}</b>
               </div>
 
@@ -50,13 +53,14 @@
 </template>
 
 <script>
-import PictureIcon from '@/components/profile/picture-views/PictureIcon.vue';
+import PictureIcon from '@/components/profile/PictureIcon.vue';
 
 export default {
   props: {
     links: Array[Object],
     information: Array[Object],
     name: String,
+    username: String,
     avatarAlt: String,
     avatarPath: String,
     bio: String,
@@ -70,6 +74,10 @@ export default {
 @import bootstrap/scss/bootstrap
 
 .profile-name
+  font-size: 14pt
+  text-align: center
+
+.profile-username
   font-size: 18pt
   text-align: center
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="text-secondary mb-2" style="font-size: 24pt">
+  <div class="text-secondary mb-2" style="font-size: 20pt">
     <b-row>
       <b-col class="text-left">
         <slot name="left" />

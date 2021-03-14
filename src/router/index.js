@@ -11,29 +11,34 @@ const routes = [
     component: Home,
   },
   {
-    path: '/archive',
-    name: 'Archive',
-    component: () => import('../views/Archive.vue'),
-  },
-  {
     path: '/about',
-    name: 'About',
+    name: 'about',
     component: () => import('../views/About.vue'),
   },
   {
-    path: '/profile',
-    name: 'Profile',
-    component: () => import('../views/Profile.vue'),
+    path: '/signin',
+    name: 'signin',
+    component: () => import('../views/Signin.vue'),
   },
   {
     path: '/feed',
-    name: 'Feed',
+    name: 'feed',
     component: () => import('../views/Feed.vue'),
   },
   {
     path: '/explore',
-    name: 'Explore',
+    name: 'explore',
     component: () => import('../views/Explore.vue'),
+  },
+  {
+    path: '/profile/:username/archive/:folderId',
+    name: 'archive',
+    component: () => import('../views/Archive.vue'),
+  },
+  {
+    path: '/profile/:username',
+    name: 'profile',
+    component: () => import('../views/Profile.vue'),
   },
 ];
 

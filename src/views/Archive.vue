@@ -27,61 +27,50 @@
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import SubNavbar from '@/components/SubNavbar.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
+import BackendMixin from '@/mixins/backend/main';
 
 export default {
+  mixins: [BackendMixin],
   name: 'Archive',
-  data() {
-    return {
-      owner: 'Gleb Marin',
-      path: [
-        { name: 'Glebanister', link: 'user/Glebanister' },
-        { name: 'root', link: 'user/Glebanister/root' },
-        { name: 'collections', link: 'user/Glebanister/root/collections' },
-      ],
-      directions: [
-        {
-          name: 'leetcode',
-          isDirectory: true,
-          link: '/leetcode',
-          solved: false,
-        },
-        {
-          name: 'codefoeces',
-          isDirectory: true,
-          link: '/codefoeces',
-          solved: true,
-        },
-        {
-          name: 'A + B Problem',
-          isDirectory: false,
-          link: '/aplusb',
-          solved: true,
-        },
-        {
-          name: 'Find path',
-          isDirectory: false,
-          link: '/findpath',
-          solved: false,
-        },
-        {
-          name: '3-SAT',
-          isDirectory: false,
-          link: '/3sat',
-          solved: false,
-        },
-        {
-          name: 'collection',
-          isDirectory: true,
-          link: '/collection',
-          solved: null,
-        },
-      ],
-    };
-  },
+  data() {},
   components: {
     DirectoryItem,
     SubNavbar,
     HeaderPath,
+  },
+  computed: {
+    routeUsername() {
+      return this.$route.params.username;
+    },
+
+    routeFolderId() {
+      return this.$route.params.folderId;
+    },
+
+    path() {
+      const result = [];
+      this.backend.getPathToRoot(this.routeFolderId()).forEach((name, id) => {
+        result.push({ name, link: `/profile/${this.routeUsername()}/archive/${id}` });
+      });
+      return result;
+    },
+
+    directions() {
+      const dirs = [];
+      this.backend
+        .getFolderContent(this.routeUsername(), this.routeFolderId())
+        .forEach((name, isDirectory, solved, id) => {
+          dirs.push({
+            name,
+            isDirectory,
+            solved,
+            link: isDirectory
+              ? `/profile/${this.routeUsername()}/archive/${id}`
+              : `/profile/${this.routeUsername()}/submission/${id}`,
+          });
+        });
+      return dirs;
+    },
   },
 };
 </script>

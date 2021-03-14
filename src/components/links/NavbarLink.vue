@@ -10,7 +10,6 @@
 export default {
   props: {
     link: String,
-    icon: String,
     name: String,
   },
 };
