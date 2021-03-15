@@ -37,8 +37,8 @@ const routes = [
   },
   {
     path: '/profile/:userId/problem/:problemId',
-    name: 'problem',
-    component: () => import('../views/Problem.vue'),
+    name: 'problemOrSubmissionHistory',
+    component: () => import('../views/ProblemOrSubmissionHistory.vue'),
   },
   {
     path: '/profile/:userId',

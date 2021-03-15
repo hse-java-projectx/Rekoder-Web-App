@@ -1,13 +1,9 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left> {{ submitter }} submissions for {{ problem }} </template>
-      <template #right> </template>
-    </SubNavbar>
     <div class="page-item-container">
       <b-table :items="submissions">
         <template #cell(id)="data">
-          <SubmissionLink :profile="submitter" :id="data.value" />
+          <SubmissionLink :profile="owner" :id="data.value" />
         </template>
         <template #cell(date)="data">
           {{ data.value.toLocaleString() }}
@@ -17,33 +13,14 @@
   </div>
 </template>
 <script>
-import SubNavbar from '@/components/SubNavbar.vue';
 import SubmissionLink from '@/components/links/SubmissionLink.vue';
 
 export default {
-  components: { SubNavbar, SubmissionLink },
-  data() {
-    return {
-      submitter: 'Glebanister',
-      problem: 'A + B problem',
-      submissions: [
-        {
-          id: 'bac628a',
-          verdict: 'OK',
-          date: new Date(),
-        },
-        {
-          id: '5fb28d1',
-          verdict: 'CE',
-          date: new Date(),
-        },
-        {
-          id: '4ac6cfc',
-          verdict: 'PE',
-          date: new Date(),
-        },
-      ],
-    };
+  components: { SubmissionLink },
+  props: {
+    owner: String,
+    problem: String,
+    submissions: Array[Object],
   },
 };
 </script>
