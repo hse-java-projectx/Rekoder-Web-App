@@ -1,6 +1,6 @@
 const users = [
   {
-    id: 'userid1',
+    id: 'Glebanister',
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
@@ -161,7 +161,7 @@ const teams = [
     registrationDate: new Date(),
     bio: 'ProjecX',
     permissions: {
-      userid1: ['admin'],
+      Glebanister: ['admin'],
       userid2: ['admin'],
       userid3: ['admin'],
     },
@@ -171,7 +171,7 @@ const teams = [
     registrationDate: new Date(),
     bio: 'Ample',
     permissions: {
-      userid1: ['admin'],
+      Glebanister: ['admin'],
       userid2: ['admin'],
       userid4: ['non-admin'],
     },
@@ -183,7 +183,7 @@ const folders = [
     id: 'folderid1',
     parent: null,
     visibility: 'public',
-    name: 'userid1',
+    name: 'Glebanister',
     items: [
       { isFolder: true, id: 'folderid2' },
       { isFolder: true, id: 'folderid3' },
@@ -193,7 +193,7 @@ const folders = [
     id: 'folderid2',
     parent: 'folderid1',
     visibility: 'private',
-    sharedWith: ['userid1', 'userid2'],
+    sharedWith: ['Glebanister', 'userid2'],
     name: 'codeforces',
     items: [
       { isFolder: false, id: 'problemid1' },

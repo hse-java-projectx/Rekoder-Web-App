@@ -2,11 +2,22 @@
   <div>
     <SubNavbar>
       <template #left>
-        <ProfileLink :profile="routeUserId" />: "{{ routeProblemId }}"
+        <ProfileLink :profile="routeUserId" /> /
+        {{ problem.recieved ? problem.data.name : "" }}
       </template>
       <template #right>
-        <router-link :to="statementLink"> Statement </router-link>
-        <router-link :to="submissionsLink"> Submissions </router-link>
+        <b-form-group v-slot="{ ariaDescribedby }">
+          <b-form-radio-group
+            id="radio-type"
+            v-model="selected"
+            :options="radio.options"
+            :aria-describedby="ariaDescribedby"
+            button-variant="outline-primary"
+            name="radio-btn-outline"
+            size="lg"
+            buttons
+          ></b-form-radio-group>
+        </b-form-group>
       </template>
     </SubNavbar>
     <HorCylon v-if="!problem.recieved" />
@@ -14,6 +25,7 @@
       v-else-if="viewingSubmissions"
       :owner="routeUserId"
       :problem="problem.data.name"
+      :problemId="routeProblemId"
       :submissions="problem.data.submissions"
     />
     <Problem
@@ -50,6 +62,13 @@ export default {
         recieved: false,
         data: null,
       },
+      selected: this.$route.query.view,
+      radio: {
+        options: [
+          { text: 'Statement', value: 'statement' },
+          { text: 'Submissions', value: 'submissions' },
+        ],
+      },
     };
   },
 
@@ -60,6 +79,26 @@ export default {
         data: problem,
       };
     });
+  },
+
+  methods: {
+    onClickStatement() {
+      this.$router.push(this.statementLink);
+    },
+
+    onClickSubmissions() {
+      this.$router.push(this.submissionsLink);
+    },
+  },
+
+  watch: {
+    selected(newValue) {
+      if (newValue === 'statement') {
+        this.onClickStatement();
+      } else {
+        this.onClickSubmissions();
+      }
+    },
   },
 
   computed: {
@@ -78,5 +117,12 @@ export default {
   },
 };
 </script>
-<style lang="">
+<style lang="sass">
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
+
+.select-active
+  &:hover
+
+.select-nonactive
 </style>

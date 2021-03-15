@@ -41,12 +41,35 @@ const Backend = {
         }
       },
     );
+    if (userFound == null) {
+      throw new Error('User not found');
+    }
     return userFound;
   },
 
   async getUser(userId) {
     await sleep();
     return this.getUserImpl(userId);
+  },
+
+  getSubmissionImpl(userId, problemId, submissionId) {
+    let foundSubmission = null;
+    const problem = this.getProblemImpl(userId, problemId);
+    problem.submissions.forEach((submission) => {
+      if (submission.id === submissionId) {
+        foundSubmission = submission;
+      }
+    });
+    if (foundSubmission == null) {
+      throw new Error('Submission not found');
+    }
+    foundSubmission.problem = problem.name;
+    return foundSubmission;
+  },
+
+  async getSubmission(userId, problemId, submissionId) {
+    await sleep();
+    return this.getSubmissionImpl(userId, problemId, submissionId);
   },
 
   getProblemImpl(userId, problemId) {
@@ -62,6 +85,9 @@ const Backend = {
         }
       },
     );
+    if (problemFound == null) {
+      throw new Error('Problem not found');
+    }
     return problemFound;
   },
 
@@ -79,6 +105,9 @@ const Backend = {
         }
       },
     );
+    if (foundFolder == null) {
+      throw new Error(`Folder not found${folderId}`);
+    }
     return foundFolder;
   },
 
@@ -117,10 +146,11 @@ const Backend = {
   getPathToRootImpl(folderId) {
     let curFolder = this.getFolderImpl(folderId);
     const path = [];
-    while (curFolder != null) {
+    while (curFolder.parent != null) {
       path.push({ name: curFolder.name, id: curFolder.id });
       curFolder = this.getFolderImpl(curFolder.parent);
     }
+    path.push({ name: curFolder.name, id: curFolder.id });
     return path.reverse();
   },
 

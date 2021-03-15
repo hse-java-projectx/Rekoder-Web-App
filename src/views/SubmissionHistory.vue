@@ -1,12 +1,19 @@
 <template>
   <div>
     <div class="page-item-container">
-      <b-table :items="submissions">
+      <b-table :items="submissions" :fields="fields" :responsive="true">
         <template #cell(id)="data">
-          <SubmissionLink :profile="owner" :id="data.value" />
+          <SubmissionLink :profile="owner" :problem="problemId" :id="data.value" />
         </template>
         <template #cell(date)="data">
           {{ data.value.toLocaleString() }}
+        </template>
+        <template #cell(comment)="data">
+          <div
+            :class="data.item.ok ? 'ver-ok' : 'ver-nok'"
+          >
+            <b>{{ data.value }}</b>
+          </div>
         </template>
       </b-table>
     </div>
@@ -17,12 +24,35 @@ import SubmissionLink from '@/components/links/SubmissionLink.vue';
 
 export default {
   components: { SubmissionLink },
+  data() {
+    return {
+      fields: ['id', 'comment', 'date', 'language'],
+    };
+  },
   props: {
     owner: String,
     problem: String,
+    problemId: String,
     submissions: Array[Object],
+    /*
+      Object: {
+        id: String,
+        language: String,
+        date: Date,
+        ok: Boolean,
+        comment: String
+      }
+    */
   },
 };
 </script>
+
 <style lang="sass">
+@import "src/style/bootstrap-custom.scss"
+
+.ver-ok
+  color: $green
+
+.ver-nok
+  color: $red
 </style>
