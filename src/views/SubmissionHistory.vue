@@ -1,51 +1,58 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left> {{ submitter }} submissions for {{ problem }} </template>
-      <template #right> </template>
-    </SubNavbar>
     <div class="page-item-container">
-      <b-table :items="submissions">
+      <b-table :items="submissions" :fields="fields" :responsive="true">
         <template #cell(id)="data">
-          <SubmissionLink :profile="submitter" :id="data.value" />
+          <SubmissionLink :profile="owner" :problem="problemId" :id="data.value" />
         </template>
         <template #cell(date)="data">
           {{ data.value.toLocaleString() }}
+        </template>
+        <template #cell(comment)="data">
+          <div
+            :class="data.item.ok ? 'ver-ok' : 'ver-nok'"
+          >
+            <b>{{ data.value }}</b>
+          </div>
         </template>
       </b-table>
     </div>
   </div>
 </template>
 <script>
-import SubNavbar from '@/components/SubNavbar.vue';
 import SubmissionLink from '@/components/links/SubmissionLink.vue';
 
 export default {
-  components: { SubNavbar, SubmissionLink },
+  components: { SubmissionLink },
   data() {
     return {
-      submitter: 'Glebanister',
-      problem: 'A + B problem',
-      submissions: [
-        {
-          id: 'bac628a',
-          verdict: 'OK',
-          date: new Date(),
-        },
-        {
-          id: '5fb28d1',
-          verdict: 'CE',
-          date: new Date(),
-        },
-        {
-          id: '4ac6cfc',
-          verdict: 'PE',
-          date: new Date(),
-        },
-      ],
+      fields: ['id', 'comment', 'date', 'language'],
     };
+  },
+  props: {
+    owner: String,
+    problem: String,
+    problemId: String,
+    submissions: Array[Object],
+    /*
+      Object: {
+        id: String,
+        language: String,
+        date: Date,
+        ok: Boolean,
+        comment: String
+      }
+    */
   },
 };
 </script>
+
 <style lang="sass">
+@import "src/style/bootstrap-custom.scss"
+
+.ver-ok
+  color: $green
+
+.ver-nok
+  color: $red
 </style>

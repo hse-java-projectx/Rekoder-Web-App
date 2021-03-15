@@ -52,14 +52,15 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      const access = Backend.getUserAccess(this.form.userId, this.form.password);
-      if (access.success) {
-        this.commitSignin(access.user);
-        return;
-      }
-      this.signinError = 'Invalid user id or password';
-      this.validation = false;
-      this.onReset();
+      Backend.getUserAccess(this.form.userId, this.form.password)
+        .then((user) => {
+          this.commitSignin(user);
+        })
+        .catch((er) => {
+          this.signinError = er.toString();
+          this.validation = false;
+          this.onReset();
+        });
     },
 
     onReset() {

@@ -1,7 +1,11 @@
 import db from '@/js/backend/db';
 
+function sleep() {
+  return new Promise((resolve) => setTimeout(resolve, 1000));
+}
+
 const Backend = {
-  getUserAccess(userid, password) {
+  getUserAccessImpl(userid, password) {
     let accessGranted = false;
     let userFound = false;
     let userData = null;
@@ -15,14 +19,20 @@ const Backend = {
       },
     );
     if (!userFound) {
-      return { success: false, error: 'User not found' };
+      throw new Error('User not found');
     }
-    return accessGranted
-      ? { success: true, user: userData }
-      : { success: false, error: 'Invalid password' };
+    if (!accessGranted) {
+      throw new Error('Invalid password');
+    }
+    return userData;
   },
 
-  getUser(userId) {
+  async getUserAccess(userid, password) {
+    await sleep();
+    return this.getUserAccessImpl(userid, password);
+  },
+
+  getUserImpl(userId) {
     let userFound = null;
     db.users.forEach(
       (user) => {
@@ -31,10 +41,38 @@ const Backend = {
         }
       },
     );
+    if (userFound == null) {
+      throw new Error('User not found');
+    }
     return userFound;
   },
 
-  getProblem(userId, problemId) {
+  async getUser(userId) {
+    await sleep();
+    return this.getUserImpl(userId);
+  },
+
+  getSubmissionImpl(userId, problemId, submissionId) {
+    let foundSubmission = null;
+    const problem = this.getProblemImpl(userId, problemId);
+    problem.submissions.forEach((submission) => {
+      if (submission.id === submissionId) {
+        foundSubmission = submission;
+      }
+    });
+    if (foundSubmission == null) {
+      throw new Error('Submission not found');
+    }
+    foundSubmission.problem = problem.name;
+    return foundSubmission;
+  },
+
+  async getSubmission(userId, problemId, submissionId) {
+    await sleep();
+    return this.getSubmissionImpl(userId, problemId, submissionId);
+  },
+
+  getProblemImpl(userId, problemId) {
     let problemFound = null;
     db.users.forEach(
       (user) => {
@@ -47,10 +85,18 @@ const Backend = {
         }
       },
     );
+    if (problemFound == null) {
+      throw new Error('Problem not found');
+    }
     return problemFound;
   },
 
-  getFolder(folderId) {
+  async getProblem(userId, problemId) {
+    await sleep();
+    return this.getProblemImpl(userId, problemId);
+  },
+
+  getFolderImpl(folderId) {
     let foundFolder = null;
     db.folders.forEach(
       (folder) => {
@@ -59,18 +105,26 @@ const Backend = {
         }
       },
     );
+    if (foundFolder == null) {
+      throw new Error(`Folder not found${folderId}`);
+    }
     return foundFolder;
   },
 
-  getFolderContent(userId, folderId) {
+  async getFolder(folderId) {
+    await sleep();
+    return this.getFolderImpl(folderId);
+  },
+
+  getFolderContentImpl(userId, folderId) {
     const items = []; // { name, isDirectory, solved, id }
-    this.getFolder(folderId).items.forEach((dir) => {
+    this.getFolderImpl(folderId).items.forEach((dir) => {
       let name = 'undefinedName';
       let isSolved = null;
       if (dir.isFolder) {
-        name = this.getFolder(dir.id).name;
+        name = this.getFolderImpl(dir.id).name;
       } else {
-        const problem = this.getProblem(userId, dir.id);
+        const problem = this.getProblemImpl(userId, dir.id);
         name = problem.name;
         isSolved = problem.ok;
       }
@@ -84,14 +138,25 @@ const Backend = {
     return items;
   },
 
-  getPathToRoot(folderId) {
-    let curFolder = this.getFolder(folderId);
+  async getFolderContent(userId, folderId) {
+    await sleep();
+    return this.getFolderContentImpl(userId, folderId);
+  },
+
+  getPathToRootImpl(folderId) {
+    let curFolder = this.getFolderImpl(folderId);
     const path = [];
-    while (curFolder != null) {
+    while (curFolder.parent != null) {
       path.push({ name: curFolder.name, id: curFolder.id });
-      curFolder = this.getFolder(curFolder.parent);
+      curFolder = this.getFolderImpl(curFolder.parent);
     }
+    path.push({ name: curFolder.name, id: curFolder.id });
     return path.reverse();
+  },
+
+  async getPathToRoot(folderId) {
+    await sleep();
+    return this.getPathToRootImpl(folderId);
   },
 };
 

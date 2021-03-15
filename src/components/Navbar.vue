@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" variant="primary" class="comp-navbar">
+  <b-navbar toggleable="md" type="dark" variant="primary" class="comp-navbar" :print="true">
     <b-navbar-brand>
       <router-link
         to="/feed"

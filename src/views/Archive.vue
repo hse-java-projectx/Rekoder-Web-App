@@ -2,16 +2,18 @@
   <div>
     <SubNavbar>
       <template #left>
-        <HeaderPath :path="path" />
+        <HorCylon v-if="!path.recieved" />
+        <HeaderPath v-else :path="path.data" />
       </template>
       <template #right>
         <b-icon icon="folder-plus" class="text-primary" />
       </template>
     </SubNavbar>
     <div class="page-item-container">
-      <b-list-group>
+      <HorCylon v-if="!directions.recieved" />
+      <b-list-group v-else>
         <DirectoryItem
-          v-for="item in directions"
+          v-for="item in directions.data"
           :key="item.link"
           :name="item.name"
           :isDirectory="item.isDirectory"
@@ -29,6 +31,7 @@ import Backend from '@/js/backend/main';
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import SubNavbar from '@/components/SubNavbar.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
+import HorCylon from '@/components/animated/HorCylon.vue';
 
 export default {
   name: 'Archive',
@@ -36,18 +39,43 @@ export default {
     return {
       routeUserId: this.$route.params.userId,
       routeFolderId: this.$route.params.folderId,
+      path: {
+        recieved: false,
+        data: [],
+      },
+      directions: {
+        recieved: false,
+        data: [],
+      },
     };
   },
   components: {
     DirectoryItem,
     SubNavbar,
     HeaderPath,
+    HorCylon,
   },
 
-  computed: {
-    path() {
+  created() {
+    this.getPathToRoot().then((path) => {
+      this.path = {
+        recieved: true,
+        data: path,
+      };
+    });
+    this.getDirections().then((dirs) => {
+      this.directions = {
+        recieved: true,
+        data: dirs,
+      };
+    });
+  },
+
+  methods: {
+    async getPathToRoot() {
       const result = [];
-      Backend.getPathToRoot(this.routeFolderId).forEach((folder) => {
+      const pathToRoot = await Backend.getPathToRoot(this.routeFolderId);
+      pathToRoot.forEach((folder) => {
         result.push({
           name: folder.name,
           link: `/profile/${this.routeUserId}/archive/${folder.id}`,
@@ -56,20 +84,19 @@ export default {
       return result;
     },
 
-    directions() {
+    async getDirections() {
       const dirs = [];
-      Backend.getFolderContent(this.routeUserId, this.routeFolderId).forEach(
-        (dir) => {
-          dirs.push({
-            name: dir.name,
-            isDirectory: dir.isDirectory,
-            solved: dir.solved,
-            link: dir.isDirectory
-              ? `/profile/${this.routeUserId}/archive/${dir.id}`
-              : `/profile/${this.routeUserId}/problem/${dir.id}`,
-          });
-        },
-      );
+      const folderContent = await Backend.getFolderContent(this.routeUserId, this.routeFolderId);
+      folderContent.forEach((dir) => {
+        dirs.push({
+          name: dir.name,
+          isDirectory: dir.isDirectory,
+          solved: dir.solved,
+          link: dir.isDirectory
+            ? `/profile/${this.routeUserId}/archive/${dir.id}`
+            : `/profile/${this.routeUserId}/problem/${dir.id}/?view=statement`,
+        });
+      });
       return dirs;
     },
   },

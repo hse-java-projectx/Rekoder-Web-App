@@ -1,6 +1,6 @@
 const users = [
   {
-    id: 'userid1',
+    id: 'Glebanister',
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
@@ -20,6 +20,7 @@ const users = [
         statement: 'print sum of two given numbers.',
         submissions: [
           {
+            id: 'submissionid1',
             language: 'Python',
             source: 'print(1 + sum(input().split()))',
             ok: false,
@@ -27,6 +28,7 @@ const users = [
             date: new Date(),
           },
           {
+            id: 'submissionid2',
             language: 'Python',
             source: 'print(sum(input().split()))',
             ok: true,
@@ -41,6 +43,7 @@ const users = [
         statement: 'print difference of two given numbers.',
         submissions: [
           {
+            id: 'submissionid3',
             language: 'C++',
             source: 'std::cout << a + b << std::endl;',
             ok: false,
@@ -48,6 +51,7 @@ const users = [
             date: new Date(),
           },
           {
+            id: 'submissionid4',
             language: 'C++',
             source: 'std::cout << a - b << std::endl;',
             ok: true,
@@ -62,6 +66,7 @@ const users = [
         statement: 'print random number.',
         submissions: [
           {
+            id: 'submissionid5',
             language: 'Python',
             source: 'print(rand()',
             ok: false,
@@ -69,6 +74,7 @@ const users = [
             date: new Date(),
           },
           {
+            id: 'submissionid6',
             language: 'Python',
             source: 'print(rand())',
             ok: true,
@@ -76,6 +82,7 @@ const users = [
             date: new Date(),
           },
           {
+            id: 'submissionid7',
             language: 'Python',
             source: 'print(rand())',
             ok: false,
@@ -90,6 +97,7 @@ const users = [
         statement: 'print product of two given numbers.',
         submissions: [
           {
+            id: 'submissionid8',
             language: 'C++',
             source: 'std::cout << a * b << std::endl;',
             ok: false,
@@ -153,7 +161,7 @@ const teams = [
     registrationDate: new Date(),
     bio: 'ProjecX',
     permissions: {
-      userid1: ['admin'],
+      Glebanister: ['admin'],
       userid2: ['admin'],
       userid3: ['admin'],
     },
@@ -163,7 +171,7 @@ const teams = [
     registrationDate: new Date(),
     bio: 'Ample',
     permissions: {
-      userid1: ['admin'],
+      Glebanister: ['admin'],
       userid2: ['admin'],
       userid4: ['non-admin'],
     },
@@ -175,7 +183,7 @@ const folders = [
     id: 'folderid1',
     parent: null,
     visibility: 'public',
-    name: 'userid1',
+    name: 'Glebanister',
     items: [
       { isFolder: true, id: 'folderid2' },
       { isFolder: true, id: 'folderid3' },
@@ -185,7 +193,7 @@ const folders = [
     id: 'folderid2',
     parent: 'folderid1',
     visibility: 'private',
-    sharedWith: ['userid1', 'userid2'],
+    sharedWith: ['Glebanister', 'userid2'],
     name: 'codeforces',
     items: [
       { isFolder: false, id: 'problemid1' },
