@@ -26,7 +26,6 @@ $cyan: #17a2b8 !default;
 
 // Theme color default definitions
 $primary: #24659b !default;
-$second-primary: $orange !default;
 $secondary: $gray-600 !default;
 $success: $green !default;
 $info: $cyan !default;
@@ -40,7 +39,6 @@ $theme-colors: () !default;
 $theme-colors: map-merge(
   (
     'primary': $primary,
-    'second-primary': $second-primary,
     'secondary': $secondary,
     'success': $success,
     'info': $info,
@@ -54,10 +52,6 @@ $theme-colors: map-merge(
 
 .bg-white {
   background-color: $white;
-}
-
-.bg-second-primary {
-  background-color: $second-primary;
 }
 
 .bg-gray-150 {

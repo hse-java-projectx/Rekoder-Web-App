@@ -123,8 +123,6 @@ export default {
   .information
     width: 100%
 
-@import "src/style/bootstrap-custom.scss"
-
 .ver-ok
   color: $green
 

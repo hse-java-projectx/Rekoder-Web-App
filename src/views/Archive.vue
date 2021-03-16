@@ -17,12 +17,17 @@
               New Problem
               <b-icon icon="file-plus" class="text-primary" />
             </b-button>
-            <b-button variant="outline-primary" class="m-1" size="sm" aria-label="sdfa">
+            <b-button
+              variant="outline-primary"
+              class="m-1"
+              size="sm"
+              aria-label="sdfa"
+            >
               New Folder
               <b-icon icon="folder-plus" class="text-primary" />
             </b-button>
           </div>
-          <hr class="mt-1 w-100"/>
+          <hr class="mt-1 w-100" />
           <HorCylon v-if="!directions.recieved" />
           <b-list-group v-else>
             <DirectoryItem
@@ -141,3 +146,9 @@ export default {
   },
 };
 </script>
+
+<style lang="sass" scoped>
+@import "src/style/bootstrap-custom.scss"
+@import "@/../node_modules/bootstrap/scss/bootstrap"
+@import "@/../node_modules/bootstrap-vue/src/index.scss"
+</style>
