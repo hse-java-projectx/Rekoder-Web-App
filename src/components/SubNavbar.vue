@@ -1,5 +1,5 @@
 <template>
-  <div class="page-item-container" style="font-size: 15pt">
+  <div class="sub-navbar p-2">
     <b-row>
       <b-col class="text-left">
         <slot name="left" />
@@ -17,4 +17,11 @@ export default {};
 <style lang="sass">
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
+
+.sub-navbar
+  font-size: 15pt
+
+@media (max-width: $grid-md)
+  .sub-navbar
+    font-size: 12pt
 </style>

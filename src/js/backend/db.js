@@ -16,13 +16,55 @@ const users = [
     problems: [
       {
         id: 'problemid1',
-        name: 'A + B problem',
-        statement: 'print sum of two given numbers.',
+        name: 'Сортировка матрицы',
+        statement: `
+        Даны две таблицы A и B размера n×m.
+
+Назовём сортировкой по столбцу следующее действие: выбирается столбец, и все строки упорядочиваются по значению в этом столбце, от строк, содержащих меньшие значения, к строкам с большими. В случае, если две строки имеют одинаковое значение в этом столбце, их порядок не меняется (такие сортировки называются стабильными).
+
+Подобное поведение сортировки по столбцу можно найти практически в любом офисном приложении для работы с таблицами. Петя работает в одном из таких приложений, и у него открыта таблица A. Он хочет проделать ноль или более операций сортировки по столбцу, чтобы получить таблицу B.
+
+Определите, может ли он это сделать, и если может, предложите ему алгоритм действий — последовательность столбцов, по которым нужно применить сортировку по столбцу. Обратите внимание, что не требуется минимизировать число действий.`,
         submissions: [
           {
             id: 'submissionid1',
-            language: 'Python',
-            source: 'print(1 + sum(input().split()))',
+            language: 'C++',
+            source: `#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int maxn = 5e6 + 5;
+const int N = 2e5 + 5;
+const double edg = 1e-12;
+int x[maxn] = {0}, y[maxn] = {0}, a[N];
+//map<int , bool> mp;
+//map<int , pair<int, int> > ans;
+  
+  
+int main(){
+    ios::sync_with_stdio(0);
+    cin.tie(); cout.tie(0);
+  
+    #ifndef ONLINE_JUDGE
+    freopen("in.txt", "r", stdin);
+    #endif // ONLINE_JUDGE
+  
+    int n; cin >> n;
+    //mp.clear();
+    //ans.clear();
+    for(int i = 1 ; i <= n; i ++) cin >> a[i];
+    for(int i = 1; i <= n; i ++){
+        for(int j = i + 1; j <= n; j ++){
+            int tmp = a[i] + a[j];
+            if(x[tmp] && y[tmp] && x[tmp] != i && x[tmp] != j && y[tmp] != i && y[tmp] != j){
+                cout << "YES" << i << " " << j << " " << x[tmp] << " " << y[tmp] << "";
+                return 0;
+            }
+            x[tmp] = i, y[tmp] = j;
+        }
+    }
+    cout << "NO\n";
+    return 0;
+}`,
             ok: false,
             comment: 'Wrond Answer',
             date: new Date(),

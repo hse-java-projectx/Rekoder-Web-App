@@ -1,17 +1,19 @@
 <template>
-  <div class="sw-container mt-1">
-    <b-container fluid>
-      <slot name="header" />
-      <b-row>
-        <b-col cols="12" lg="9" class="pr-lg-1">
-          <slot name="content" />
-        </b-col>
-        <b-col cols="12" lg="3" class="d-none d-lg-inline-block pl-0">
-          <slot name="additional" />
-        </b-col>
-      </b-row>
-    </b-container>
-  </div>
+  <b-container fluid>
+    <slot name="header" />
+    <div class="sw-container mt-1">
+      <b-container fluid>
+        <b-row>
+          <b-col cols="12" lg="9" class="px-0 pr-lg-1">
+            <slot name="content" />
+          </b-col>
+          <b-col cols="12" lg="3" class="d-none d-lg-inline-block px-0 pl-0">
+            <slot name="additional" />
+          </b-col>
+        </b-row>
+      </b-container>
+    </div>
+  </b-container>
 </template>
 <script>
 export default {

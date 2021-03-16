@@ -80,12 +80,9 @@ $page-item-container-border-radius: 5pt;
   padding: $page-item-container-padding;
   padding-top: 8pt;
   padding-bottom: 8pt;
-  border-right-color: $gray-200;
-  border-bottom-color: $gray-200;
-  border-left-color: $gray-150;
-  border-top-color: $gray-150;
-  border-style: double;
-  border-width: 2pt;
+  border-width: 1pt;
+  border-color: $gray-200;
+  border-style: solid;
   height: fit-content;
   margin-bottom: 3pt;
 }
