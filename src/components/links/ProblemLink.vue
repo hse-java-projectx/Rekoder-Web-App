@@ -7,11 +7,12 @@ export default {
     profile: String,
     problem: String,
     name: String,
+    view: String,
   },
 
   computed: {
     link() {
-      return `/profile/${this.profile}/problem/${this.problem}`;
+      return `/profile/${this.profile}/problem/${this.problem}?view=${this.view}`;
     },
   },
 };

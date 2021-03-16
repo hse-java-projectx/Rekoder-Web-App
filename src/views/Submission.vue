@@ -4,13 +4,14 @@
       <template #header>
         <SubNavbar>
           <template #left>
-            <ProfileLink :profile="routeUserId" />/
+            <ProfileLink :profile="routeUserId" />
+            <b-icon icon="chevron-right" scale="0.7" />
             <ProblemLink
               :profile="routeUserId"
               :problem="routeProblemId"
               :name="submission.recieved ? submission.data.problem : ''"
-            />
-            /
+              view="submissions"
+            /><b-icon icon="chevron-right" scale="0.7" />
             <SubmissionLink
               :profile="routeUserId"
               :problem="routeProblemId"

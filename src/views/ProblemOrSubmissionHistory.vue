@@ -4,8 +4,14 @@
       <template #header>
         <SubNavbar>
           <template #left>
-            <ProfileLink :profile="routeUserId" /> /
-            {{ problem.recieved ? problem.data.name : "" }}
+            <ProfileLink :profile="routeUserId" />
+            <b-icon icon="chevron-right" scale="0.7" />
+            <ProblemLink
+              :profile="routeUserId"
+              :problem="routeProblemId"
+              :name="problem.recieved ? problem.data.name : ''"
+              view="statement"
+            />
           </template>
           <template #right> </template>
         </SubNavbar>
@@ -53,6 +59,7 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import Backend from '@/js/backend/main';
 import SubNavbar from '@/components/SubNavbar.vue';
 import ProfileLink from '@/components/links/ProfileLink.vue';
+import ProblemLink from '@/components/links/ProblemLink.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 
@@ -65,6 +72,7 @@ export default {
     ProfileLink,
     SplitView,
     ProfileCardLayout,
+    ProblemLink,
   },
 
   data() {
