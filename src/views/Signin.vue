@@ -1,44 +1,51 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left> Sign in </template>
-    </SubNavbar>
-    <div class="page-item-container">
-      <b-form @submit="onSubmit">
-        <b-form-group label="User Id:" label-for="form-input-userId">
-          <b-form-input
-            id="form-input-userId"
-            v-model="form.userId"
-            placeholder="Enter userId"
-            :state="validation"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-form-group label="Password:" label-for="form-input-password">
-          <b-form-input
-            id="form-input-password"
-            v-model="form.password"
-            type="password"
-            placeholder="Enter password"
-            :state="validation"
-            required
-          ></b-form-input>
-        </b-form-group>
-        <b-button type="submit" variant="primary">Submit</b-button>
-        <b-form-invalid-feedback :state="validation">
-          {{ signinError }}
-        </b-form-invalid-feedback>
-      </b-form>
-    </div>
+    <SingleView>
+      <template #header>
+        <SubNavbar>
+          <template #left> Sign in </template>
+        </SubNavbar>
+      </template>
+      <template #content>
+        <div class="page-item-container">
+          <b-form @submit="onSubmit">
+            <b-form-group label="User Id:" label-for="form-input-userId">
+              <b-form-input
+                id="form-input-userId"
+                v-model="form.userId"
+                placeholder="Enter userId"
+                :state="validation"
+                required
+              ></b-form-input>
+            </b-form-group>
+            <b-form-group label="Password:" label-for="form-input-password">
+              <b-form-input
+                id="form-input-password"
+                v-model="form.password"
+                type="password"
+                placeholder="Enter password"
+                :state="validation"
+                required
+              ></b-form-input>
+            </b-form-group>
+            <b-button type="submit" variant="primary">Sign In</b-button>
+            <b-form-invalid-feedback :state="validation">
+              {{ signinError }}
+            </b-form-invalid-feedback>
+          </b-form>
+        </div>
+      </template>
+    </SingleView>
   </div>
 </template>
 
 <script>
 import Backend from '@/js/backend/main';
 import SubNavbar from '@/components/SubNavbar.vue';
+import SingleView from '@/components/SingleView.vue';
 
 export default {
-  components: { SubNavbar },
+  components: { SubNavbar, SingleView },
   data() {
     return {
       form: {

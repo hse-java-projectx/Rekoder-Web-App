@@ -42,7 +42,7 @@ const Backend = {
       },
     );
     if (userFound == null) {
-      throw new Error('User not found');
+      throw new Error(`User not found ${userId}`);
     }
     return userFound;
   },
