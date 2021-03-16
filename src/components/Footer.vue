@@ -20,5 +20,5 @@
   text-align: center
   height: fill
   color: $secondary
-  font-size: 12pt
+  font-size: 10pt
 </style>

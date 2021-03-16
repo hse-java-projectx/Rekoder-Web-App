@@ -18,15 +18,14 @@ $indigo: #6610f2 !default;
 $purple: #6f42c1 !default;
 $pink: #e83e8c !default;
 $red: #dc3545 !default;
-$orange: #fd7e14 !default;
+$orange: #f1b24a !default;
 $yellow: #ffc107 !default;
 $green: #28a745 !default;
 $teal: #20c997 !default;
 $cyan: #17a2b8 !default;
 
 // Theme color default definitions
-$primary: $indigo !default;
-$second-primary: $orange !default;
+$primary: #24659b !default;
 $secondary: $gray-600 !default;
 $success: $green !default;
 $info: $cyan !default;
@@ -40,7 +39,6 @@ $theme-colors: () !default;
 $theme-colors: map-merge(
   (
     'primary': $primary,
-    'second-primary': $second-primary,
     'secondary': $secondary,
     'success': $success,
     'info': $info,
@@ -54,10 +52,6 @@ $theme-colors: map-merge(
 
 .bg-white {
   background-color: $white;
-}
-
-.bg-second-primary {
-  background-color: $second-primary;
 }
 
 .bg-gray-150 {
@@ -80,12 +74,9 @@ $page-item-container-border-radius: 5pt;
   padding: $page-item-container-padding;
   padding-top: 8pt;
   padding-bottom: 8pt;
-  border-right-color: $gray-200;
-  border-bottom-color: $gray-200;
-  border-left-color: $gray-150;
-  border-top-color: $gray-150;
-  border-style: double;
-  border-width: 2pt;
+  border-width: 1pt;
+  border-color: $gray-200;
+  border-style: solid;
   height: fit-content;
   margin-bottom: 3pt;
 }

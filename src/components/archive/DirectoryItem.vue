@@ -1,5 +1,5 @@
 <template>
-  <b-list-group-item class="d-flex justify-content-between">
+  <b-list-group-item class="d-flex justify-content-between dir-item">
     <div>
       <span class="mr-2">
         <b-icon v-if="isDirectory" icon="folder"></b-icon>
@@ -33,4 +33,8 @@ export default {
 
 .attempted
   color: $red
+
+@media (max-width: $grid-md)
+  .dir-item
+    font-size: 11pt
 </style>

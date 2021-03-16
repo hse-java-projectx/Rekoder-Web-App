@@ -4,7 +4,7 @@
       :links="links"
       name="Gleb Marin"
       avatarAlt="Profile avatar"
-      avatarPath="https://www.dmarge.com/wp-content/uploads/2021/01/dwayne-the-rock-.jpg"
+      avatarPath="https://i.stack.imgur.com/l60Hf.png"
       :information="userInfo"
       :bio="description"
     >

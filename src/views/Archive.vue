@@ -7,13 +7,27 @@
             <HorCylon v-if="!path.recieved" />
             <HeaderPath v-else :path="path.data" />
           </template>
-          <template #right>
-            <b-icon icon="folder-plus" class="text-primary" />
-          </template>
+          <template #right> </template>
         </SubNavbar>
       </template>
       <template #content>
         <div class="page-item-container">
+          <div class="text-left">
+            <b-button variant="outline-primary" class="m-1" size="sm">
+              New Problem
+              <b-icon icon="file-plus" class="text-primary" />
+            </b-button>
+            <b-button
+              variant="outline-primary"
+              class="m-1"
+              size="sm"
+              aria-label="sdfa"
+            >
+              New Folder
+              <b-icon icon="folder-plus" class="text-primary" />
+            </b-button>
+          </div>
+          <hr class="mt-1 w-100" />
           <HorCylon v-if="!directions.recieved" />
           <b-list-group v-else>
             <DirectoryItem
@@ -132,3 +146,9 @@ export default {
   },
 };
 </script>
+
+<style lang="sass" scoped>
+@import "src/style/bootstrap-custom.scss"
+@import "@/../node_modules/bootstrap/scss/bootstrap"
+@import "@/../node_modules/bootstrap-vue/src/index.scss"
+</style>

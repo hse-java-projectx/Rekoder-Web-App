@@ -4,13 +4,14 @@
       <template #header>
         <SubNavbar>
           <template #left>
-            <ProfileLink :profile="routeUserId" />/
+            <ProfileLink :profile="routeUserId" />
+            <b-icon icon="chevron-right" scale="0.7" />
             <ProblemLink
               :profile="routeUserId"
               :problem="routeProblemId"
               :name="submission.recieved ? submission.data.problem : ''"
-            />
-            /
+              view="submissions"
+            /><b-icon icon="chevron-right" scale="0.7" />
             <SubmissionLink
               :profile="routeUserId"
               :problem="routeProblemId"
@@ -121,8 +122,6 @@ export default {
 @media (max-width: $grid-lg)
   .information
     width: 100%
-
-@import "src/style/bootstrap-custom.scss"
 
 .ver-ok
   color: $green

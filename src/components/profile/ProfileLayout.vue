@@ -1,56 +1,81 @@
 <template>
   <div>
-    <b-row>
-      <b-col cols="12" md="4" class="p-1">
-        <div class="page-item-container">
-          <b-row>
-            <b-col cols="3" md="12" class="text-center pr-0 px-md-3">
-              <PictureIcon :alt="avatarAlt" :src="avatarPath" />
-            </b-col>
-            <b-col cols="9" md="12">
-              <div class="mt-md-1 text-dark text-center" style="font-size: 16pt">
-                <b>{{ name }}</b>
-              </div>
+    <SingleView>
+      <template #header> </template>
 
-              <div class="my-md-2 profile-bio">
-                <i>{{ bio }}</i>
-              </div>
+      <template #content>
+        <b-row>
+          <b-col cols="12" md="4" class="p-1">
+            <div class="page-item-container">
+              <b-row>
+                <b-col cols="3" md="12" class="text-center pr-0 px-md-3">
+                  <PictureIcon :alt="avatarAlt" :src="avatarPath" />
+                </b-col>
+                <b-col cols="9" md="12">
+                  <div
+                    class="mt-md-1 text-dark text-center"
+                    style="font-size: 16pt"
+                  >
+                    <b>{{ name }}</b>
+                  </div>
 
-              <div class="my-3">
-                <div v-for="{ key, value, ref } in information" :key="key">
-                  <b> {{ key }}: </b>
-                  <router-link :to="ref" class="text-primary">
-                    <span class="profile-bio"> {{ value }} </span>
+                  <div class="my-md-2 profile-bio">
+                    <i>{{ bio }}</i>
+                  </div>
+
+                  <div class="my-3">
+                    <div v-for="{ key, value, ref } in information" :key="key">
+                      <b> {{ key }}: </b>
+                      <router-link :to="ref" class="text-primary">
+                        <span class="profile-bio"> {{ value }} </span>
+                      </router-link>
+                    </div>
+                  </div>
+                </b-col>
+              </b-row>
+              <b-row class="justify-content-center">
+                <b-col
+                  v-for="{ name, num, ref } in links"
+                  :key="name"
+                  col
+                  md="12"
+                >
+                  <router-link :to="ref" class="text-primary profile-numbers">
+                    <b> {{ num }} </b>
+                    <div style="display: inline">{{ name }}</div>
                   </router-link>
-                </div>
+                </b-col>
+              </b-row>
+            </div>
+          </b-col>
+          <b-col cols="12" md="8" class="p-1">
+            <slot name="feed">
+              <div style="height: 100pt" class="page-item-container">
+                Hello!
               </div>
-            </b-col>
-          </b-row>
-          <b-row class="justify-content-center">
-            <b-col v-for="{ name, num, ref } in links" :key="name" col md="12">
-              <router-link :to="ref" class="text-primary profile-numbers">
-                <b> {{ num }} </b>
-                <div style="display: inline">{{ name }}</div>
-              </router-link>
-            </b-col>
-          </b-row>
-        </div>
-      </b-col>
-      <b-col cols="12" md="8" class="p-1">
-        <slot name="feed">
-          <div style="height: 100pt" class="page-item-container">Hello!</div>
-          <div style="height: 100pt" class="page-item-container">Hello!</div>
-          <div style="height: 100pt" class="page-item-container">Hello!</div>
-          <div style="height: 100pt" class="page-item-container">Hello!</div>
-          <div style="height: 100pt" class="page-item-container">Hello!</div>
-        </slot>
-      </b-col>
-    </b-row>
+              <div style="height: 100pt" class="page-item-container">
+                Hello!
+              </div>
+              <div style="height: 100pt" class="page-item-container">
+                Hello!
+              </div>
+              <div style="height: 100pt" class="page-item-container">
+                Hello!
+              </div>
+              <div style="height: 100pt" class="page-item-container">
+                Hello!
+              </div>
+            </slot>
+          </b-col>
+        </b-row>
+      </template>
+    </SingleView>
   </div>
 </template>
 
 <script>
 import PictureIcon from '@/components/profile/PictureIcon.vue';
+import SingleView from '@/components/SingleView.vue';
 
 export default {
   props: {
@@ -61,7 +86,7 @@ export default {
     avatarPath: String,
     bio: String,
   },
-  components: { PictureIcon },
+  components: { PictureIcon, SingleView },
 };
 </script>
 

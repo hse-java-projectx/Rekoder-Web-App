@@ -4,15 +4,13 @@
 <script>
 export default {
   props: {
-    profile: String,
-    problem: String,
-    name: String,
-    view: String,
+    userId: String,
+    folderId: String,
   },
 
   computed: {
     link() {
-      return `/profile/${this.profile}/problem/${this.problem}?view=${this.view}`;
+      return `/profile/${this.userId}/archive/${this.folderId}`;
     },
   },
 };

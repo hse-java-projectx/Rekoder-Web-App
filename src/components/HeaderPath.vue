@@ -45,9 +45,4 @@ export default {
 <style scoped lang="sass">
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
-
-.path-way-link
-  color: $secondary
-  &:hover
-    color: $dark
 </style>

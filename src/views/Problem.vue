@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div class="page-item-container">
+    <div class="page-item-container pb-3">
       <div>
-        <div class="problem-name text-center mt-3">
-          {{ name }}
+        <div class="problem-name text-center mt-1 mt-md-3">
+          <b>{{ name }}</b>
         </div>
         <div class="text-center mb-3">
           by <ProfileLink :profile="owner" />
         </div>
         <hr />
         <b> Statement </b>
-        <div class="statement">
+        <div class="statement p-0 p-md-3">
           {{ statement }}
         </div>
       </div>
@@ -38,4 +38,11 @@ export default {
 
 .statement
   font-size: 16pt
+
+@media (max-width: $grid-md)
+  .problem-name
+    font-size: 16pt
+
+  .statement
+    font-size: 10pt
 </style>

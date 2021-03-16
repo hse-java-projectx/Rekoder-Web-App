@@ -1,11 +1,8 @@
 <template>
   <div class="page-wrapper">
     <div class="app-wrapper">
-      <!-- <Header /> -->
       <Navbar />
-      <!-- <b-container fluid="xl" class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5"> -->
       <router-view :key="$route.fullPath" />
-      <!-- </b-container> -->
       <Footer />
     </div>
   </div>
@@ -13,12 +10,10 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
-// import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 
 export default {
   components: {
-    // Header,
     Navbar,
     Footer,
   },
@@ -39,6 +34,6 @@ export default {
 @import "../node_modules/bootstrap-vue/src/index.scss"
 
 .app-wrapper
-  background-color: $gray-150
+  background-color: $light
   min-height: 100vh
 </style>
