@@ -1,27 +1,36 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left>
-        <HorCylon v-if="!path.recieved" />
-        <HeaderPath v-else :path="path.data" />
+    <SplitView>
+      <template #header>
+        <SubNavbar>
+          <template #left>
+            <HorCylon v-if="!path.recieved" />
+            <HeaderPath v-else :path="path.data" />
+          </template>
+          <template #right>
+            <b-icon icon="folder-plus" class="text-primary" />
+          </template>
+        </SubNavbar>
       </template>
-      <template #right>
-        <b-icon icon="folder-plus" class="text-primary" />
+      <template #content>
+        <div class="page-item-container">
+          <HorCylon v-if="!directions.recieved" />
+          <b-list-group v-else>
+            <DirectoryItem
+              v-for="item in directions.data"
+              :key="item.link"
+              :name="item.name"
+              :isDirectory="item.isDirectory"
+              :link="item.link"
+              :solved="item.solved"
+            ></DirectoryItem
+          ></b-list-group>
+        </div>
       </template>
-    </SubNavbar>
-    <div class="page-item-container">
-      <HorCylon v-if="!directions.recieved" />
-      <b-list-group v-else>
-        <DirectoryItem
-          v-for="item in directions.data"
-          :key="item.link"
-          :name="item.name"
-          :isDirectory="item.isDirectory"
-          :link="item.link"
-          :solved="item.solved"
-        ></DirectoryItem
-      ></b-list-group>
-    </div>
+      <template #additional>
+        <ProfileCardLayout :userId="routeUserId" />
+      </template>
+    </SplitView>
   </div>
 </template>
 
@@ -32,11 +41,30 @@ import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import SubNavbar from '@/components/SubNavbar.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
+import SplitView from '@/components/SplitView.vue';
+import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 
 export default {
   name: 'Archive',
   data() {
     return {
+      links: [
+        {
+          name: 'teams',
+          num: 3,
+          ref: 'teams',
+        },
+        {
+          name: 'followers',
+          num: 281,
+          ref: 'followers',
+        },
+        {
+          name: 'following',
+          num: 12,
+          ref: 'following',
+        },
+      ],
       routeUserId: this.$route.params.userId,
       routeFolderId: this.$route.params.folderId,
       path: {
@@ -54,6 +82,8 @@ export default {
     SubNavbar,
     HeaderPath,
     HorCylon,
+    SplitView,
+    ProfileCardLayout,
   },
 
   created() {

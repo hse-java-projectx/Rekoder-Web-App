@@ -1,40 +1,54 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left>
-        <ProfileLink :profile="routeUserId" />/
-        {{ submission.recieved ? submission.data.problem : "" }} /
-        <SubmissionLink
-          :profile="routeUserId"
-          :problem="routeProblemId"
-          :id="routeSubmissionId"
-        />
+    <SplitView>
+      <template #header>
+        <SubNavbar>
+          <template #left>
+            <ProfileLink :profile="routeUserId" />/
+            <ProblemLink
+              :profile="routeUserId"
+              :problem="routeProblemId"
+              :name="submission.recieved ? submission.data.problem : ''"
+            />
+            /
+            <SubmissionLink
+              :profile="routeUserId"
+              :problem="routeProblemId"
+              :id="routeSubmissionId"
+            />
+          </template>
+        </SubNavbar>
       </template>
-    </SubNavbar>
-    <div v-if="submission.recieved" class="page-item-container">
-      <h2>Information</h2>
-      <b-list-group class="information mb-3">
-        <b-list-group-item class="d-flex justify-content-between">
-          <span> Problem </span>
-          <span>{{ submission.data.problem }}</span>
-        </b-list-group-item>
-        <b-list-group-item class="d-flex justify-content-between">
-          <span> Date </span>
-          <span> {{ submission.data.date.toLocaleString() }} </span>
-        </b-list-group-item>
-        <b-list-group-item class="d-flex justify-content-between">
-          <span> Verdict </span>
-          <div :class="submission.data.ok ? 'ver-ok' : 'ver-nok'">
-            <b>{{ submission.data.comment }}</b>
-          </div>
-        </b-list-group-item>
-      </b-list-group>
-      <h2>Source code</h2>
-      <code-highlight :class="submission.data.language">
-        {{ submission.data.source }}
-      </code-highlight>
-    </div>
-    <HorCylon v-else />
+
+      <template #content>
+        <div v-if="submission.recieved" class="page-item-container">
+          <b-list-group class="information mb-3">
+            <b-list-group-item class="d-flex justify-content-between">
+              <span> Problem </span>
+              <span>{{ submission.data.problem }}</span>
+            </b-list-group-item>
+            <b-list-group-item class="d-flex justify-content-between">
+              <span> Date </span>
+              <span> {{ submission.data.date.toLocaleString() }} </span>
+            </b-list-group-item>
+            <b-list-group-item class="d-flex justify-content-between">
+              <span> Verdict </span>
+              <div :class="submission.data.ok ? 'ver-ok' : 'ver-nok'">
+                <b>{{ submission.data.comment }}</b>
+              </div>
+            </b-list-group-item>
+          </b-list-group>
+          <code-highlight :class="submission.data.language">
+            {{ submission.data.source }}
+          </code-highlight>
+        </div>
+        <HorCylon v-else />
+      </template>
+
+      <template #additional>
+        <ProfileCardLayout :userId="routeUserId"
+      /></template>
+    </SplitView>
   </div>
 </template>
 <script>
@@ -43,6 +57,9 @@ import SubNavbar from '@/components/SubNavbar.vue';
 import SubmissionLink from '@/components/links/SubmissionLink.vue';
 import ProfileLink from '@/components/links/ProfileLink.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
+import SplitView from '@/components/SplitView.vue';
+import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
+import ProblemLink from '@/components/links/ProblemLink.vue';
 
 import Backend from '@/js/backend/main';
 
@@ -55,6 +72,9 @@ export default {
     SubmissionLink,
     HorCylon,
     ProfileLink,
+    SplitView,
+    ProfileCardLayout,
+    ProblemLink,
   },
 
   created() {

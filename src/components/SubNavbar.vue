@@ -1,5 +1,5 @@
 <template>
-  <div class="text-secondary mb-2" style="font-size: 20pt">
+  <div class="page-item-container" style="font-size: 15pt">
     <b-row>
       <b-col class="text-left">
         <slot name="left" />
@@ -13,6 +13,7 @@
 <script>
 export default {};
 </script>
+
 <style lang="sass">
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap

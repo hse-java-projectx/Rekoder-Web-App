@@ -71,10 +71,13 @@ $grid-lg: 992px;
 $grid-xl: 1200px;
 $grid-xxl: 1400px;
 
+$page-item-container-padding: 10pt;
+$page-item-container-border-radius: 5pt;
+
 .page-item-container {
   background-color: $white;
-  border-radius: 5pt;
-  padding: 10pt;
+  border-radius: $page-item-container-border-radius;
+  padding: $page-item-container-padding;
   padding-top: 8pt;
   padding-bottom: 8pt;
   border-right-color: $gray-200;

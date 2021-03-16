@@ -1,11 +1,11 @@
 <template>
   <div class="page-wrapper">
     <div class="app-wrapper">
-      <Header />
+      <!-- <Header /> -->
       <Navbar />
-      <b-container fluid="xl" class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5">
-        <router-view :key="$route.fullPath" />
-      </b-container>
+      <!-- <b-container fluid="xl" class="my-0 my-sm-2 my-md-4 py-3 px-md-4 px-lg-5"> -->
+      <router-view :key="$route.fullPath" />
+      <!-- </b-container> -->
       <Footer />
     </div>
   </div>
@@ -13,12 +13,12 @@
 
 <script>
 import Navbar from '@/components/Navbar.vue';
+// import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
-import Header from '@/components/Header.vue';
 
 export default {
   components: {
-    Header,
+    // Header,
     Navbar,
     Footer,
   },

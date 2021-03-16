@@ -5,7 +5,7 @@
         <router-link class="path-way-link" :to="way.link">
           {{ way.name }}
         </router-link>
-        /
+        <b-icon icon="chevron-right" scale="0.7" />
       </span>
     </span>
     <span class="d-inline-block d-md-none">
@@ -13,13 +13,13 @@
         <router-link class="path-way-link" :to="prevWay.link">
           ...
         </router-link>
-        /
+        <b-icon icon="chevron-right" scale="0.7" />
       </span>
       <span class="path-way">
         <router-link class="path-way-link" :to="lastWay.link">
           {{ lastWay.name }}
         </router-link>
-        /
+        <b-icon icon="chevron-right" scale="0.7" />
       </span>
     </span>
   </div>

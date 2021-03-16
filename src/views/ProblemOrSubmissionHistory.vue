@@ -1,39 +1,49 @@
 <template>
   <div>
-    <SubNavbar>
-      <template #left>
-        <ProfileLink :profile="routeUserId" /> /
-        {{ problem.recieved ? problem.data.name : "" }}
+    <SplitView>
+      <template #header>
+        <SubNavbar>
+          <template #left>
+            <ProfileLink :profile="routeUserId" /> /
+            {{ problem.recieved ? problem.data.name : "" }}
+          </template>
+          <template #right> </template>
+        </SubNavbar>
       </template>
-      <template #right>
-        <b-form-group v-slot="{ ariaDescribedby }">
-          <b-form-radio-group
-            id="radio-type"
-            v-model="selected"
-            :options="radio.options"
-            :aria-describedby="ariaDescribedby"
-            button-variant="outline-primary"
-            name="radio-btn-outline"
-            size="lg"
-            buttons
-          ></b-form-radio-group>
-        </b-form-group>
+      <template #content>
+        <div class="page-item-container">
+          <b-form-group v-slot="{ ariaDescribedby }" class="m-0">
+            <b-form-radio-group
+              id="radio-type"
+              v-model="selected"
+              :options="radio.options"
+              :aria-describedby="ariaDescribedby"
+              button-variant="outline-primary"
+              name="radio-btn-outline"
+              size="sm"
+              buttons
+            ></b-form-radio-group>
+          </b-form-group>
+        </div>
+        <HorCylon v-if="!problem.recieved" />
+        <SubmissionHistory
+          v-else-if="viewingSubmissions"
+          :owner="routeUserId"
+          :problem="problem.data.name"
+          :problemId="routeProblemId"
+          :submissions="problem.data.submissions"
+        />
+        <Problem
+          v-else
+          :owner="routeUserId"
+          :name="problem.data.name"
+          :statement="problem.data.statement"
+        />
       </template>
-    </SubNavbar>
-    <HorCylon v-if="!problem.recieved" />
-    <SubmissionHistory
-      v-else-if="viewingSubmissions"
-      :owner="routeUserId"
-      :problem="problem.data.name"
-      :problemId="routeProblemId"
-      :submissions="problem.data.submissions"
-    />
-    <Problem
-      v-else
-      :owner="routeUserId"
-      :name="problem.data.name"
-      :statement="problem.data.statement"
-    />
+      <template #additional>
+        <ProfileCardLayout :userId="routeUserId" />
+      </template>
+    </SplitView>
   </div>
 </template>
 <script>
@@ -43,6 +53,8 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import Backend from '@/js/backend/main';
 import SubNavbar from '@/components/SubNavbar.vue';
 import ProfileLink from '@/components/links/ProfileLink.vue';
+import SplitView from '@/components/SplitView.vue';
+import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 
 export default {
   components: {
@@ -51,6 +63,8 @@ export default {
     HorCylon,
     SubNavbar,
     ProfileLink,
+    SplitView,
+    ProfileCardLayout,
   },
 
   data() {

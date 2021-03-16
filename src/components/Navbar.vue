@@ -1,10 +1,7 @@
 <template>
-  <b-navbar toggleable="md" type="dark" variant="primary" class="comp-navbar" :print="true">
+  <b-navbar toggleable="md" type="dark" variant="primary">
     <b-navbar-brand>
-      <router-link
-        to="/feed"
-        class="navbar-brand-text d-inline-block d-md-none"
-      >
+      <router-link to="/feed" class="navbar-brand-text">
         <b>Rekoder</b>
       </router-link>
     </b-navbar-brand>
