@@ -28,7 +28,13 @@ Build release version
 npm run build
 ```
 
-### Customize configuration
+## Preview
+
+<figure>
+  <iframe src="https://rekoder-64172.web.app/profile/Glebanister/archive/folderid1" frameborder="0" allowfullscreen="false"> </iframe>
+</figure>
+
+## Customize configuration
 
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
