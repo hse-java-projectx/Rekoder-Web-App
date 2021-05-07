@@ -3,7 +3,7 @@
     <SingleView>
       <template #header>
         <SubNavbar>
-          <template #left> Sign in </template>
+          <template #left> <b> Sign in </b> </template>
         </SubNavbar>
       </template>
       <template #content>

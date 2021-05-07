@@ -46,17 +46,17 @@ export default {
       this.links.push({
         name: 'following',
         num: user.following.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/following`,
       });
       this.links.push({
         name: 'followers',
         num: user.followers.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/followers`,
       });
       this.links.push({
         name: 'teams',
         num: user.teams.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/teams`,
       });
     });
   },

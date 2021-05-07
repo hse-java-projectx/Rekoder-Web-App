@@ -4,11 +4,10 @@ const users = [
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
-    avatarPath: '@/assets/avatars/1.jpg',
+    avatarPath: 'https://sun9-67.userapi.com/s/v1/ig2/cyjZAKchavG0U-AGRcRZt058MMy8dvqtd04hpvWyCgUV6Qygy4bOgfnH_ByyBtC52_m2o__h-QZcaw4znwRNFbL8.jpg?size=200x0&quality=96&crop=0,357,1346,1346&ava=1',
     bio: 'My mind is going a mile an hour.',
-    contacts: [
+    contacts:
       { telegram: 'glebmarin', email: 'glebmar2001@gmail.com', twitter: 'glebanister' },
-    ],
     following: ['userid2', 'userid3', 'teamid1'],
     followers: ['userid2', 'userid3'],
     teams: ['teamid1', 'teamid2'],
@@ -201,7 +200,7 @@ const teams = [
   {
     id: 'teamid1',
     registrationDate: new Date(),
-    bio: 'ProjecX',
+    name: 'ProjecX',
     permissions: {
       Glebanister: ['admin'],
       userid2: ['admin'],
@@ -211,7 +210,7 @@ const teams = [
   {
     id: 'teamid2',
     registrationDate: new Date(),
-    bio: 'Ample',
+    name: 'Ample',
     permissions: {
       Glebanister: ['admin'],
       userid2: ['admin'],

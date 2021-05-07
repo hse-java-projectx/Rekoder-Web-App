@@ -1,5 +1,5 @@
 <template>
-  <div class="sub-navbar p-2">
+  <div class="sub-navbar p-2 m-1 mt-md-3 mb-md-2 mx-md-2">
     <b-row>
       <b-col class="text-left">
         <slot name="left" />

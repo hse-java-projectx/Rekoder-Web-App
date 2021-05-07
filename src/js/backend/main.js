@@ -158,6 +158,22 @@ const Backend = {
     await sleep();
     return this.getPathToRootImpl(folderId);
   },
+
+  getUserTeamsImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const teams = [];
+    db.teams.forEach((team) => {
+      if (user.teams.indexOf(team.id) !== -1) {
+        teams.push(team);
+      }
+    });
+    return teams;
+  },
+
+  async getUserTeams(userId) {
+    await sleep();
+    return this.getUserTeamsImpl(userId);
+  },
 };
 
 export default Backend;

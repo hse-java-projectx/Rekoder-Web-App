@@ -1,7 +1,7 @@
 <template>
-  <b-container fluid>
+  <b-container fluid class="p-0 p-md-2">
     <slot name="header" />
-    <div class="sw-container mt-1">
+    <div class="sw-container mt-3">
       <b-container fluid>
         <b-row>
           <b-col cols="12" lg="9" class="px-0 pr-lg-1">

@@ -1,10 +1,14 @@
 <template>
-<div>
-  <b-container fluid="lg" class="mt-1">
-    <slot name="header" />
-    <slot name="content" />
-  </b-container>
-</div>
+  <div>
+    <b-container fluid="lg" class="mt-1">
+      <div>
+        <slot name="header" />
+      </div>
+      <div>
+        <slot name="content" />
+      </div>
+    </b-container>
+  </div>
 </template>
 <script>
 export default {
