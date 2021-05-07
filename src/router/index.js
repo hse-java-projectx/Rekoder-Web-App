@@ -55,6 +55,16 @@ const routes = [
     name: 'teamList',
     component: () => import('../views/lists/TeamList.vue'),
   },
+  {
+    path: '/profile/:userId/following',
+    name: 'followersList',
+    component: () => import('../views/lists/FollowingList.vue'),
+  },
+  {
+    path: '/profile/:userId/followers',
+    name: 'followingList',
+    component: () => import('../views/lists/FollowersList.vue'),
+  },
 ];
 
 const router = new VueRouter({

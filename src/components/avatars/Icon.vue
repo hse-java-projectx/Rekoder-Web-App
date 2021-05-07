@@ -1,5 +1,11 @@
 <template>
-  <b-img :src="src" thumbnail :alt="alt" rounded="circle" width="60" />
+  <b-img
+    class="icon"
+    :src="src"
+    thumbnail
+    :alt="alt"
+    width="60"
+  />
 </template>
 <script>
 export default {
@@ -9,5 +15,8 @@ export default {
   },
 };
 </script>
-<style lang="">
+<style lang="css">
+.icon {
+  border-radius: 50%;
+}
 </style>

@@ -174,6 +174,38 @@ const Backend = {
     await sleep();
     return this.getUserTeamsImpl(userId);
   },
+
+  getUserFollowersImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const followers = [];
+    db.users.forEach((follower) => {
+      if (user.followers.indexOf(follower.id) !== -1) {
+        followers.push(follower);
+      }
+    });
+    return followers;
+  },
+
+  async getUserFollowers(userId) {
+    await sleep();
+    return this.getUserFollowersImpl(userId);
+  },
+
+  getUserFollowingImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const followings = [];
+    db.users.forEach((following) => {
+      if (user.following.indexOf(following.id) !== -1) {
+        followings.push(following);
+      }
+    });
+    return followings;
+  },
+
+  async getUserFollowing(userId) {
+    await sleep();
+    return this.getUserFollowingImpl(userId);
+  },
 };
 
 export default Backend;
