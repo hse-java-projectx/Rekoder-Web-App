@@ -9,7 +9,7 @@
       <template #content>
         <div class="page-item-container">
           <b-form @submit="onSubmit">
-            <b-form-group label="User Id:" label-for="form-input-userId">
+            <b-form-group label="Username" label-for="form-input-userId">
               <b-form-input
                 id="form-input-userId"
                 v-model="form.userId"
@@ -18,7 +18,7 @@
                 required
               ></b-form-input>
             </b-form-group>
-            <b-form-group label="Password:" label-for="form-input-password">
+            <b-form-group label="Password" label-for="form-input-password">
               <b-form-input
                 id="form-input-password"
                 v-model="form.password"

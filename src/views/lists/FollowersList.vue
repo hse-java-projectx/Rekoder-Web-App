@@ -12,7 +12,7 @@
           v-for="follower in followers.data"
           :key="follower.id"
         >
-          <TeamListItem :team="getFollowerObjectFromFollower(follower)" />
+          <ListItem :team="getFollowerObjectFromFollower(follower)" />
         </b-list-group-item>
       </b-list-group>
       <NotFound v-else :message="error.message" />
@@ -24,7 +24,7 @@
 </template>
 <script>
 import Backend from '@/js/backend/main';
-import TeamListItem from '@/components/team/TeamListItem.vue';
+import ListItem from '@/views/lists/ListItem.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import NotFound from '@/views/NotFound.vue';
@@ -47,7 +47,7 @@ export default {
   },
 
   components: {
-    TeamListItem,
+    ListItem,
     HorCylon,
     SplitView,
     NotFound,

@@ -2,7 +2,7 @@
   <SplitView>
     <template #header>
       <SubNavbar>
-        <template #left> <b> Followers </b> </template>
+        <template #left> <b> Following </b> </template>
       </SubNavbar>
     </template>
     <template #content>
@@ -12,7 +12,7 @@
           v-for="followee in following.data"
           :key="followee.id"
         >
-          <TeamListItem :team="getFollowingObjectFromFollowing(followee)" />
+          <ListItem :team="getFollowingObjectFromFollowing(followee)" />
         </b-list-group-item>
       </b-list-group>
       <NotFound v-else :message="error.message" />
@@ -24,7 +24,7 @@
 </template>
 <script>
 import Backend from '@/js/backend/main';
-import TeamListItem from '@/components/team/TeamListItem.vue';
+import ListItem from '@/views/lists/ListItem.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import NotFound from '@/views/NotFound.vue';
@@ -47,7 +47,7 @@ export default {
   },
 
   components: {
-    TeamListItem,
+    ListItem,
     HorCylon,
     SplitView,
     NotFound,

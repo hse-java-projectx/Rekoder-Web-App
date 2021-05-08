@@ -148,6 +148,29 @@ int main(){
         ],
       },
     ],
+    activity: [
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'follow',
+        subject: { id: 'userid4', name: 'Alexey Luchinin' },
+        date: new Date('01 May 2021 13:12:11 GMT'),
+        count: 1,
+      },
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'problem-attempt',
+        subject: { id: 'problemid1', name: 'Сортировка матрицы' },
+        date: new Date(),
+        count: 1,
+      },
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'problem-new',
+        subject: { id: 'problemid2', name: 'A - B problem' },
+        date: new Date(),
+        count: 1,
+      },
+    ],
   },
   {
     id: 'userid2',
@@ -162,6 +185,7 @@ int main(){
     followers: ['userid1', 'userid3', 'userid4'],
     teams: ['teamid1'],
     root: 'folderid2',
+    activity: [],
   },
   {
     id: 'userid3',
@@ -176,6 +200,7 @@ int main(){
     followers: ['userid1', 'userid2'],
     teams: ['teamid1', 'teamid2'],
     root: 'folderid3',
+    activity: [],
   },
   {
     id: 'userid4',
@@ -190,6 +215,7 @@ int main(){
     followers: ['userid1'],
     teams: ['teamid2'],
     root: 'folderid4',
+    activity: [],
   },
 ];
 
@@ -198,6 +224,7 @@ const teams = [
     id: 'teamid1',
     registrationDate: new Date(),
     name: 'ProjecX',
+    avatarPath: 'https://rusmonitor.com/wp-content/uploads/2019/08/B2th9IcQ_400x400.png',
     permissions: {
       userid1: ['admin'],
       userid2: ['admin'],
@@ -208,6 +235,7 @@ const teams = [
     id: 'teamid2',
     registrationDate: new Date(),
     name: 'Ample',
+    avatarPath: 'https://upload.wikimedia.org/wikipedia/ru/d/d6/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_%D0%9D%D0%98%D0%A3_%D0%92%D0%A8%D0%AD.jpg',
     permissions: {
       userid1: ['admin'],
       userid2: ['admin'],

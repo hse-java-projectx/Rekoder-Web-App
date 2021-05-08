@@ -1,6 +1,6 @@
 <template>
   <SingleView>
-    <template #header> <h2> Page not found </h2> </template>
+    <template #header> Something went wrong </template>
     <template #content> {{ message }} </template>
   </SingleView>
 </template>

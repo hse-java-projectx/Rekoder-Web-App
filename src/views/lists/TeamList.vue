@@ -4,7 +4,7 @@
       <HorCylon v-if="!teams.recieved" />
       <b-list-group v-else-if="!error.hasError">
         <b-list-group-item v-for="team in teams.data" :key="team.id">
-          <TeamListItem :team="getTeamObjectFromTeam(team)" />
+          <ListItem :team="getTeamObjectFromTeam(team)" />
         </b-list-group-item>
       </b-list-group>
       <NotFound v-else :message="error.message" />
@@ -16,7 +16,7 @@
 </template>
 <script>
 import Backend from '@/js/backend/main';
-import TeamListItem from '@/components/team/TeamListItem.vue';
+import ListItem from '@/views/lists/ListItem.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import NotFound from '@/views/NotFound.vue';
@@ -38,7 +38,7 @@ export default {
   },
 
   components: {
-    TeamListItem,
+    ListItem,
     HorCylon,
     SplitView,
     NotFound,
@@ -67,8 +67,7 @@ export default {
         name: team.name,
         ref: '/',
         avatarAlt: `${team.name}'s avatar`,
-        avatarPath:
-          'https://icon2.cleanpng.com/20180715/ea/kisspng-person-logo-royalty-free-people-travel-5b4bde06941fa6.8784224315316986946067.jpg',
+        avatarPath: team.avatarPath,
       };
     },
   },

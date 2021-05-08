@@ -206,6 +206,39 @@ const Backend = {
     await sleep();
     return this.getUserFollowingImpl(userId);
   },
+
+  getUserActivityImpl(userId) {
+    const activity = [];
+    this.getUserImpl(userId).activity.forEach((act) => {
+      activity.push({
+        type: act.type,
+        object: act.object,
+        subject: act.subject,
+        date: act.date,
+        count: act.count,
+      });
+    });
+    return activity;
+  },
+
+  async getUserActivity(userId) {
+    sleep();
+    return this.getUserActivityImpl(userId);
+  },
+
+  getUserFeedImpl(userId) {
+    const user = this.getUserImpl(userId);
+    let feed = [];
+    user.following.forEach((followee) => {
+      feed = feed.concat(this.getUserActivityImpl(followee));
+    });
+    return feed;
+  },
+
+  async getUserFeed(userId) {
+    sleep();
+    return this.getUserFeedImpl(userId);
+  },
 };
 
 export default Backend;

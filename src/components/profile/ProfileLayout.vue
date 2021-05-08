@@ -1,8 +1,6 @@
 <template>
   <div>
     <SingleView>
-      <template #header> </template>
-
       <template #content>
         <b-row>
           <b-col cols="12" md="4" class="p-1">
@@ -49,8 +47,7 @@
             </div>
           </b-col>
           <b-col cols="12" md="8" class="p-1">
-            <slot name="feed">
-            </slot>
+            <slot name="feed"/>
           </b-col>
         </b-row>
       </template>

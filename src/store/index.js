@@ -20,8 +20,18 @@ export default new Vuex.Store({
   modules: {
   },
   getters: {
-    isSigned: (state) => !(typeof state.user === 'undefined' || state.user === null),
-    userid: (state) => state.user.id,
-    archiveRoot: (state) => state.user.root,
+    isSigned: (state) => !(state.user === undefined || state.user === null),
+    userid: (state) => {
+      if (state.user === null) {
+        return null;
+      }
+      return state.user.id;
+    },
+    archiveRoot: (state) => {
+      if (state.user === null) {
+        return null;
+      }
+      return state.user.root;
+    },
   },
 });
