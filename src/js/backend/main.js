@@ -274,6 +274,30 @@ const Backend = {
     sleep();
     return this.createFolderImpl(parentFolderId, folderName);
   },
+
+  editProblemImpl(userId, problemId, changedProblem) {
+    const user = this.getUserImpl(userId);
+    const problemToInsert = changedProblem;
+    problemToInsert.id = problemId;
+    let changed = false;
+    user.problems.forEach((problem) => {
+      if (problem.id === problemToInsert.id) {
+        // eslint-disable-next-line no-param-reassign
+        problem.name = problemToInsert.name;
+        // eslint-disable-next-line no-param-reassign
+        problem.statement = problemToInsert.statement;
+        changed = true;
+      }
+    });
+    if (!changed) {
+      throw new Error(`Unable to find problem of user ${userId} with id ${problemId}`);
+    }
+  },
+
+  async editProblem(userId, problemId, problem) {
+    sleep();
+    return this.editProblemImpl(userId, problemId, problem);
+  },
 };
 
 export default Backend;

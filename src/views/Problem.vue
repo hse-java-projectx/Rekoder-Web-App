@@ -11,7 +11,7 @@
         <hr />
         <b> Statement </b>
         <div class="statement p-0 p-md-3">
-          {{ statement }}
+          <Math :formula="statement" :options="mathJaxOptions" />
         </div>
       </div>
     </div>
@@ -19,6 +19,7 @@
 </template>
 <script>
 import ProfileLink from '@/components/links/ProfileLink.vue';
+import Math from 'vue-mathjax/src/components/vue-mathjax.vue';
 
 export default {
   props: {
@@ -28,7 +29,15 @@ export default {
     statement: String,
   },
 
-  components: { ProfileLink },
+  data() {
+    return {
+      mathJaxOptions: {
+        tex2jax: { inlineMath: [['$$$', '$$$']], displayMath: [['$$$$$$', '$$$$$$']] },
+      },
+    };
+  },
+
+  components: { ProfileLink, Math },
 };
 </script>
 <style lang="sass">

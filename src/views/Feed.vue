@@ -4,9 +4,6 @@
       <template #header v-if="!isSigned">
         Please <router-link to="/signin">sign in</router-link> to see feed
       </template>
-      <template #header v-else>
-        <b> Recent followees activity </b>
-      </template>
       <template #content v-if="isSigned">
         <HorCylon v-if="!activities.recieved && !error.has" />
         <NotFound v-else-if="error.has" :message="error.message" />
