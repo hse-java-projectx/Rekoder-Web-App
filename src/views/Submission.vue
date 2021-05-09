@@ -41,7 +41,7 @@
               </b-list-group-item>
               <b-list-group-item class="d-flex justify-content-between">
                 <span> Verdict </span>
-                <div :class="submission.data.ok ? 'ver-ok' : 'ver-nok'">
+                <div>
                   <b>{{ submission.data.comment }}</b>
                 </div>
               </b-list-group-item>

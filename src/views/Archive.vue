@@ -15,7 +15,7 @@
             </b-col>
             <b-col cols="auto" class="mr-auto">
               <b-button
-                v-b-modal="'modal-create-problem'"
+                @click.prevent="onCreateProblemClick"
                 size="sm"
                 variant="link"
               >
@@ -251,6 +251,19 @@ export default {
                 message: er.toString(),
               };
             });
+        })
+        .catch((er) => {
+          this.error = {
+            has: true,
+            message: er.toString(),
+          };
+        });
+    },
+
+    onCreateProblemClick() {
+      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId)
+        .then((id) => {
+          this.$router.push({ path: `/profile/${this.routeUserId}/problem-edit/${id}` });
         })
         .catch((er) => {
           this.error = {

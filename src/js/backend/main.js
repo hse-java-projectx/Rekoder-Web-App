@@ -120,18 +120,15 @@ const Backend = {
     const items = []; // { name, isDirectory, solved, id }
     this.getFolderImpl(folderId).items.forEach((dir) => {
       let name = 'undefinedName';
-      let isSolved = null;
       if (dir.isFolder) {
         name = this.getFolderImpl(dir.id).name;
       } else {
         const problem = this.getProblemImpl(userId, dir.id);
         name = problem.name;
-        isSolved = problem.ok;
       }
       items.push({
         name,
         isDirectory: dir.isFolder,
-        solved: isSolved,
         id: dir.id,
       });
     });
@@ -297,6 +294,28 @@ const Backend = {
   async editProblem(userId, problemId, problem) {
     sleep();
     return this.editProblemImpl(userId, problemId, problem);
+  },
+
+  addProblemImpl(userId, parentFolderId, newProblem) {
+    // eslint-disable-next-line no-param-reassign
+    newProblem.id = `problemid${this.makeid(6)}`;
+    const user = this.getUserImpl(userId);
+    user.problems.push(newProblem);
+    db.folders.forEach((folder) => {
+      if (folder.id === parentFolderId) {
+        folder.items.push({ isFolder: false, id: newProblem.id });
+      }
+    });
+    return newProblem.id;
+  },
+
+  async addProblem(userId, parentFolderId, newProblem) {
+    sleep();
+    return this.addProblemImpl(userId, parentFolderId, newProblem);
+  },
+
+  async addEmptyProblem(userId, parentFolderId) {
+    return this.addProblem(userId, parentFolderId, { name: 'New Problem', statement: 'Print sum of two numbers.' });
   },
 };
 

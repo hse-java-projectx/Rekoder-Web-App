@@ -12,7 +12,7 @@
         {{ data.value.toLocaleString() }}
       </template>
       <template #cell(comment)="data">
-        <div :class="data.item.ok ? 'ver-ok' : 'ver-nok'">
+        <div>
           <b>{{ data.value }}</b>
         </div>
       </template>
@@ -39,7 +39,6 @@ export default {
         id: String,
         language: String,
         date: Date,
-        ok: Boolean,
         comment: String
       }
     */

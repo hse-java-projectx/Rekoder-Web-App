@@ -5,12 +5,9 @@
         <NotFound :message="error.message" />
       </template>
       <template #content>
+        <span class="big-font"> <b> Edit </b> </span>
         <div class="page-item-container">
-          <span class="big-font"> <b> Edit </b> </span>
-          <hr class="mt-1 w-100" />
-
           <HorCylon v-if="!problemRecieved" />
-
           <b-form v-else @submit="onSubmit">
             <b-form-group label="Name" label-for="form-input-name">
               <b-form-input
@@ -41,9 +38,8 @@
             </b-form-valid-feedback>
           </b-form>
         </div>
+        <span class="big-font"> <b> Preview </b> </span>
         <div class="page-item-container">
-          <span class="big-font"> <b> Preview </b> </span>
-          <hr class="mt-1 w-100" />
           <Problem
             v-if="user.recieved"
             :ownerName="user.data.name"
