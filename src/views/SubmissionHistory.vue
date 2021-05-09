@@ -1,22 +1,22 @@
 <template>
   <div>
-    <div class="page-item-container">
-      <b-table :items="submissions" :fields="fields" :responsive="true">
-        <template #cell(id)="data">
-          <SubmissionLink :profile="owner" :problem="problemId" :id="data.value" />
-        </template>
-        <template #cell(date)="data">
-          {{ data.value.toLocaleString() }}
-        </template>
-        <template #cell(comment)="data">
-          <div
-            :class="data.item.ok ? 'ver-ok' : 'ver-nok'"
-          >
-            <b>{{ data.value }}</b>
-          </div>
-        </template>
-      </b-table>
-    </div>
+    <b-table :items="submissions" :fields="fields" :responsive="true">
+      <template #cell(id)="data">
+        <SubmissionLink
+          :profile="owner"
+          :problem="problemId"
+          :id="data.value"
+        />
+      </template>
+      <template #cell(date)="data">
+        {{ data.value.toLocaleString() }}
+      </template>
+      <template #cell(comment)="data">
+        <div :class="data.item.ok ? 'ver-ok' : 'ver-nok'">
+          <b>{{ data.value }}</b>
+        </div>
+      </template>
+    </b-table>
   </div>
 </template>
 <script>

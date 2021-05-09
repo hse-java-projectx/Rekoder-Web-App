@@ -239,6 +239,41 @@ const Backend = {
     sleep();
     return this.getUserFeedImpl(userId);
   },
+
+  makeid(length) {
+    const result = [];
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i += 1) {
+      result.push(characters.charAt(Math.floor(Math.random()
+        * charactersLength)));
+    }
+    return result.join('');
+  },
+
+  createFolderImpl(parentFolderId, newFolderName) {
+    const newFolderId = `folderid${this.makeid(5)}`;
+    db.folders.forEach((folder) => {
+      if (folder.id === parentFolderId) {
+        folder.items.push({
+          isFolder: true,
+          id: newFolderId,
+        });
+      }
+    });
+    db.folders.push({
+      id: newFolderId,
+      parent: parentFolderId,
+      privacy: 'public',
+      name: newFolderName,
+      items: [],
+    });
+  },
+
+  async createFolder(parentFolderId, folderName) {
+    sleep();
+    return this.createFolderImpl(parentFolderId, folderName);
+  },
 };
 
 export default Backend;

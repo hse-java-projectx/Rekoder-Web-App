@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="page-item-container pb-3">
+    <div class="pb-3">
       <div>
         <div class="problem-name text-center mt-1 mt-md-3">
           <b>{{ name }}</b>
         </div>
         <div class="text-center mb-3">
-          by <ProfileLink :profile="owner" />
+          by <ProfileLink :name="ownerName" :profile="owner" />
         </div>
         <hr />
         <b> Statement </b>
@@ -22,6 +22,7 @@ import ProfileLink from '@/components/links/ProfileLink.vue';
 
 export default {
   props: {
+    ownerName: String,
     owner: String,
     name: String,
     statement: String,

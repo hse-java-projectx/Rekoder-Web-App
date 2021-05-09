@@ -1,7 +1,7 @@
 <template>
   <div>
-    <HorCylon v-if="!user.recieved && !userError.has" />
-    <NotFound v-else-if="userError.has" :message="userError.message" />
+    <NotFound v-if="error.has" :message="error.message" />
+    <HorCylon v-if="!user.recieved" />
     <ProfileLayout
       v-else
       :statRefs="statRefs"
@@ -12,12 +12,26 @@
       :bio="user.data.bio"
     >
       <template #feed>
-        <b-container fluid class="my-2">
-          <span class="big-font"> <b> Recent activity </b> </span>
-        </b-container>
-        <HorCylon v-if="!activities.recieved && !activitiesError.has" />
-        <NotFound v-else-if="activitiesError.has" :message="activitiesError.message" />
-        <ActivityFeed v-else :activities="activities.data" :anon="true" />
+        <FeedBlock name="Archive">
+          <template #content>
+            <HorCylon v-if="!archiveDirections.recieved" />
+            <b-list-group v-else>
+              <DirectoryItem
+                v-for="item in archiveDirections.data"
+                :key="item.link"
+                :name="item.name"
+                :isDirectory="item.isDirectory"
+                :link="item.link"
+                :solved="item.solved"
+              ></DirectoryItem></b-list-group
+          ></template>
+        </FeedBlock>
+        <FeedBlock name="Recent activity">
+          <template #content>
+            <HorCylon v-if="!activities.recieved" />
+            <ActivityFeed v-else :activities="activities.data" :anon="true" />
+          </template>
+        </FeedBlock>
       </template>
     </ProfileLayout>
   </div>
@@ -28,6 +42,8 @@ import ProfileLayout from '@/components/profile/ProfileLayout.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import NotFound from '@/views/NotFound.vue';
 import ActivityFeed from '@/components/feed/ActivityFeed.vue';
+import FeedBlock from '@/components/feed/FeedBlock.vue';
+import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 
 import Backend from '@/js/backend/main';
 
@@ -39,27 +55,55 @@ export default {
     HorCylon,
     NotFound,
     ActivityFeed,
+    FeedBlock,
+    DirectoryItem,
   },
   data() {
     return {
       routeUserId: this.$route.params.userId,
+      error: {
+        has: false,
+        message: null,
+      },
       user: {
         recieved: false,
         data: [],
-      },
-      userError: {
-        has: false,
       },
       activities: {
         recieved: false,
         data: [],
       },
-      activitiesError: {
-        has: false,
-      },
       statRefs: [],
       contacts: [],
+      archiveDirections: {
+        recieved: false,
+        data: null,
+      },
+      rootFolderId: null,
     };
+  },
+
+  methods: {
+    async getDirections() {
+      const dirs = [];
+      const folderContent = await Backend.getFolderContent(this.routeUserId, this.rootFolderId);
+      this.folder = {
+        recieved: true,
+        data: folderContent,
+      };
+      this.folderPrivacy = folderContent.privacy;
+      folderContent.forEach((dir) => {
+        dirs.push({
+          name: dir.name,
+          isDirectory: dir.isDirectory,
+          solved: dir.solved,
+          link: dir.isDirectory
+            ? `/profile/${this.routeUserId}/archive/${dir.id}`
+            : `/profile/${this.routeUserId}/problem/${dir.id}/?view=statement`,
+        });
+      });
+      return dirs;
+    },
   },
 
   created() {
@@ -71,7 +115,7 @@ export default {
         };
       })
       .catch((err) => {
-        this.activitiesError = {
+        this.error = {
           has: true,
           message: err,
         };
@@ -104,9 +148,17 @@ export default {
             ref: '/',
           });
         });
+        this.rootFolderId = user.root;
+        this.getDirections()
+          .then((dirs) => {
+            this.archiveDirections = { recieved: true, data: dirs };
+          })
+          .catch((er) => {
+            this.error = { has: true, message: er.toString };
+          });
       })
       .catch((er) => {
-        this.userError = {
+        this.error = {
           has: true,
           message: `Unable to load profile of user with id ${this.routeUserId}: ${er}`,
         };

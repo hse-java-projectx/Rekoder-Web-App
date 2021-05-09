@@ -2,9 +2,18 @@
   <div>
     <SplitView>
       <template #header>
-        <SubNavbar>
-          <template #left>
-            <ProfileLink :profile="routeUserId" />
+        <NotFound v-if="error.has" :message="error.message" />
+      </template>
+
+      <template #content>
+        <div class="page-item-container">
+          <div class="big-font">
+            <FolderLink
+              v-if="owner.recieved"
+              :name="owner.data.name"
+              :userId="routeUserId"
+              :folderId="owner.data.root"
+            />
             <b-icon icon="chevron-right" scale="0.7" />
             <ProblemLink
               :profile="routeUserId"
@@ -17,33 +26,32 @@
               :problem="routeProblemId"
               :id="routeSubmissionId"
             />
-          </template>
-        </SubNavbar>
-      </template>
+          </div>
 
-      <template #content>
-        <div v-if="submission.recieved" class="page-item-container">
-          <b-list-group class="information mb-3">
-            <b-list-group-item class="d-flex justify-content-between">
-              <span> Problem </span>
-              <span>{{ submission.data.problem }}</span>
-            </b-list-group-item>
-            <b-list-group-item class="d-flex justify-content-between">
-              <span> Date </span>
-              <span> {{ submission.data.date.toLocaleString() }} </span>
-            </b-list-group-item>
-            <b-list-group-item class="d-flex justify-content-between">
-              <span> Verdict </span>
-              <div :class="submission.data.ok ? 'ver-ok' : 'ver-nok'">
-                <b>{{ submission.data.comment }}</b>
-              </div>
-            </b-list-group-item>
-          </b-list-group>
-          <code-highlight :class="submission.data.language">
-            {{ submission.data.source }}
-          </code-highlight>
+          <hr class="mt-1 w-100" />
+          <div v-if="submission.recieved">
+            <b-list-group class="information mb-3">
+              <b-list-group-item class="d-flex justify-content-between">
+                <span> Problem </span>
+                <span>{{ submission.data.problem }}</span>
+              </b-list-group-item>
+              <b-list-group-item class="d-flex justify-content-between">
+                <span> Date </span>
+                <span> {{ submission.data.date.toLocaleString() }} </span>
+              </b-list-group-item>
+              <b-list-group-item class="d-flex justify-content-between">
+                <span> Verdict </span>
+                <div :class="submission.data.ok ? 'ver-ok' : 'ver-nok'">
+                  <b>{{ submission.data.comment }}</b>
+                </div>
+              </b-list-group-item>
+            </b-list-group>
+            <code-highlight :class="submission.data.language">
+              {{ submission.data.source }}
+            </code-highlight>
+          </div>
+          <HorCylon v-else />
         </div>
-        <HorCylon v-else />
       </template>
 
       <template #additional>
@@ -54,9 +62,9 @@
 </template>
 <script>
 import CodeHighlight from 'vue-code-highlight/src/CodeHighlight.vue';
-import SubNavbar from '@/components/SubNavbar.vue';
+import NotFound from '@/views/NotFound.vue';
 import SubmissionLink from '@/components/links/SubmissionLink.vue';
-import ProfileLink from '@/components/links/ProfileLink.vue';
+import FolderLink from '@/components/links/FolderLink.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
@@ -69,10 +77,10 @@ import 'vue-code-highlight/themes/prism.css';
 export default {
   components: {
     CodeHighlight,
-    SubNavbar,
+    NotFound,
     SubmissionLink,
     HorCylon,
-    ProfileLink,
+    FolderLink,
     SplitView,
     ProfileCardLayout,
     ProblemLink,
@@ -86,8 +94,24 @@ export default {
           data: submission,
         };
       })
-      .catch(() => {
-        /* TODO */
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
+    Backend.getUser(this.routeUserId)
+      .then((user) => {
+        this.owner = {
+          recieved: true,
+          data: user,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
       });
   },
 
@@ -97,6 +121,14 @@ export default {
       routeSubmissionId: this.$route.params.submissionId,
       routeProblemId: this.$route.params.problemId,
       submission: {
+        recieved: false,
+        data: null,
+      },
+      error: {
+        has: false,
+        message: null,
+      },
+      owner: {
         recieved: false,
         data: null,
       },
@@ -114,7 +146,8 @@ export default {
 </style>
 
 <style scoped lang="sass">
-@import "src/style/bootstrap-custom.scss"
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
 
 .information
   width: 50%

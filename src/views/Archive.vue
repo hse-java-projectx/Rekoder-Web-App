@@ -2,35 +2,32 @@
   <div>
     <SplitView>
       <template #header>
-        <SubNavbar>
-          <template #left>
-            <HorCylon v-if="!path.recieved" />
-            <HeaderPath v-else :path="path.data" />
-          </template>
-          <template #right> </template>
-        </SubNavbar>
+        <NotFound v-if="error.has" :message="error.message" />
       </template>
       <template #content>
         <div class="page-item-container">
-          <div class="text-left">
-            <b-button
-              v-b-modal="'modal-create-problem'"
-              variant="outline-primary"
-              class="m-1"
-              size="sm"
-            >
-              New Problem
-              <b-icon icon="file-plus" class="text-primary" />
-            </b-button>
-            <b-button
-              variant="outline-primary"
-              class="m-1"
-              size="sm"
-            >
-              New Folder
-              <b-icon icon="folder-plus" class="text-primary" />
-            </b-button>
-          </div>
+          <b-row>
+            <b-col class="my-auto pr-0">
+              <div class="big-font">
+                <HorCylon v-if="!path.recieved" />
+                <HeaderPath v-else :path="path.data" />
+              </div>
+            </b-col>
+            <b-col cols="auto" class="mr-auto">
+              <b-button
+                v-b-modal="'modal-create-problem'"
+                size="sm"
+                variant="link"
+              >
+                <b-icon icon="file-earmark-plus" />
+                Problem
+              </b-button>
+              <b-button v-b-modal.modal-create-folder size="sm" variant="link">
+                <b-icon icon="folder-plus" />
+                Folder
+              </b-button>
+            </b-col>
+          </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!directions.recieved" />
           <b-list-group v-else>
@@ -49,7 +46,33 @@
         <ProfileCardLayout :userId="routeUserId" />
       </template>
     </SplitView>
-    <CreateProblem />
+    <div v-if="folder.recieved">
+      <b-modal id="modal-create-problem"> </b-modal>
+      <b-modal
+        id="modal-create-folder"
+        ref="modal-create-folder"
+        title="Create New Folder"
+        @show="resetModal"
+        @hidden="resetModal"
+        @ok="handleOk"
+      >
+        <form ref="form-create-folder" @submit.stop.prevent="handleSubmit">
+          <b-form-group
+            label="Name"
+            label-for="folder-name-input"
+            invalid-feedback="Folder name must not be empty or duplicate"
+            :state="newFolder.state"
+          >
+            <b-form-input
+              id="folder-name-input"
+              v-model="newFolder.name"
+              :state="newFolder.state"
+              required
+            ></b-form-input>
+          </b-form-group>
+        </form>
+      </b-modal>
+    </div>
   </div>
 </template>
 
@@ -57,12 +80,11 @@
 import Backend from '@/js/backend/main';
 
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
-import SubNavbar from '@/components/SubNavbar.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
-import CreateProblem from '@/components/create/CreateProblem.vue';
+import NotFound from '@/views/NotFound.vue';
 
 export default {
   name: 'Archive',
@@ -78,31 +100,74 @@ export default {
         recieved: false,
         data: [],
       },
+      folder: {
+        recieved: false,
+        data: null,
+      },
+      folderError: {
+        has: false,
+        message: null,
+      },
+      newFolder: {
+        name: '',
+        state: null,
+      },
+      error: {
+        has: false,
+        message: null,
+      },
     };
   },
   components: {
     DirectoryItem,
-    SubNavbar,
     HeaderPath,
     HorCylon,
     SplitView,
     ProfileCardLayout,
-    CreateProblem,
+    NotFound,
   },
 
   created() {
-    this.getPathToRoot().then((path) => {
-      this.path = {
-        recieved: true,
-        data: path,
-      };
-    });
-    this.getDirections().then((dirs) => {
-      this.directions = {
-        recieved: true,
-        data: dirs,
-      };
-    });
+    this.getPathToRoot()
+      .then((path) => {
+        this.path = {
+          recieved: true,
+          data: path,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
+    this.getDirections()
+      .then((dirs) => {
+        this.directions = {
+          recieved: true,
+          data: dirs,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
+    Backend.getFolder(this.routeFolderId)
+      .then((folder) => {
+        this.folder = {
+          recieved: true,
+          data: folder,
+        };
+        this.folderPrivacy = folder.privacy;
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
   },
 
   methods: {
@@ -121,6 +186,11 @@ export default {
     async getDirections() {
       const dirs = [];
       const folderContent = await Backend.getFolderContent(this.routeUserId, this.routeFolderId);
+      this.folder = {
+        recieved: true,
+        data: folderContent,
+      };
+      this.folderPrivacy = folderContent.privacy;
       folderContent.forEach((dir) => {
         dirs.push({
           name: dir.name,
@@ -133,12 +203,67 @@ export default {
       });
       return dirs;
     },
+
+    checkFormValidity() {
+      let valid = this.$refs['form-create-folder'].checkValidity();
+      this.directions.data.forEach((item) => {
+        if (item.isDirectory && item.name === this.newFolder.name) {
+          valid = false;
+        }
+      });
+      this.newFolder.state = valid;
+      return valid;
+    },
+    resetModal() {
+      this.newFolder = {
+        name: '',
+        state: null,
+      };
+    },
+    handleOk(bvModalEvt) {
+      bvModalEvt.preventDefault();
+      this.handleSubmit();
+    },
+    async handleSubmit() {
+      this.checkFormValidity();
+      if (!this.checkFormValidity()) {
+        return;
+      }
+      Backend.createFolder(this.folder.data.id, this.newFolder.name)
+        .then(() => {
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-folder');
+          });
+          this.directions = {
+            recieved: false,
+            data: [],
+          };
+          this.getDirections()
+            .then((dirs) => {
+              this.directions = {
+                recieved: true,
+                data: dirs,
+              };
+            })
+            .catch((er) => {
+              this.error = {
+                has: true,
+                message: er.toString(),
+              };
+            });
+        })
+        .catch((er) => {
+          this.error = {
+            has: true,
+            message: er.toString(),
+          };
+        });
+    },
   },
 };
 </script>
 
 <style lang="sass" scoped>
-@import "src/style/bootstrap-custom.scss"
-@import "@/../node_modules/bootstrap/scss/bootstrap"
-@import "@/../node_modules/bootstrap-vue/src/index.scss"
+@import "@/style/bootstrap-custom.scss"
+@import "@/../node_modules/bootstrap/scss/bootstrap.scss"
 </style>

@@ -3,7 +3,7 @@
     <div class="page-item-container">
       <b-row>
         <b-col cols="auto" class="m-auto">
-          <Icon
+          <IconSmall
             :src="iconPath"
             :alt="type"
             class="m-1"
@@ -25,7 +25,7 @@
   </b-container>
 </template>
 <script>
-import Icon from '@/components/avatars/IconSmall.vue';
+import IconSmall from '@/components/avatars/IconSmall.vue';
 
 export default {
   props: {
@@ -36,7 +36,7 @@ export default {
     count: Number,
   },
 
-  components: { Icon },
+  components: { IconSmall },
 
   computed: {
     objectLink() {
@@ -80,15 +80,15 @@ export default {
     iconPath() {
       switch (this.type) {
         case 'problem-attempt':
-          return 'https://www.flaticon.com/svg/vstatic/svg/3176/3176382.svg?token=exp=1620493715~hmac=f5a8931a9d314d93a0ecc2f4c94a304d';
+          return 'https://i.pinimg.com/originals/9c/72/86/9c7286b4969f978eff6d4c923c584506.png';
         case 'problem-new':
-          return 'https://www.flaticon.com/svg/vstatic/svg/1828/1828757.svg?token=exp=1620493937~hmac=2f0bf88464f25d3dd2c3b7347c649ade';
+          return 'https://cdn2.iconfinder.com/data/icons/lucid-generic/24/new_artboard_file_create_post-512.png';
         case 'team-new':
-          return 'https://www.flaticon.com/svg/vstatic/svg/681/681392.svg?token=exp=1620493981~hmac=a7deeb2f02b70ee362e24740f28478ec';
+          return 'http://pcmlp.socleg.ox.ac.uk/wp-content/uploads/2019/12/Icon-Teams.png';
         case 'team-join':
-          return 'https://www.flaticon.com/svg/vstatic/svg/2754/2754478.svg?token=exp=1620494005~hmac=f2bd54efc59114f9a8be0aaf64558aed';
+          return 'https://static.thenounproject.com/png/1007187-200.png';
         case 'follow':
-          return 'https://www.flaticon.com/svg/vstatic/svg/2097/2097654.svg?token=exp=1620494040~hmac=7cd8d1fd6442964d47f063c563849ceb';
+          return 'https://freepikpsd.com/wp-content/uploads/2019/11/follow-icon-png-Transparent-Images.png';
         default:
           throw Error(`Undefined action type: ${this.type}`);
       }

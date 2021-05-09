@@ -248,7 +248,7 @@ const folders = [
   {
     id: 'folderid1',
     parent: null,
-    visibility: 'public',
+    privacy: 'public',
     name: 'userid1',
     items: [
       { isFolder: true, id: 'folderid2' },
@@ -258,7 +258,7 @@ const folders = [
   {
     id: 'folderid2',
     parent: 'folderid1',
-    visibility: 'private',
+    privacy: 'private',
     sharedWith: ['userid1', 'userid2'],
     name: 'codeforces',
     items: [
@@ -270,7 +270,7 @@ const folders = [
   {
     id: 'folderid3',
     parent: 'folderid1',
-    visibility: 'public',
+    privacy: 'public',
     name: 'my collections',
     items: [
       { isFolder: false, id: 'problemid3' },
