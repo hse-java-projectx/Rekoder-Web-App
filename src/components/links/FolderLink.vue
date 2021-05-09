@@ -4,6 +4,7 @@
 <script>
 export default {
   props: {
+    name: String,
     userId: String,
     folderId: String,
   },

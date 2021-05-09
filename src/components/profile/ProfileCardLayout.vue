@@ -5,7 +5,11 @@
       <b-row>
         <b-col cols="9" md="12">
           <div class="mt-md-1 text-dark text-center" style="font-size: 16pt">
-            <b>{{ user.data.name }}</b>
+            <router-link :to="`/profile/${userId}`">
+              <b>{{ user.data.name }}</b>
+            </router-link>
+            |
+            <router-link :to="user.data.root"><b>Archive</b></router-link>
           </div>
           <div class="my-md-2 profile-bio">
             <i>{{ user.data.bio }}</i>
@@ -46,17 +50,17 @@ export default {
       this.links.push({
         name: 'following',
         num: user.following.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/following`,
       });
       this.links.push({
         name: 'followers',
         num: user.followers.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/followers`,
       });
       this.links.push({
         name: 'teams',
         num: user.teams.length,
-        ref: '/',
+        ref: `/profile/${this.userId}/teams`,
       });
     });
   },

@@ -8,7 +8,7 @@
       </span>
       <router-link :to="link"> {{ name }} </router-link>
     </div>
-    <b-icon icon="gear" class="text-secondary" />
+    <!-- <b-icon icon="gear" class="text-secondary" /> -->
   </b-list-group-item>
 </template>
 

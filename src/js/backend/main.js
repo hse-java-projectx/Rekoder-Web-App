@@ -158,6 +158,122 @@ const Backend = {
     await sleep();
     return this.getPathToRootImpl(folderId);
   },
+
+  getUserTeamsImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const teams = [];
+    db.teams.forEach((team) => {
+      if (user.teams.indexOf(team.id) !== -1) {
+        teams.push(team);
+      }
+    });
+    return teams;
+  },
+
+  async getUserTeams(userId) {
+    await sleep();
+    return this.getUserTeamsImpl(userId);
+  },
+
+  getUserFollowersImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const followers = [];
+    db.users.forEach((follower) => {
+      if (user.followers.indexOf(follower.id) !== -1) {
+        followers.push(follower);
+      }
+    });
+    return followers;
+  },
+
+  async getUserFollowers(userId) {
+    await sleep();
+    return this.getUserFollowersImpl(userId);
+  },
+
+  getUserFollowingImpl(userId) {
+    const user = this.getUserImpl(userId);
+    const followings = [];
+    db.users.forEach((following) => {
+      if (user.following.indexOf(following.id) !== -1) {
+        followings.push(following);
+      }
+    });
+    return followings;
+  },
+
+  async getUserFollowing(userId) {
+    await sleep();
+    return this.getUserFollowingImpl(userId);
+  },
+
+  getUserActivityImpl(userId) {
+    const activity = [];
+    this.getUserImpl(userId).activity.forEach((act) => {
+      activity.push({
+        type: act.type,
+        object: act.object,
+        subject: act.subject,
+        date: act.date,
+        count: act.count,
+      });
+    });
+    return activity;
+  },
+
+  async getUserActivity(userId) {
+    sleep();
+    return this.getUserActivityImpl(userId);
+  },
+
+  getUserFeedImpl(userId) {
+    const user = this.getUserImpl(userId);
+    let feed = [];
+    user.following.forEach((followee) => {
+      feed = feed.concat(this.getUserActivityImpl(followee));
+    });
+    return feed;
+  },
+
+  async getUserFeed(userId) {
+    sleep();
+    return this.getUserFeedImpl(userId);
+  },
+
+  makeid(length) {
+    const result = [];
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i += 1) {
+      result.push(characters.charAt(Math.floor(Math.random()
+        * charactersLength)));
+    }
+    return result.join('');
+  },
+
+  createFolderImpl(parentFolderId, newFolderName) {
+    const newFolderId = `folderid${this.makeid(5)}`;
+    db.folders.forEach((folder) => {
+      if (folder.id === parentFolderId) {
+        folder.items.push({
+          isFolder: true,
+          id: newFolderId,
+        });
+      }
+    });
+    db.folders.push({
+      id: newFolderId,
+      parent: parentFolderId,
+      privacy: 'public',
+      name: newFolderName,
+      items: [],
+    });
+  },
+
+  async createFolder(parentFolderId, folderName) {
+    sleep();
+    return this.createFolderImpl(parentFolderId, folderName);
+  },
 };
 
 export default Backend;

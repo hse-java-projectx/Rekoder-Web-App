@@ -33,7 +33,7 @@ const routes = [
   {
     path: '/profile/:userId',
     name: 'profile',
-    component: () => import('../views/Profile.vue'),
+    component: () => import('../views/UserProfile.vue'),
   },
   {
     path: '/profile/:userId/archive/:folderId',
@@ -49,6 +49,21 @@ const routes = [
     path: '/profile/:userId/problem/:problemId/submission/:submissionId',
     name: 'submission',
     component: () => import('../views/Submission.vue'),
+  },
+  {
+    path: '/profile/:userId/teams',
+    name: 'teamList',
+    component: () => import('../views/lists/TeamList.vue'),
+  },
+  {
+    path: '/profile/:userId/following',
+    name: 'followersList',
+    component: () => import('../views/lists/FollowingList.vue'),
+  },
+  {
+    path: '/profile/:userId/followers',
+    name: 'followingList',
+    component: () => import('../views/lists/FollowersList.vue'),
   },
 ];
 

@@ -80,3 +80,13 @@ $page-item-container-border-radius: 5pt;
   height: fit-content;
   margin-bottom: 3pt;
 }
+
+.big-font {
+  font-size: 15pt;
+}
+
+@media (max-width: $grid-md) {
+  .big-font {
+    font-size: 12pt;
+  }
+}

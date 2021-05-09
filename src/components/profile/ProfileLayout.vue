@@ -1,8 +1,6 @@
 <template>
   <div>
     <SingleView>
-      <template #header> </template>
-
       <template #content>
         <b-row>
           <b-col cols="12" md="4" class="p-1">
@@ -24,7 +22,7 @@
                   </div>
 
                   <div class="my-3">
-                    <div v-for="{ key, value, ref } in information" :key="key">
+                    <div v-for="{ key, value, ref } in contacts" :key="key">
                       <b> {{ key }}: </b>
                       <router-link :to="ref" class="text-primary">
                         <span class="profile-bio"> {{ value }} </span>
@@ -35,7 +33,7 @@
               </b-row>
               <b-row class="justify-content-center">
                 <b-col
-                  v-for="{ name, num, ref } in links"
+                  v-for="{ name, num, ref } in statRefs"
                   :key="name"
                   col
                   md="12"
@@ -49,23 +47,7 @@
             </div>
           </b-col>
           <b-col cols="12" md="8" class="p-1">
-            <slot name="feed">
-              <div style="height: 100pt" class="page-item-container">
-                Hello!
-              </div>
-              <div style="height: 100pt" class="page-item-container">
-                Hello!
-              </div>
-              <div style="height: 100pt" class="page-item-container">
-                Hello!
-              </div>
-              <div style="height: 100pt" class="page-item-container">
-                Hello!
-              </div>
-              <div style="height: 100pt" class="page-item-container">
-                Hello!
-              </div>
-            </slot>
+            <slot name="feed"/>
           </b-col>
         </b-row>
       </template>
@@ -79,8 +61,8 @@ import SingleView from '@/components/SingleView.vue';
 
 export default {
   props: {
-    links: Array[Object],
-    information: Array[Object],
+    statRefs: Array[Object], // name, num, ref
+    contacts: Array[Object], // key, value, ref
     name: String,
     avatarAlt: String,
     avatarPath: String,

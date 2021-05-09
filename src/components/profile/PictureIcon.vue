@@ -14,6 +14,7 @@ export default {
   props: {
     src: String,
     alt: String,
+    size: String,
   },
 };
 </script>

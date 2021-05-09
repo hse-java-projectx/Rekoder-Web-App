@@ -1,16 +1,15 @@
 const users = [
   {
-    id: 'Glebanister',
+    id: 'userid1',
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
-    avatarPath: '@/assets/avatars/1.jpg',
+    avatarPath: 'https://sun9-14.userapi.com/impg/QLCF2inSBFKbTyR2a20T_A4xxqHTCrvT01rqFQ/T44GXmY4ED8.jpg?size=1602x2160&quality=96&sign=5815abbab30801c1eafdbe672e7ada5a&type=album',
     bio: 'My mind is going a mile an hour.',
-    contacts: [
-      { telegram: 'glebmarin', email: 'glebmar2001@gmail.com', twitter: 'glebanister' },
-    ],
-    following: ['userid2', 'userid3', 'teamid1'],
-    followers: ['userid2', 'userid3'],
+    contacts:
+      { telegram: 'glebmarin', email: 'glebmar2001@gmail.com', twitter: 'Glebanister' },
+    following: ['userid2', 'userid3', 'userid4'],
+    followers: ['userid4'],
     teams: ['teamid1', 'teamid2'],
     root: 'folderid1',
     problems: [
@@ -149,51 +148,74 @@ int main(){
         ],
       },
     ],
+    activity: [
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'follow',
+        subject: { id: 'userid4', name: 'Alexey Luchinin' },
+        date: new Date('01 May 2021 13:12:11 GMT'),
+        count: 1,
+      },
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'problem-attempt',
+        subject: { id: 'problemid1', name: 'Сортировка матрицы' },
+        date: new Date(),
+        count: 1,
+      },
+      {
+        object: { id: 'userid1', name: 'Gleb Marin' },
+        type: 'problem-new',
+        subject: { id: 'problemid2', name: 'A - B problem' },
+        date: new Date(),
+        count: 1,
+      },
+    ],
   },
   {
     id: 'userid2',
     registrationDate: new Date(),
     name: 'Danil Bubnov',
     password: 'password',
-    avatarPath: '@/assets/avatars/2.jpg',
+    avatarPath: 'https://sun9-59.userapi.com/impf/c846320/v846320980/1c585a/o1H12CIh8R4.jpg?size=1484x1200&quality=96&sign=1eb888a5878b3cfd5eeb45042093497c&type=album',
     bio: 'Intellij IDEA Pugin Developer',
-    contacts: [
+    contacts:
       { telegram: 'danilbk123' },
-    ],
-    following: ['userid2', 'userid3', 'teamid1'],
-    followers: ['userid2', 'userid3'],
-    teams: ['teamid1', 'teamid2'],
+    following: ['userid3'],
+    followers: ['userid1', 'userid3', 'userid4'],
+    teams: ['teamid1'],
     root: 'folderid2',
+    activity: [],
   },
   {
     id: 'userid3',
     registrationDate: new Date(),
     name: 'Ilya Onofriychuk',
     password: 'password',
-    avatarPath: '@/assets/avatars/3.jpg',
+    avatarPath: 'https://sun9-2.userapi.com/impf/c604628/v604628475/9b54/Bm0f5SmnuXM.jpg?size=1080x1080&quality=96&sign=86980b7d8ca33964a4fadecc914ea90f&type=album',
     bio: 'Backend Developer',
-    contacts: [
+    contacts:
       { telegram: 'ilyaonoff', email: 'ilyaonoff@gmail.com' },
-    ],
-    following: ['userid2', 'userid3', 'teamid1'],
-    followers: ['userid2', 'userid3'],
+    following: ['userid2'],
+    followers: ['userid1', 'userid2'],
     teams: ['teamid1', 'teamid2'],
     root: 'folderid3',
+    activity: [],
   },
   {
     id: 'userid4',
     registrationDate: new Date(),
     name: 'Alexey Luchinin',
     password: 'password',
-    avatarPath: '@/assets/avatars/4.jpg',
+    avatarPath: 'https://sun9-25.userapi.com/impf/Knsi9wbEI8AeAkvQDlgiBXP1oVNxj8IkXrT6gQ/xXdOBgyRQJ4.jpg?size=1920x1920&quality=96&sign=fb7759441823347dfb3c2512023a2377&type=album',
     bio: 'Developer of Something',
-    contacts: [
+    contacts:
       { telegram: 'alex99999', email: 'alex99999@yandex.ru' },
-    ],
-    following: ['userid2', 'userid3', 'teamid1'],
-    followers: ['userid2', 'userid3'],
-    teams: ['teamid1', 'teamid2'],
+    following: ['userid1', 'userid2'],
+    followers: ['userid1'],
+    teams: ['teamid2'],
     root: 'folderid4',
+    activity: [],
   },
 ];
 
@@ -201,9 +223,10 @@ const teams = [
   {
     id: 'teamid1',
     registrationDate: new Date(),
-    bio: 'ProjecX',
+    name: 'ProjecX',
+    avatarPath: 'https://rusmonitor.com/wp-content/uploads/2019/08/B2th9IcQ_400x400.png',
     permissions: {
-      Glebanister: ['admin'],
+      userid1: ['admin'],
       userid2: ['admin'],
       userid3: ['admin'],
     },
@@ -211,9 +234,10 @@ const teams = [
   {
     id: 'teamid2',
     registrationDate: new Date(),
-    bio: 'Ample',
+    name: 'Ample',
+    avatarPath: 'https://upload.wikimedia.org/wikipedia/ru/d/d6/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_%D0%9D%D0%98%D0%A3_%D0%92%D0%A8%D0%AD.jpg',
     permissions: {
-      Glebanister: ['admin'],
+      userid1: ['admin'],
       userid2: ['admin'],
       userid4: ['non-admin'],
     },
@@ -224,8 +248,8 @@ const folders = [
   {
     id: 'folderid1',
     parent: null,
-    visibility: 'public',
-    name: 'Glebanister',
+    privacy: 'public',
+    name: 'userid1',
     items: [
       { isFolder: true, id: 'folderid2' },
       { isFolder: true, id: 'folderid3' },
@@ -234,8 +258,8 @@ const folders = [
   {
     id: 'folderid2',
     parent: 'folderid1',
-    visibility: 'private',
-    sharedWith: ['Glebanister', 'userid2'],
+    privacy: 'private',
+    sharedWith: ['userid1', 'userid2'],
     name: 'codeforces',
     items: [
       { isFolder: false, id: 'problemid1' },
@@ -246,7 +270,7 @@ const folders = [
   {
     id: 'folderid3',
     parent: 'folderid1',
-    visibility: 'public',
+    privacy: 'public',
     name: 'my collections',
     items: [
       { isFolder: false, id: 'problemid3' },
