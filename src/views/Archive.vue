@@ -14,11 +14,7 @@
         <div class="page-item-container">
           <b-row>
             <b-col v-if="isFolderEditable" cols="auto" class="mr-auto">
-              <b-button
-                @click.prevent="onCreateProblemClick"
-                size="sm"
-                variant="link"
-              >
+              <b-button v-b-modal.modal-create-problem size="sm" variant="link">
                 <b-icon icon="file-earmark-plus" />
                 Problem
               </b-button>
@@ -47,7 +43,32 @@
       </template>
     </SplitView>
     <div v-if="folder.recieved">
-      <b-modal id="modal-create-problem"> </b-modal>
+      <b-modal
+        id="modal-create-problem"
+        ref="modal-create-problem"
+        title="Create New Problem"
+        @show="resetModalProblem"
+        @hidden="resetModalProblem"
+        @ok="handleOkProblem"
+      >
+        <form
+          ref="form-create-problem"
+          @submit.stop.prevent="handleSubmitProblem"
+        >
+          <b-form-group
+            label="Name"
+            label-for="problem-name-input"
+            invalid-feedback="Invalid problem name"
+            :state="newProblem.state"
+          >
+          </b-form-group>
+          <b-form-input
+            id="problem-name-input"
+            v-model="newProblem.name"
+            :state="newProblem.state"
+            required
+          /></form
+      ></b-modal>
       <b-modal
         id="modal-create-folder"
         ref="modal-create-folder"
@@ -68,7 +89,7 @@
               v-model="newFolder.name"
               :state="newFolder.state"
               required
-            ></b-form-input>
+            />
           </b-form-group>
         </form>
       </b-modal>
@@ -106,6 +127,10 @@ export default {
         data: null,
       },
       newFolder: {
+        name: '',
+        state: null,
+      },
+      newProblem: {
         name: '',
         state: null,
       },
@@ -283,9 +308,30 @@ export default {
         });
     },
 
-    onCreateProblemClick() {
-      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId)
+    checkFormValidityProblem() {
+      const valid = this.$refs['form-create-problem'].checkValidity();
+      this.newProblem.state = valid;
+      return valid;
+    },
+    resetModalProblem() {
+      this.newProblem = {
+        name: '',
+        state: null,
+      };
+    },
+    handleOkProblem(bvModalEvt) {
+      bvModalEvt.preventDefault();
+      this.handleSubmitProblem();
+    },
+    async handleSubmitProblem() {
+      if (!this.checkFormValidityProblem()) {
+        return;
+      }
+      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId, this.newProblem.name)
         .then((id) => {
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-folder');
+          });
           this.$router.push({ path: `/profile/${this.routeUserId}/problem-edit/${id}` });
         })
         .catch((er) => {

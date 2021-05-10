@@ -329,8 +329,8 @@ const Backend = {
     return this.addProblemImpl(userId, parentFolderId, newProblem);
   },
 
-  async addEmptyProblem(userId, parentFolderId) {
-    return this.addProblem(userId, parentFolderId, { name: 'New Problem', statement: 'Print sum of two numbers.' });
+  async addEmptyProblem(userId, parentFolderId, name) {
+    return this.addProblem(userId, parentFolderId, { name, statement: 'Print sum of two numbers.' });
   },
 
   getContentGeneratorTypeImpl(profileId) {
