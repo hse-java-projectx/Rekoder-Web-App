@@ -27,9 +27,18 @@
                 required
               ></b-form-textarea>
             </b-form-group>
-            <b-button class="mt-2" type="submit" variant="primary"
-              >Save changes</b-button
-            >
+            <b-row v-if="user.recieved">
+              <b-col cols="auto">
+                <b-button type="submit" variant="success"
+                  >Save changes</b-button
+                >
+              </b-col>
+              <b-col cols="auto">
+                <b-button variant="outline-danger" v-b-modal.modal-delete
+                  >Delete problem</b-button
+                >
+              </b-col>
+            </b-row>
             <b-form-invalid-feedback :state="validation">
               {{ submissionInvalidFeedback.message }}
             </b-form-invalid-feedback>
@@ -49,6 +58,22 @@
         </div>
       </template>
     </SingleView>
+    <b-modal
+      id="modal-delete"
+      ref="modal-delete"
+      title="Delete this problem"
+      @ok="onProblemDelete"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      body-text-variant="secondary"
+    >
+      <b-container>
+        <p>
+          Are you sure? The entire history of this task will be deleted
+          irretrievably, including all parcels on this problem.
+        </p>
+      </b-container>
+    </b-modal>
   </div>
 </template>
 
@@ -103,6 +128,18 @@ export default {
     HorCylon,
   },
   methods: {
+    onProblemDelete() {
+      Backend.deleteProblem(this.userId, this.problemId)
+        .then(() => {
+          this.$router.push(`/profile/${this.userId}/archive/${this.user.data.root}`);
+        })
+        .catch((er) => {
+          this.error = {
+            has: true,
+            message: er.toString(),
+          };
+        });
+    },
     onSubmit(event) {
       event.preventDefault();
       Backend.editProblem(this.userId, this.problemId, this.problem)

@@ -15,6 +15,9 @@
         <FeedBlock name="Archive">
           <template #content>
             <HorCylon v-if="!archiveDirections.recieved" />
+            <NothingToShow
+              v-else-if="archiveDirections.data.length === 0"
+              message="Archive is empty" />
             <b-list-group v-else>
               <DirectoryItem
                 v-for="item in archiveDirections.data"
@@ -44,6 +47,7 @@ import NotFound from '@/views/NotFound.vue';
 import ActivityFeed from '@/components/feed/ActivityFeed.vue';
 import FeedBlock from '@/components/feed/FeedBlock.vue';
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 import Backend from '@/js/backend/main';
 
@@ -57,6 +61,7 @@ export default {
     ActivityFeed,
     FeedBlock,
     DirectoryItem,
+    NothingToShow,
   },
   data() {
     return {

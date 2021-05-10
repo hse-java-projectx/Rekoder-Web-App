@@ -26,6 +26,10 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!directions.recieved" />
+          <NothingToShow
+            v-else-if="directions.data.length === 0"
+            message="This folder is empty"
+          />
           <b-list-group v-else>
             <DirectoryItem
               v-for="item in directions.data"
@@ -107,6 +111,7 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 import NotFound from '@/views/NotFound.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 export default {
   name: 'Archive',
@@ -152,6 +157,7 @@ export default {
     SplitView,
     ProfileCardLayout,
     NotFound,
+    NothingToShow,
   },
 
   created() {

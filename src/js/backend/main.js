@@ -380,6 +380,28 @@ const Backend = {
     sleep();
     return this.canEditImpl(editorId, ownerId);
   },
+
+  deleteProblemImpl(ownerId, problemId) {
+    db.folders.forEach((folder) => {
+      let itemIndex = -1;
+      let curIndex = 0;
+      folder.items.forEach((item) => {
+        if (item.id === problemId) {
+          itemIndex = curIndex;
+        }
+        curIndex += 1;
+      });
+      if (itemIndex !== -1) {
+        folder.items.splice(itemIndex, 1);
+      }
+    });
+    return true;
+  },
+
+  async deleteProblem(ownerId, problemId) {
+    sleep();
+    this.deleteProblemImpl(ownerId, problemId);
+  },
 };
 
 export default Backend;
