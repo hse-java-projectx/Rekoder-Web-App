@@ -5,20 +5,19 @@
         <div class="problem-name text-center mt-1 mt-md-3">
           <b>{{ name }}</b>
         </div>
-        <div class="text-center mb-3">
-          by <ProfileLink :name="ownerName" :profile="owner" />
+        <div class="text-center">
+          <slot name="under-solve" />
         </div>
         <hr />
-        <b> Statement </b>
         <div class="statement p-0 p-md-3">
-          {{ statement }}
+          <Math :safe="false" :formula="statement" :options="mathJaxOptions" />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import ProfileLink from '@/components/links/ProfileLink.vue';
+import Math from 'vue-mathjax/src/components/vue-mathjax.vue';
 
 export default {
   props: {
@@ -28,11 +27,20 @@ export default {
     statement: String,
   },
 
-  components: { ProfileLink },
+  data() {
+    return {
+      mathJaxOptions: {
+        tex2jax: { inlineMath: [['$$$', '$$$']], displayMath: [['$$$$$$', '$$$$$$']] },
+      },
+    };
+  },
+
+  components: { Math },
 };
 </script>
 <style lang="sass">
-@import "src/style/bootstrap-custom.scss"
+@import "@/style/bootstrap-custom.scss"
+@import "@/../node_modules/bootstrap/scss/bootstrap.scss"
 
 .problem-name
   font-size: 20pt

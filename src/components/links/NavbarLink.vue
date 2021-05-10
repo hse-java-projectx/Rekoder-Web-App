@@ -1,6 +1,6 @@
 <template>
   <router-link :to="link">
-    <b-nav-text class="navbar-link-text text-light">
+    <b-nav-text class="navbar-link-text text-primary">
       {{ name }}
     </b-nav-text>
   </router-link>
@@ -20,7 +20,7 @@ export default {
 @import bootstrap/scss/bootstrap
 
 .navbar-link-text
-  color: $light
+  color: $primary
   &:hover
     text-decoration-line: underline
 </style>

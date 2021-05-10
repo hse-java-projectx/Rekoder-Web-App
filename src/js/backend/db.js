@@ -64,7 +64,6 @@ int main(){
     cout << "NO\n";
     return 0;
 }`,
-            ok: false,
             comment: 'Wrond Answer',
             date: new Date(),
           },
@@ -72,7 +71,6 @@ int main(){
             id: 'submissionid2',
             language: 'Python',
             source: 'print(sum(input().split()))',
-            ok: true,
             comment: 'Accepted',
             date: new Date(),
           },
@@ -87,7 +85,6 @@ int main(){
             id: 'submissionid3',
             language: 'C++',
             source: 'std::cout << a + b << std::endl;',
-            ok: false,
             comment: 'Wrond Answer',
             date: new Date(),
           },
@@ -95,7 +92,6 @@ int main(){
             id: 'submissionid4',
             language: 'C++',
             source: 'std::cout << a - b << std::endl;',
-            ok: true,
             comment: 'Accepted',
             date: new Date(),
           },
@@ -110,7 +106,6 @@ int main(){
             id: 'submissionid5',
             language: 'Python',
             source: 'print(rand()',
-            ok: false,
             comment: 'Wrond Answer',
             date: new Date(),
           },
@@ -118,7 +113,6 @@ int main(){
             id: 'submissionid6',
             language: 'Python',
             source: 'print(rand())',
-            ok: true,
             comment: 'Accepted',
             date: new Date(),
           },
@@ -126,7 +120,6 @@ int main(){
             id: 'submissionid7',
             language: 'Python',
             source: 'print(rand())',
-            ok: false,
             comment: 'Wrond Answer',
             date: new Date(),
           },
@@ -141,7 +134,6 @@ int main(){
             id: 'submissionid8',
             language: 'C++',
             source: 'std::cout << a * b << std::endl;',
-            ok: false,
             comment: 'Wrond Answer',
             date: new Date(),
           },
@@ -186,6 +178,29 @@ int main(){
     teams: ['teamid1'],
     root: 'folderid2',
     activity: [],
+    problems: [
+      {
+        id: 'problemid21',
+        name: 'A - B problem',
+        statement: 'print difference of two given numbers.',
+        submissions: [
+          {
+            id: 'submissionid3',
+            language: 'C++',
+            source: 'std::cout << a + b << std::endl;',
+            comment: 'Wrond Answer',
+            date: new Date(),
+          },
+          {
+            id: 'submissionid4',
+            language: 'C++',
+            source: 'std::cout << a - b << std::endl;',
+            comment: 'Accepted',
+            date: new Date(),
+          },
+        ],
+      },
+    ],
   },
   {
     id: 'userid3',
@@ -201,6 +216,7 @@ int main(){
     teams: ['teamid1', 'teamid2'],
     root: 'folderid3',
     activity: [],
+    problems: [],
   },
   {
     id: 'userid4',
@@ -216,6 +232,7 @@ int main(){
     teams: ['teamid2'],
     root: 'folderid4',
     activity: [],
+    problems: [],
   },
 ];
 
@@ -224,23 +241,30 @@ const teams = [
     id: 'teamid1',
     registrationDate: new Date(),
     name: 'ProjecX',
+    members: ['userid1', 'userid2', 'userid3'],
     avatarPath: 'https://rusmonitor.com/wp-content/uploads/2019/08/B2th9IcQ_400x400.png',
-    permissions: {
-      userid1: ['admin'],
-      userid2: ['admin'],
-      userid3: ['admin'],
-    },
   },
   {
     id: 'teamid2',
     registrationDate: new Date(),
     name: 'Ample',
+    members: ['userid1', 'userid4', 'userid3'],
     avatarPath: 'https://upload.wikimedia.org/wikipedia/ru/d/d6/%D0%9B%D0%BE%D0%B3%D0%BE%D1%82%D0%B8%D0%BF_%D0%9D%D0%98%D0%A3_%D0%92%D0%A8%D0%AD.jpg',
-    permissions: {
-      userid1: ['admin'],
-      userid2: ['admin'],
-      userid4: ['non-admin'],
-    },
+  },
+];
+
+const systems = [
+  {
+    id: 'codeforces',
+    registrationDate: new Date(),
+    name: 'Codeforces',
+    avatarPath: 'https://rusmonitor.com/wp-content/uploads/2019/08/B2th9IcQ_400x400.png',
+  },
+  {
+    id: 'atcoder',
+    registrationDate: new Date(),
+    name: 'AtCoder',
+    avatarPath: 'https://rusmonitor.com/wp-content/uploads/2019/08/B2th9IcQ_400x400.png',
   },
 ];
 
@@ -248,19 +272,8 @@ const folders = [
   {
     id: 'folderid1',
     parent: null,
-    privacy: 'public',
-    name: 'userid1',
-    items: [
-      { isFolder: true, id: 'folderid2' },
-      { isFolder: true, id: 'folderid3' },
-    ],
-  },
-  {
-    id: 'folderid2',
-    parent: 'folderid1',
-    privacy: 'private',
-    sharedWith: ['userid1', 'userid2'],
-    name: 'codeforces',
+    name: 'Gleb Marin',
+    owner: 'userid1',
     items: [
       { isFolder: false, id: 'problemid1' },
       { isFolder: false, id: 'problemid2' },
@@ -268,14 +281,28 @@ const folders = [
     ],
   },
   {
-    id: 'folderid3',
-    parent: 'folderid1',
-    privacy: 'public',
-    name: 'my collections',
+    id: 'folderid2',
+    parent: null,
+    sharedWith: ['userid1', 'userid2'],
+    name: 'Danil Bubnov',
+    owner: 'userid2',
     items: [
-      { isFolder: false, id: 'problemid3' },
-      { isFolder: false, id: 'problemid4' },
+      { isFolder: false, id: 'problemid21' },
     ],
+  },
+  {
+    id: 'folderid3',
+    parent: null,
+    owner: 'userid3',
+    name: 'Ilya Onofriychuck',
+    items: [],
+  },
+  {
+    id: 'folderid4',
+    parent: null,
+    owner: 'userid4',
+    name: 'Alexey Luchinin',
+    items: [],
   },
 ];
 
@@ -283,6 +310,7 @@ const db = {
   users,
   teams,
   folders,
+  systems,
 };
 
 export default db;

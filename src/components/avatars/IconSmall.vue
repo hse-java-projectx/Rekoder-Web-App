@@ -1,5 +1,5 @@
 <template>
-  <div class="circular">
+  <div>
     <b-img :src="src" :alt="alt" width="35" />
   </div>
 </template>

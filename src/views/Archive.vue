@@ -4,18 +4,18 @@
       <template #header>
         <NotFound v-if="error.has" :message="error.message" />
       </template>
+      <template #subheader>
+        <div class="big-font">
+          <HorCylon v-if="!path.recieved" />
+          <HeaderPath v-else :path="path.data" />
+        </div>
+      </template>
       <template #content>
         <div class="page-item-container">
           <b-row>
-            <b-col class="my-auto pr-0">
-              <div class="big-font">
-                <HorCylon v-if="!path.recieved" />
-                <HeaderPath v-else :path="path.data" />
-              </div>
-            </b-col>
-            <b-col cols="auto" class="mr-auto">
+            <b-col v-if="isFolderEditable" cols="auto" class="mr-auto">
               <b-button
-                v-b-modal="'modal-create-problem'"
+                @click.prevent="onCreateProblemClick"
                 size="sm"
                 variant="link"
               >
@@ -78,6 +78,7 @@
 
 <script>
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import HeaderPath from '@/components/HeaderPath.vue';
@@ -104,10 +105,6 @@ export default {
         recieved: false,
         data: null,
       },
-      folderError: {
-        has: false,
-        message: null,
-      },
       newFolder: {
         name: '',
         state: null,
@@ -115,6 +112,11 @@ export default {
       error: {
         has: false,
         message: null,
+      },
+
+      requestIsEditable: {
+        recieved: false,
+        data: null,
       },
     };
   },
@@ -168,6 +170,27 @@ export default {
           message: er.toString(),
         };
       });
+    Backend.canEdit(this.userid, this.routeUserId)
+      .then((val) => {
+        this.requestIsEditable = {
+          recieved: true,
+          data: val,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
+  },
+
+  computed: {
+    ...mapGetters(['userid']),
+
+    isFolderEditable() {
+      return this.requestIsEditable.recieved && this.requestIsEditable.data;
+    },
   },
 
   methods: {
@@ -251,6 +274,19 @@ export default {
                 message: er.toString(),
               };
             });
+        })
+        .catch((er) => {
+          this.error = {
+            has: true,
+            message: er.toString(),
+          };
+        });
+    },
+
+    onCreateProblemClick() {
+      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId)
+        .then((id) => {
+          this.$router.push({ path: `/profile/${this.routeUserId}/problem-edit/${id}` });
         })
         .catch((er) => {
           this.error = {

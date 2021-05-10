@@ -57,13 +57,33 @@ const routes = [
   },
   {
     path: '/profile/:userId/following',
-    name: 'followersList',
+    name: 'followingList',
     component: () => import('../views/lists/FollowingList.vue'),
   },
   {
     path: '/profile/:userId/followers',
-    name: 'followingList',
+    name: 'followersList',
     component: () => import('../views/lists/FollowersList.vue'),
+  },
+  {
+    path: '/profile/:userId/problem-edit/:problemId',
+    name: 'problemEdit',
+    component: () => import('../views/EditProblem.vue'),
+  },
+  {
+    path: '/help',
+    name: 'help',
+    component: () => import('../views/Help.vue'),
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('../views/Contact.vue'),
+  },
+  {
+    path: '/report',
+    name: 'report',
+    component: () => import('../views/Report.vue'),
   },
 ];
 
