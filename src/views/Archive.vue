@@ -60,19 +60,22 @@
           @submit.stop.prevent="handleSubmitProblem"
         >
           <b-form-group
-            label="Name"
             label-for="problem-name-input"
-            invalid-feedback="Invalid problem name"
             :state="newProblem.state"
           >
+            <b-form-input
+              id="problem-name-input"
+              v-model="newProblem.name"
+              :state="newProblem.state"
+              placeholder="Problem name"
+              required
+            />
+            <b-form-invalid-feedback :state="newProblem.state">
+              {{ newProblem.invalidFeedback }}
+            </b-form-invalid-feedback>
           </b-form-group>
-          <b-form-input
-            id="problem-name-input"
-            v-model="newProblem.name"
-            :state="newProblem.state"
-            required
-          /></form
-      ></b-modal>
+        </form>
+      </b-modal>
       <b-modal
         id="modal-create-folder"
         ref="modal-create-folder"
@@ -82,18 +85,17 @@
         @ok="handleOk"
       >
         <form ref="form-create-folder" @submit.stop.prevent="handleSubmit">
-          <b-form-group
-            label="Name"
-            label-for="folder-name-input"
-            invalid-feedback="Folder name must not be empty or duplicate"
-            :state="newFolder.state"
-          >
+          <b-form-group label-for="folder-name-input" :state="newFolder.state">
             <b-form-input
               id="folder-name-input"
               v-model="newFolder.name"
               :state="newFolder.state"
+              placeholder="Folder name"
               required
             />
+            <b-form-invalid-feedback :state="newFolder.state">
+              {{ newFolder.invalidFeedback }}
+            </b-form-invalid-feedback>
           </b-form-group>
         </form>
       </b-modal>
@@ -134,10 +136,12 @@ export default {
       newFolder: {
         name: '',
         state: null,
+        invalidFeedback: '',
       },
       newProblem: {
         name: '',
         state: null,
+        invalidFeedback: '',
       },
       error: {
         has: false,
@@ -260,9 +264,13 @@ export default {
 
     checkFormValidity() {
       let valid = this.$refs['form-create-folder'].checkValidity();
+      if (!valid) {
+        this.newFolder.invalidFeedback = 'Folder name cannot be empty';
+      }
       this.directions.data.forEach((item) => {
         if (item.isDirectory && item.name === this.newFolder.name) {
           valid = false;
+          this.newFolder.invalidFeedback = 'Folder name can not be a duplicate';
         }
       });
       this.newFolder.state = valid;
@@ -307,16 +315,17 @@ export default {
             });
         })
         .catch((er) => {
-          this.error = {
-            has: true,
-            message: er.toString(),
-          };
+          this.newFolder.state = false;
+          this.newFolder.invalidFeedback = er.toString();
         });
     },
 
     checkFormValidityProblem() {
       const valid = this.$refs['form-create-problem'].checkValidity();
       this.newProblem.state = valid;
+      if (!valid) {
+        this.newProblem.invalidFeedback = 'Problem name cannot be empty';
+      }
       return valid;
     },
     resetModalProblem() {
@@ -341,10 +350,8 @@ export default {
           this.$router.push({ path: `/profile/${this.routeUserId}/problem-edit/${id}` });
         })
         .catch((er) => {
-          this.error = {
-            has: true,
-            message: er.toString(),
-          };
+          this.newProblem.state = false;
+          this.newProblem.invalidFeedback = er.toString();
         });
     },
   },

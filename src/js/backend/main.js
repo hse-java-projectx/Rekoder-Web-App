@@ -350,9 +350,6 @@ const Backend = {
         type = 'system';
       }
     });
-    if (type === null) {
-      throw new Error(`Content generator does not exist: ${profileId}`);
-    }
     return type;
   },
 
@@ -401,6 +398,68 @@ const Backend = {
   async deleteProblem(ownerId, problemId) {
     sleep();
     this.deleteProblemImpl(ownerId, problemId);
+  },
+
+  createProfileImpl(profile) {
+    const newId = this.makeid(6);
+    const folderId = this.makeid(6);
+    if (profile.type === 'user') {
+      db.users.push({
+        id: newId,
+        registrationDate: new Date(),
+        name: profile.name,
+        password: profile.password,
+        avatarPath: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        bio: null,
+        contacts: {},
+        following: [],
+        followers: [],
+        teams: [],
+        root: folderId,
+        activity: [],
+        problems: [],
+      });
+    } else if (profile.type === 'team') {
+      db.teams.push(
+        {
+          id: newId,
+          registrationDate: new Date(),
+          name: profile.name,
+          password: profile.password,
+          avatarPath: 'https://cdn.raceroster.com/assets/images/team-placeholder.png',
+          members: [],
+          bio: null,
+          followers: [],
+          root: folderId,
+          activity: [],
+          problems: [],
+        },
+      );
+    } else if (profile.type === 'system') {
+      db.systems.push({
+        id: newId,
+        registrationDate: new Date(),
+        name: profile.name,
+        avatarPath: 'https://i.kym-cdn.com/photos/images/newsfeed/001/996/641/bc2.jpg',
+        origin: null,
+        root: folderId,
+        activity: [],
+        problems: [],
+      });
+    }
+    db.folders.push({
+      id: folderId,
+      parent: null,
+      name: profile.name,
+      owner: newId,
+      items: [],
+    });
+    return { id: newId, root: folderId };
+  },
+
+  async createProfile(profile) {
+    sleep();
+    return this.createProfileImpl(profile);
   },
 };
 
