@@ -34,6 +34,6 @@ export default {
 @import "../node_modules/bootstrap-vue/src/index.scss"
 
 .app-wrapper
-  background-color: $light
+  background-color: $white
   min-height: 100vh
 </style>

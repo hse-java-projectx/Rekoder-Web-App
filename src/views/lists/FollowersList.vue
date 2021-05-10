@@ -1,10 +1,8 @@
 <template>
   <SplitView>
-      <template #header>
-        <SubNavbar>
-          <template #left> <b> Followers </b> </template>
-        </SubNavbar>
-      </template>
+    <template #subheader>
+      <b class="big-font"> Followers </b>
+    </template>
     <template #content>
       <HorCylon v-if="!followers.recieved" />
       <b-list-group v-else-if="!error.hasError">
@@ -29,7 +27,6 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import NotFound from '@/views/NotFound.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
-import SubNavbar from '@/components/SubNavbar.vue';
 
 export default {
   data() {
@@ -52,7 +49,6 @@ export default {
     SplitView,
     NotFound,
     ProfileCardLayout,
-    SubNavbar,
   },
 
   created() {

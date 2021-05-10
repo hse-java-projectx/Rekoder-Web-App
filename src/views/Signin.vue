@@ -2,9 +2,7 @@
   <div>
     <SingleView>
       <template #header>
-        <SubNavbar>
-          <template #left> <b> Sign in </b> </template>
-        </SubNavbar>
+        <b class="big-font"> Sign in </b>
       </template>
       <template #content>
         <div class="page-item-container">
@@ -41,11 +39,10 @@
 
 <script>
 import Backend from '@/js/backend/main';
-import SubNavbar from '@/components/SubNavbar.vue';
 import SingleView from '@/components/SingleView.vue';
 
 export default {
-  components: { SubNavbar, SingleView },
+  components: { SingleView },
   data() {
     return {
       form: {
@@ -54,7 +51,14 @@ export default {
       },
       validation: null,
       signinError: '',
+      prevRoute: { path: '/' },
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      // eslint-disable-next-line no-param-reassign
+      vm.prevRoute = from;
+    });
   },
   methods: {
     onSubmit(event) {
@@ -77,7 +81,7 @@ export default {
 
     commitSignin(userData) {
       this.$store.commit('signin', userData);
-      this.$router.push({ path: '/' });
+      this.$router.push({ path: this.prevRoute.path });
     },
   },
 };

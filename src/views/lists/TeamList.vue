@@ -1,5 +1,8 @@
 <template>
   <SplitView>
+    <template #subheader>
+      <b class="big-font"> Teams </b>
+    </template>
     <template #content>
       <HorCylon v-if="!teams.recieved" />
       <b-list-group v-else-if="!error.hasError">

@@ -8,8 +8,8 @@
             <router-link :to="`/profile/${userId}`">
               <b>{{ user.data.name }}</b>
             </router-link>
-            |
-            <router-link :to="user.data.root"><b>Archive</b></router-link>
+            <b-icon icon="chevron-right" scale="0.8" />
+            <router-link :to="`/profile/${userId}/archive/${user.data.root}`">Archive</router-link>
           </div>
           <div class="my-md-2 profile-bio">
             <i>{{ user.data.bio }}</i>

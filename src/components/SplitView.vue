@@ -2,7 +2,10 @@
   <b-container fluid class="p-0 p-md-2">
     <slot name="header" />
     <div class="sw-container mt-3">
-      <b-container fluid>
+      <div class="p-2">
+      <slot name="subheader" />
+      </div>
+      <b-container fluid class="">
         <b-row>
           <b-col cols="12" lg="9" class="px-0 pr-lg-1">
             <slot name="content" />

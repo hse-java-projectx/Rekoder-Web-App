@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="dark" variant="primary">
+  <b-navbar toggleable="md" type="light" variant="light" class="shadow-sm">
     <b-navbar-brand>
       <router-link to="/feed" class="navbar-brand-text">
         <b>Rekoder</b>
@@ -10,57 +10,28 @@
       <b-container fluid>
         <b-navbar-nav class="w-100">
           <b-row class="w-100">
-            <b-col md="8">
+            <b-col md="7">
               <b-row>
-                <b-col class="navbar-link" cols="12" md="3" xl="2">
-                  <NavbarLink name="Feed" link="/feed" />
-                </b-col>
-                <b-col class="navbar-link" cols="12" md="3" xl="2">
-                  <NavbarLink name="Explore" link="/explore" />
-                </b-col>
                 <b-col cols="12" md="6" class="my-auto">
-                  <b-form-input size="sm" placeholder="Search" />
+                  <b-form-input size="md" placeholder="Search" />
                 </b-col>
               </b-row>
             </b-col>
-            <b-col md="4">
+            <b-col md="5">
               <b-row align-h="end">
                 <template v-if="isSigned">
-                  <b-col
-                    class="navbar-link p-md-0"
-                    cols="12"
-                    md="4"
-                    lg="6"
-                    xl="4"
-                  >
-                    <NavbarLink
-                      name="Profile"
-                      :link="profileLink"
-                      icon="user-alt"
-                    />
+                  <b-col cols="auto">
+                    <NavbarLink name="Feed" link="/feed" />
                   </b-col>
-                  <b-col
-                    class="navbar-link p-md-0"
-                    cols="12"
-                    md="4"
-                    lg="6"
-                    xl="4"
-                  >
-                    <NavbarLink
-                      name="Archive"
-                      :link="archiveLink"
-                      icon="archive"
-                    />
+                  <b-col cols="auto">
+                    <NavbarLink name="Archive" :link="archiveLink" />
+                  </b-col>
+                  <b-col cols="auto">
+                    <NavbarLink name="Profile" :link="profileLink" />
                   </b-col>
                 </template>
                 <template v-else>
-                  <b-col
-                    class="navbar-link p-md-0"
-                    cols="12"
-                    md="4"
-                    lg="6"
-                    xl="4"
-                  >
+                  <b-col cols="auto">
                     <NavbarLink name="Sign in" link="/signin" />
                   </b-col>
                 </template>
@@ -103,13 +74,13 @@ export default {
     max-width: 60pt
 
 .navbar-link-text
-  color: $light
+  color: $primary
   &:hover
     text-decoration-line: underline
 
 .navbar-brand-text
-  color: $light
+  color: $primary
   &:hover
-    color: $light
+    color: $primary
     text-decoration: none
 </style>

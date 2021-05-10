@@ -70,6 +70,21 @@ const routes = [
     name: 'problemEdit',
     component: () => import('../views/EditProblem.vue'),
   },
+  {
+    path: '/help',
+    name: 'help',
+    component: () => import('../views/Help.vue'),
+  },
+  {
+    path: '/contact',
+    name: 'contact',
+    component: () => import('../views/Contact.vue'),
+  },
+  {
+    path: '/report',
+    name: 'report',
+    component: () => import('../views/Report.vue'),
+  },
 ];
 
 const router = new VueRouter({

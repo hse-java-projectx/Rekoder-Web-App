@@ -6,7 +6,7 @@
       </template>
       <template #content>
         <span class="big-font"> <b> Edit </b> </span>
-        <div class="page-item-container">
+        <div class="page-item-container m-0 m-md-3">
           <HorCylon v-if="!problemRecieved" />
           <b-form v-else @submit="onSubmit">
             <b-form-group label="Name" label-for="form-input-name">
@@ -39,10 +39,9 @@
           </b-form>
         </div>
         <span class="big-font"> <b> Preview </b> </span>
-        <div class="page-item-container">
+        <div class="page-item-container m-0 m-md-3">
           <Problem
             v-if="user.recieved"
-            :ownerName="user.data.name"
             :owner="userId"
             :name="problem.name"
             :statement="problem.statement"
@@ -151,4 +150,5 @@ export default {
 
 <style lang="sass" scoped>
 @import "@/style/bootstrap-custom.scss"
+@import "@/../node_modules/bootstrap/scss/bootstrap.scss"
 </style>

@@ -4,24 +4,26 @@
       <template #header>
         <NotFound v-if="error.has" :message="error.message" />
       </template>
+      <template #subheader>
+        <div class="big-font">
+          <FolderLink
+            v-if="problemOwner.recieved"
+            :name="problemOwner.data.name"
+            :userId="routeUserId"
+            :folderId="problemOwner.data.root"
+          />
+          <b-icon icon="chevron-right" scale="0.7" />
+          <ProblemLink
+            :profile="routeUserId"
+            :problem="routeProblemId"
+            :name="problem.recieved ? problem.data.name : ''"
+            view="statement"
+          />
+        </div>
+      </template>
       <template #content>
         <div class="page-item-container">
           <b-row>
-            <b-col class="big-font">
-              <FolderLink
-                v-if="problemOwner.recieved"
-                :name="problemOwner.data.name"
-                :userId="routeUserId"
-                :folderId="problemOwner.data.root"
-              />
-              <b-icon icon="chevron-right" scale="0.7" />
-              <ProblemLink
-                :profile="routeUserId"
-                :problem="routeProblemId"
-                :name="problem.recieved ? problem.data.name : ''"
-                view="statement"
-              />
-            </b-col>
             <b-col class="mr-auto" cols="auto">
               <b-form-group v-slot="{ ariaDescribedby }" class="m-0">
                 <b-form-radio-group
@@ -49,10 +51,26 @@
           <Problem
             v-else
             :owner="routeUserId"
-            :ownerName="problemOwner.data.name"
             :name="problem.data.name"
             :statement="problem.data.statement"
-          />
+          >
+            <template #under-solve>
+              <b-button
+                v-if="canClone"
+                variant="outline-success"
+                @click.prevent="onClickClone"
+              >
+                <span> Clone </span>
+              </b-button>
+              <b-button
+                v-else-if="canEdit"
+                variant="outline-primary"
+                @click.prevent="onClickEdit"
+              >
+                Edit
+              </b-button>
+            </template>
+          </Problem>
         </div>
       </template>
       <template #additional>
@@ -62,6 +80,8 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex';
+
 import Problem from '@/views/Problem.vue';
 import SubmissionHistory from '@/views/SubmissionHistory.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
@@ -70,6 +90,7 @@ import ProblemLink from '@/components/links/ProblemLink.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 import FolderLink from '@/components/links/FolderLink.vue';
+import NotFound from '@/views/NotFound.vue';
 
 export default {
   components: {
@@ -80,6 +101,7 @@ export default {
     SplitView,
     ProfileCardLayout,
     ProblemLink,
+    NotFound,
   },
 
   data() {
@@ -106,10 +128,27 @@ export default {
         recieved: false,
         data: null,
       },
+      editRequest: {
+        recieved: false,
+        data: null,
+      },
     };
   },
 
   created() {
+    Backend.canEdit(this.userid, this.routeUserId)
+      .then((val) => {
+        this.editRequest = {
+          recieved: true,
+          data: val,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
     Backend.getProblem(this.routeUserId, this.routeProblemId)
       .then((problem) => {
         this.problem = {
@@ -146,6 +185,12 @@ export default {
     onClickSubmissions() {
       this.$router.push(this.submissionsLink);
     },
+
+    onClickEdit() {
+      this.$router.push(`/profile/${this.routeUserId}/problem-edit/${this.routeProblemId}`);
+    },
+
+    onClickClone() {},
   },
 
   watch: {
@@ -159,6 +204,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['userid', 'isSigned']),
+
     viewingSubmissions() {
       return this.view === 'submissions';
     },
@@ -170,6 +217,12 @@ export default {
     },
     submissionsLink() {
       return `/profile/${this.routeUserId}/problem/${this.routeProblemId}/?view=submissions`;
+    },
+    canClone() {
+      return !this.canEdit && this.isSigned;
+    },
+    canEdit() {
+      return this.editRequest.recieved && this.editRequest.data;
     },
   },
 };

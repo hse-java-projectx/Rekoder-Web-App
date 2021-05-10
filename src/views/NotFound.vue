@@ -1,17 +1,16 @@
 <template>
-  <SingleView>
-    <template #header> Something went wrong </template>
-    <template #content> {{ message }} </template>
-  </SingleView>
+  <b-card
+    title="Something went wrong"
+    bg-variant="danger"
+    text-variant="white"
+  >
+    <b-card-text> {{ message }} </b-card-text>
+  </b-card>
 </template>
 
 <script>
-import SingleView from '@/components/SingleView.vue';
-
 export default {
   name: 'NotFound',
-
-  components: { SingleView },
 
   props: {
     message: String,
