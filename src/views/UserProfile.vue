@@ -36,6 +36,24 @@
           </template>
         </FeedBlock>
       </template>
+      <template #undername v-if="isSigned">
+        <b-button
+          v-if="canEdit"
+          variant="outline-primary"
+          size="sm"
+          class="w-100"
+          @click.prevent="onClickEdit"
+          >Edit</b-button
+        >
+        <b-button
+          v-else
+          variant="outline-primary"
+          size="sm"
+          class="w-100"
+          @click.prevent="onClickFollow"
+          >Follow</b-button
+        >
+      </template>
     </ProfileLayout>
   </div>
 </template>
@@ -50,6 +68,7 @@ import DirectoryItem from '@/components/archive/DirectoryItem.vue';
 import NothingToShow from '@/components/NothingToShow.vue';
 
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 export default {
   props: {},
@@ -85,7 +104,24 @@ export default {
         data: null,
       },
       rootFolderId: null,
+
+      canEditRequest: {
+        recieved: false,
+        data: null,
+      },
     };
+  },
+
+  computed: {
+    ...mapGetters(['userid', 'isSigned']),
+
+    canEdit() {
+      return this.canEditRequest.recieved && this.canEditRequest.data;
+    },
+
+    canFollow() {
+      return !this.canEdit;
+    },
   },
 
   methods: {
@@ -109,6 +145,12 @@ export default {
       });
       return dirs;
     },
+
+    onClickEdit() {
+      this.$router.push({ path: `/profile-edit/${this.routeUserId}` });
+    },
+
+    onClickFollow() {},
   },
 
   created() {
@@ -146,11 +188,11 @@ export default {
           num: user.teams.length,
           ref: `/profile/${this.routeUserId}/teams`,
         });
-        Object.keys(user.contacts).forEach((contact) => {
+        user.contacts.forEach((contact) => {
           this.contacts.push({
-            key: contact,
-            value: user.contacts[contact],
-            ref: '/',
+            key: contact.name,
+            value: contact.ref,
+            ref: contact.ref,
           });
         });
         this.rootFolderId = user.root;
@@ -166,6 +208,19 @@ export default {
         this.error = {
           has: true,
           message: `Unable to load profile of user with id ${this.routeUserId}: ${er}`,
+        };
+      });
+    Backend.canEdit(this.userid, this.routeUserId)
+      .then((can) => {
+        this.canEditRequest = {
+          recieved: true,
+          data: can,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
         };
       });
   },

@@ -7,7 +7,7 @@ const users = [
     avatarPath: 'https://sun9-14.userapi.com/impg/QLCF2inSBFKbTyR2a20T_A4xxqHTCrvT01rqFQ/T44GXmY4ED8.jpg?size=1602x2160&quality=96&sign=5815abbab30801c1eafdbe672e7ada5a&type=album',
     bio: 'My mind is going a mile an hour.',
     contacts:
-      { telegram: 'glebmarin', email: 'glebmar2001@gmail.com', twitter: 'Glebanister' },
+      [{ name: 'telegram', ref: 'glebmarin' }, { name: 'email', ref: 'glebmar2001@gmail.com' }, { name: 'twitter', ref: 'Glebanister' }],
     following: ['userid2', 'userid3', 'userid4'],
     followers: ['userid4'],
     teams: ['teamid1', 'teamid2'],
@@ -172,7 +172,7 @@ int main(){
     avatarPath: 'https://sun9-59.userapi.com/impf/c846320/v846320980/1c585a/o1H12CIh8R4.jpg?size=1484x1200&quality=96&sign=1eb888a5878b3cfd5eeb45042093497c&type=album',
     bio: 'Intellij IDEA Pugin Developer',
     contacts:
-      { telegram: 'danilbk123' },
+      [{ name: 'telegram', ref: 'danilbk123' }],
     following: ['userid3'],
     followers: ['userid1', 'userid3', 'userid4'],
     teams: ['teamid1'],
@@ -209,8 +209,7 @@ int main(){
     password: 'password',
     avatarPath: 'https://sun9-2.userapi.com/impf/c604628/v604628475/9b54/Bm0f5SmnuXM.jpg?size=1080x1080&quality=96&sign=86980b7d8ca33964a4fadecc914ea90f&type=album',
     bio: 'Backend Developer',
-    contacts:
-      { telegram: 'ilyaonoff', email: 'ilyaonoff@gmail.com' },
+    contacts: [],
     following: ['userid2'],
     followers: ['userid1', 'userid2'],
     teams: ['teamid1', 'teamid2'],
@@ -225,8 +224,7 @@ int main(){
     password: 'password',
     avatarPath: 'https://sun9-25.userapi.com/impf/Knsi9wbEI8AeAkvQDlgiBXP1oVNxj8IkXrT6gQ/xXdOBgyRQJ4.jpg?size=1920x1920&quality=96&sign=fb7759441823347dfb3c2512023a2377&type=album',
     bio: 'Developer of Something',
-    contacts:
-      { telegram: 'alex99999', email: 'alex99999@yandex.ru' },
+    contacts: [],
     following: ['userid1', 'userid2'],
     followers: ['userid1'],
     teams: ['teamid2'],

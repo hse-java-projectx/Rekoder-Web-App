@@ -86,7 +86,7 @@ export default {
         case 'team-join':
           return 'https://static.thenounproject.com/png/1007187-200.png';
         case 'follow':
-          return 'https://icon-library.com/images/follow_299383_63697.png';
+          return 'https://freepikpsd.com/wp-content/uploads/2019/10/logo-contact-person-png-Transparent-Images.png';
         default:
           throw Error(`Undefined action type: ${this.type}`);
       }

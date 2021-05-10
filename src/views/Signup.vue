@@ -62,10 +62,10 @@
               {{ form.sentRequest.invalidFeedback }}
             </b-form-invalid-feedback>
           </b-form>
-          <b-container class="my-3 text-secondary">
+          <div class="my-3 text-secondary">
             Already have a profile? Then
             <router-link to="/signin">Sign in</router-link>
-          </b-container>
+          </div>
         </div>
       </template>
     </SingleView>
@@ -139,9 +139,9 @@ export default {
     onValidForm() {
       this.form.sentRequest.valid = null;
       Backend.createProfile({
-        name: this.form.profileName,
-        type: this.form.profileType,
-        password: this.form.password,
+        name: this.form.profileName.value,
+        type: this.form.profileType.value,
+        password: this.form.password.value,
       })
         .then((profile) => {
           this.$store.commit('signin', profile);

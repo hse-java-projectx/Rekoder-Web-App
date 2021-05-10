@@ -73,3 +73,8 @@ export default {
   components: { SingleView },
 };
 </script>
+
+<style lang="sass">
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
+</style>

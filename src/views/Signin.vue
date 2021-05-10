@@ -31,10 +31,10 @@
               {{ signinError }}
             </b-form-invalid-feedback>
           </b-form>
-          <b-container class="my-3 text-secondary">
+          <div class="my-3 text-secondary">
             Don't have a profile yet? Create one on
             <router-link to="/signup">Sign up</router-link> page
-          </b-container>
+          </div>
         </div>
       </template>
     </SingleView>

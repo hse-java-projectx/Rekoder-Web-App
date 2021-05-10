@@ -446,6 +446,8 @@ const Backend = {
         activity: [],
         problems: [],
       });
+    } else {
+      throw Error(`Unknown profile type: ${profile.type}`);
     }
     db.folders.push({
       id: folderId,
@@ -460,6 +462,42 @@ const Backend = {
   async createProfile(profile) {
     sleep();
     return this.createProfileImpl(profile);
+  },
+
+  editProfileImpl(profileId, profile) {
+    let success = false;
+    db.users.forEach(
+      (user) => {
+        if (user.id === profileId) {
+          Object.assign(user, profile);
+          success = true;
+        }
+      },
+    );
+    db.teams.forEach(
+      (team) => {
+        if (team.id === profileId) {
+          Object.assign(team, profile);
+          success = true;
+        }
+      },
+    );
+    db.systems.forEach(
+      (system) => {
+        if (system.id === profileId) {
+          Object.assign(system, profile);
+          success = true;
+        }
+      },
+    );
+    if (!success) {
+      throw Error(`Profile with id ${profileId} not found`);
+    }
+  },
+
+  async editProfile(profileId, profile) {
+    sleep();
+    return this.editProfileImpl(profileId, profile);
   },
 };
 

@@ -10,17 +10,15 @@
                   <PictureIcon :alt="avatarAlt" :src="avatarPath" />
                 </b-col>
                 <b-col cols="9" md="12">
-                  <div
-                    class="mt-md-1 text-dark text-center"
-                    style="font-size: 16pt"
-                  >
+                  <div class="big-font text-center my-1">
                     <b>{{ name }}</b>
                   </div>
-
+                  <b-container class="text-center my-1">
+                    <slot name="undername" />
+                  </b-container>
                   <div class="my-md-2 profile-bio">
                     <i>{{ bio }}</i>
                   </div>
-
                   <div class="my-3">
                     <div v-for="{ key, value, ref } in contacts" :key="key">
                       <b> {{ key }}: </b>
@@ -47,7 +45,7 @@
             </div>
           </b-col>
           <b-col cols="12" md="8" class="p-1">
-            <slot name="feed"/>
+            <slot name="feed" />
           </b-col>
         </b-row>
       </template>
