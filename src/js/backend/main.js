@@ -18,6 +18,24 @@ const Backend = {
         }
       },
     );
+    db.teams.forEach(
+      (user) => {
+        if (user.id === userid) {
+          userFound = true;
+          userData = user;
+          accessGranted = user.password === password;
+        }
+      },
+    );
+    db.systems.forEach(
+      (user) => {
+        if (user.id === userid) {
+          userFound = true;
+          userData = user;
+          accessGranted = user.password === password;
+        }
+      },
+    );
     if (!userFound) {
       throw new Error('User not found');
     }
@@ -233,7 +251,7 @@ const Backend = {
   },
 
   async getUserActivity(userId) {
-    sleep();
+    await sleep();
     return this.getUserActivityImpl(userId);
   },
 
@@ -247,7 +265,7 @@ const Backend = {
   },
 
   async getUserFeed(userId) {
-    sleep();
+    await sleep();
     return this.getUserFeedImpl(userId);
   },
 
@@ -283,7 +301,7 @@ const Backend = {
   },
 
   async createFolder(parentFolderId, folderName) {
-    sleep();
+    await sleep();
     return this.createFolderImpl(parentFolderId, folderName);
   },
 
@@ -307,7 +325,7 @@ const Backend = {
   },
 
   async editProblem(userId, problemId, problem) {
-    sleep();
+    await sleep();
     return this.editProblemImpl(userId, problemId, problem);
   },
 
@@ -325,7 +343,7 @@ const Backend = {
   },
 
   async addProblem(userId, parentFolderId, newProblem) {
-    sleep();
+    await sleep();
     return this.addProblemImpl(userId, parentFolderId, newProblem);
   },
 
@@ -354,7 +372,7 @@ const Backend = {
   },
 
   async getContentGeneratorType(profileId) {
-    sleep();
+    await sleep();
     return this.getContentGeneratorTypeImpl(profileId);
   },
 
@@ -374,7 +392,7 @@ const Backend = {
   },
 
   async canEdit(editorId, ownerId) {
-    sleep();
+    await sleep();
     return this.canEditImpl(editorId, ownerId);
   },
 
@@ -396,7 +414,7 @@ const Backend = {
   },
 
   async deleteProblem(ownerId, problemId) {
-    sleep();
+    await sleep();
     this.deleteProblemImpl(ownerId, problemId);
   },
 
@@ -411,7 +429,7 @@ const Backend = {
         password: profile.password,
         avatarPath: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
         bio: null,
-        contacts: {},
+        contacts: [],
         following: [],
         followers: [],
         teams: [],
@@ -460,7 +478,7 @@ const Backend = {
   },
 
   async createProfile(profile) {
-    sleep();
+    await sleep();
     return this.createProfileImpl(profile);
   },
 
@@ -496,8 +514,41 @@ const Backend = {
   },
 
   async editProfile(profileId, profile) {
-    sleep();
+    await sleep();
     return this.editProfileImpl(profileId, profile);
+  },
+
+  searchContentImpl(query, contentTypes) {
+    const result = [];
+    contentTypes.forEach((contentType) => {
+      if (contentType === 'user') {
+        db.users.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+      if (contentType === 'team') {
+        db.teams.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+      if (contentType === 'system') {
+        db.systems.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+    });
+    return result;
+  },
+
+  async searchContent(query, contentTypes) {
+    await sleep();
+    return this.searchContentImpl(query, contentTypes);
   },
 };
 

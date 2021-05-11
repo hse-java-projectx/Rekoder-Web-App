@@ -37,16 +37,27 @@
         </FeedBlock>
       </template>
       <template #undername v-if="isSigned">
-        <b-button
-          v-if="canEdit"
-          variant="outline-primary"
-          size="sm"
-          class="w-100"
-          @click.prevent="onClickEdit"
-          >Edit</b-button
-        >
-        <b-button
-          v-else
+        <b-row>
+          <b-col v-if="canEdit">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              class="w-100"
+              @click.prevent="onClickEdit"
+              >Edit
+            </b-button>
+          </b-col>
+          <b-col v-if="canSignout">
+            <b-button
+              variant="outline-primary"
+              size="sm"
+              class="w-100"
+              @click.prevent="onClickSignOut"
+              >Sign out
+            </b-button>
+          </b-col>
+        </b-row>
+        <b-button v-if="canFollow"
           variant="outline-primary"
           size="sm"
           class="w-100"
@@ -122,6 +133,10 @@ export default {
     canFollow() {
       return !this.canEdit;
     },
+
+    canSignout() {
+      return this.userid === this.routeUserId;
+    },
   },
 
   methods: {
@@ -151,6 +166,11 @@ export default {
     },
 
     onClickFollow() {},
+
+    onClickSignOut() {
+      this.$store.commit('signout');
+      this.$router.push({ path: '/signin' });
+    },
   },
 
   created() {
