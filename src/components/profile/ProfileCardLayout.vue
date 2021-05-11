@@ -9,7 +9,9 @@
               <b>{{ user.data.name }}</b>
             </router-link>
             <b-icon icon="chevron-right" scale="0.8" />
-            <router-link :to="`/profile/${userId}/archive/${user.data.root}`">Archive</router-link>
+            <router-link :to="`/profile/${userId}/archive/${user.data.root}`"
+              >Archive</router-link
+            >
           </div>
           <div class="my-md-2 profile-bio">
             <i>{{ user.data.bio }}</i>
@@ -45,23 +47,33 @@ export default {
     Backend.getUser(this.userId).then((user) => {
       this.user = {
         recieved: true,
-        data: user,
+        data: { ...user },
       };
-      this.links.push({
-        name: 'following',
-        num: user.following.length,
-        ref: `/profile/${this.userId}/following`,
-      });
-      this.links.push({
-        name: 'followers',
-        num: user.followers.length,
-        ref: `/profile/${this.userId}/followers`,
-      });
-      this.links.push({
-        name: 'teams',
-        num: user.teams.length,
-        ref: `/profile/${this.userId}/teams`,
-      });
+      if (this.user.data.type === 'user') {
+        this.links.push(
+          {
+            name: 'following',
+            num: user.following.length,
+            ref: `/profile/${this.userId}/following`,
+          },
+          {
+            name: 'followers',
+            num: user.followers.length,
+            ref: `/profile/${this.userId}/followers`,
+          },
+          {
+            name: 'teams',
+            num: user.teams.length,
+            ref: `/profile/${this.userId}/teams`,
+          },
+        );
+      } else if (this.user.data.type === 'team') {
+        this.links.push({
+          name: 'members',
+          num: user.members.length,
+          ref: `/profile/${this.userId}/members`,
+        });
+      }
     });
   },
 

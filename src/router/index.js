@@ -65,6 +65,11 @@ const routes = [
     component: () => import('../views/lists/TeamList.vue'),
   },
   {
+    path: '/profile/:userId/members',
+    name: 'membersList',
+    component: () => import('../views/lists/MembersList.vue'),
+  },
+  {
     path: '/profile/:userId/following',
     name: 'followingList',
     component: () => import('../views/lists/FollowingList.vue'),

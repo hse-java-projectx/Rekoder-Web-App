@@ -1,6 +1,7 @@
 const users = [
   {
     id: 'userid1',
+    type: 'user',
     registrationDate: new Date(),
     name: 'Gleb Marin',
     password: 'G1l2e3b4',
@@ -166,6 +167,7 @@ int main(){
   },
   {
     id: 'userid2',
+    type: 'user',
     registrationDate: new Date(),
     name: 'Danil Bubnov',
     password: 'password',
@@ -204,6 +206,7 @@ int main(){
   },
   {
     id: 'userid3',
+    type: 'user',
     registrationDate: new Date(),
     name: 'Ilya Onofriychuk',
     password: 'password',
@@ -219,6 +222,7 @@ int main(){
   },
   {
     id: 'userid4',
+    type: 'user',
     registrationDate: new Date(),
     name: 'Alexey Luchinin',
     password: 'password',
@@ -237,6 +241,7 @@ int main(){
 const teams = [
   {
     id: 'teamid1',
+    type: 'team',
     registrationDate: new Date(),
     name: 'ProjectX',
     password: 'password',
@@ -250,6 +255,7 @@ const teams = [
   },
   {
     id: 'teamid2',
+    type: 'team',
     registrationDate: new Date(),
     name: 'Ample',
     password: 'password',
@@ -266,6 +272,7 @@ const teams = [
 const systems = [
   {
     id: 'codeforces',
+    type: 'system',
     registrationDate: new Date(),
     name: 'Codeforces',
     avatarPath: 'https://habrastorage.org/getpro/habr/upload_files/c5c/d81/221/c5cd81221fffa306f13a4cdea6d4cb1f.png',
@@ -276,6 +283,7 @@ const systems = [
   },
   {
     id: 'atcoder',
+    type: 'system',
     registrationDate: new Date(),
     name: 'AtCoder',
     avatarPath: 'https://img.atcoder.jp/assets/atcoder.png',

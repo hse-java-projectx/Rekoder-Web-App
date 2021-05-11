@@ -120,7 +120,7 @@ export default {
       let allValid = true;
       if (this.form.password.value !== this.form.password.confirm) {
         this.form.password.valid = false;
-        this.form.password.invalidFeedback = 'Passwords does not match';
+        this.form.password.invalidFeedback = 'Passwords didn\'t match';
         allValid = false;
       }
       if (this.form.password.value.length < 6) {

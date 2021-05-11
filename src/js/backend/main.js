@@ -424,6 +424,7 @@ const Backend = {
     if (profile.type === 'user') {
       db.users.push({
         id: newId,
+        type: 'user',
         registrationDate: new Date(),
         name: profile.name,
         password: profile.password,
@@ -441,6 +442,7 @@ const Backend = {
       db.teams.push(
         {
           id: newId,
+          type: 'team',
           registrationDate: new Date(),
           name: profile.name,
           password: profile.password,
@@ -456,6 +458,7 @@ const Backend = {
     } else if (profile.type === 'system') {
       db.systems.push({
         id: newId,
+        type: 'system',
         registrationDate: new Date(),
         name: profile.name,
         avatarPath: 'https://i.kym-cdn.com/photos/images/newsfeed/001/996/641/bc2.jpg',
@@ -549,6 +552,24 @@ const Backend = {
   async searchContent(query, contentTypes) {
     await sleep();
     return this.searchContentImpl(query, contentTypes);
+  },
+
+  getTeamMembersImpl(teamId) {
+    const members = [];
+    const user = this.getUserImpl(teamId);
+    if (user.type !== 'team') {
+      throw Error(`Not a team: ${teamId}`);
+    }
+    const membersIds = this.getUserImpl(teamId).members;
+    membersIds.forEach((memberId) => {
+      members.push(this.getUserImpl(memberId));
+    });
+    return members;
+  },
+
+  async getTeamMembers(teamId) {
+    await sleep();
+    return this.getTeamMembersImpl(teamId);
   },
 };
 

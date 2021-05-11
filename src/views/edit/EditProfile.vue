@@ -20,7 +20,7 @@
         <HorCylon v-else-if="!profile.recieved" />
         <EditSystem
           v-else-if="profile.type === 'system'"
-          :userId="routeProfileId"
+          :systemId="routeProfileId"
           @editError="onEditError"
         />
         <EditTeam

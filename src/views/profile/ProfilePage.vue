@@ -229,12 +229,6 @@ export default {
               ref: contact.ref,
             });
           });
-        } else if (user.type === 'team') {
-          this.processedUserInformation.statRefs.push({
-            name: 'members',
-            num: user.members.length,
-            ref: `/profile/${this.routeUserId}/members`,
-          });
         }
         this.userRequest.data.contacts = [];
         if (user.type === 'system') {
