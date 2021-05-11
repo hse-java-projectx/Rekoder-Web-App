@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import Home from '../views/Home.vue';
 
 Vue.use(VueRouter);
 
@@ -8,7 +7,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: () => import('../views/Home.vue'),
   },
   {
     path: '/about',
@@ -19,6 +18,11 @@ const routes = [
     path: '/signin',
     name: 'signin',
     component: () => import('../views/Signin.vue'),
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../views/Signup.vue'),
   },
   {
     path: '/feed',
@@ -34,6 +38,11 @@ const routes = [
     path: '/profile/:userId',
     name: 'profile',
     component: () => import('../views/UserProfile.vue'),
+  },
+  {
+    path: '/profile-edit/:profileId',
+    name: 'profileEdit',
+    component: () => import('../views/edit/EditProfile.vue'),
   },
   {
     path: '/profile/:userId/archive/:folderId',
@@ -54,6 +63,11 @@ const routes = [
     path: '/profile/:userId/teams',
     name: 'teamList',
     component: () => import('../views/lists/TeamList.vue'),
+  },
+  {
+    path: '/profile/:userId/members',
+    name: 'membersList',
+    component: () => import('../views/lists/MembersList.vue'),
   },
   {
     path: '/profile/:userId/following',

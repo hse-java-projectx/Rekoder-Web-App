@@ -31,6 +31,10 @@
               {{ signinError }}
             </b-form-invalid-feedback>
           </b-form>
+          <div class="my-3 text-secondary">
+            Don't have a profile yet? Create one on
+            <router-link to="/signup">Sign up</router-link> page
+          </div>
         </div>
       </template>
     </SingleView>

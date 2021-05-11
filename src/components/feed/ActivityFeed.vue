@@ -1,8 +1,6 @@
 <template>
   <div>
-    <div v-if="emptyActivity">
-      <span class="big-font"> No recent activity </span>
-    </div>
+    <NothingToShow v-if="emptyActivity" message="No recent activity" />
     <div v-for="activity in activities" :key="activity.subject.name">
       <Activity
         :anon="anon"
@@ -16,6 +14,7 @@
 </template>
 <script>
 import Activity from '@/components/feed/Activity.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 export default {
   props: {
@@ -25,6 +24,7 @@ export default {
 
   components: {
     Activity,
+    NothingToShow,
   },
 
   computed: {

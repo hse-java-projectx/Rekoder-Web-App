@@ -23,7 +23,8 @@
 </template>
 
 <style lang="sass" scoped>
-@import "@/style/bootstrap-custom.scss"
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
 
 .footer
   text-align: center

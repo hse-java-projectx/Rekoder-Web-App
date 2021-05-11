@@ -1,13 +1,16 @@
 <template>
   <SplitView>
     <template #subheader>
-      <b class="big-font"> Teams </b>
+      <b class="big-font"> Team Members </b>
     </template>
     <template #content>
-      <HorCylon v-if="!teams.recieved" />
+      <HorCylon v-if="!teamMembersRequest.recieved" />
       <b-list-group v-else-if="!error.hasError">
-        <b-list-group-item v-for="team in teams.data" :key="team.id">
-          <ListItem :team="getTeamObjectFromTeam(team)" />
+        <b-list-group-item
+          v-for="member in teamMembersRequest.data"
+          :key="member.id"
+        >
+          <ListItem :team="getObject(member)" />
         </b-list-group-item>
       </b-list-group>
       <NotFound v-else :message="error.message" />
@@ -29,9 +32,9 @@ export default {
   data() {
     return {
       routeUserId: this.$route.params.userId,
-      teams: {
+      teamMembersRequest: {
         recieved: false,
-        data: [],
+        data: null,
       },
       error: {
         hasError: false,
@@ -49,28 +52,28 @@ export default {
   },
 
   created() {
-    Backend.getUserTeams(this.routeUserId)
-      .then((teams) => {
-        this.teams = {
+    Backend.getTeamMembers(this.routeUserId)
+      .then((members) => {
+        this.teamMembersRequest = {
           recieved: true,
-          data: teams,
+          data: { ...members },
         };
       })
       .catch(() => {
         this.error = {
           hasError: true,
-          error: `Unable to get teams list of user with id ${this.routeUserId}`,
+          error: `Unable to get members of team with id ${this.routeUserId}`,
         };
       });
   },
 
   methods: {
-    getTeamObjectFromTeam(team) {
+    getObject(teamMember) {
       return {
-        name: team.name,
-        ref: `/profile/${team.id}`,
-        avatarAlt: `${team.name}'s avatar`,
-        avatarPath: team.avatarPath,
+        name: teamMember.name,
+        ref: `/profile/${teamMember.id}`,
+        avatarAlt: `${teamMember.name} avatar`,
+        avatarPath: teamMember.avatarPath,
       };
     },
   },

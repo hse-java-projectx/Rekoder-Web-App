@@ -14,11 +14,7 @@
         <div class="page-item-container">
           <b-row>
             <b-col v-if="isFolderEditable" cols="auto" class="mr-auto">
-              <b-button
-                @click.prevent="onCreateProblemClick"
-                size="sm"
-                variant="link"
-              >
+              <b-button v-b-modal.modal-create-problem size="sm" variant="link">
                 <b-icon icon="file-earmark-plus" />
                 Problem
               </b-button>
@@ -30,6 +26,10 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!directions.recieved" />
+          <NothingToShow
+            v-else-if="directions.data.length === 0"
+            message="This folder is empty"
+          />
           <b-list-group v-else>
             <DirectoryItem
               v-for="item in directions.data"
@@ -47,7 +47,35 @@
       </template>
     </SplitView>
     <div v-if="folder.recieved">
-      <b-modal id="modal-create-problem"> </b-modal>
+      <b-modal
+        id="modal-create-problem"
+        ref="modal-create-problem"
+        title="Create New Problem"
+        @show="resetModalProblem"
+        @hidden="resetModalProblem"
+        @ok="handleOkProblem"
+      >
+        <form
+          ref="form-create-problem"
+          @submit.stop.prevent="handleSubmitProblem"
+        >
+          <b-form-group
+            label-for="problem-name-input"
+            :state="newProblem.state"
+          >
+            <b-form-input
+              id="problem-name-input"
+              v-model="newProblem.name"
+              :state="newProblem.state"
+              placeholder="Problem name"
+              required
+            />
+            <b-form-invalid-feedback :state="newProblem.state">
+              {{ newProblem.invalidFeedback }}
+            </b-form-invalid-feedback>
+          </b-form-group>
+        </form>
+      </b-modal>
       <b-modal
         id="modal-create-folder"
         ref="modal-create-folder"
@@ -57,18 +85,17 @@
         @ok="handleOk"
       >
         <form ref="form-create-folder" @submit.stop.prevent="handleSubmit">
-          <b-form-group
-            label="Name"
-            label-for="folder-name-input"
-            invalid-feedback="Folder name must not be empty or duplicate"
-            :state="newFolder.state"
-          >
+          <b-form-group label-for="folder-name-input" :state="newFolder.state">
             <b-form-input
               id="folder-name-input"
               v-model="newFolder.name"
               :state="newFolder.state"
+              placeholder="Folder name"
               required
-            ></b-form-input>
+            />
+            <b-form-invalid-feedback :state="newFolder.state">
+              {{ newFolder.invalidFeedback }}
+            </b-form-invalid-feedback>
           </b-form-group>
         </form>
       </b-modal>
@@ -86,6 +113,7 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 import NotFound from '@/views/NotFound.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 export default {
   name: 'Archive',
@@ -108,6 +136,12 @@ export default {
       newFolder: {
         name: '',
         state: null,
+        invalidFeedback: '',
+      },
+      newProblem: {
+        name: '',
+        state: null,
+        invalidFeedback: '',
       },
       error: {
         has: false,
@@ -127,6 +161,7 @@ export default {
     SplitView,
     ProfileCardLayout,
     NotFound,
+    NothingToShow,
   },
 
   created() {
@@ -229,9 +264,13 @@ export default {
 
     checkFormValidity() {
       let valid = this.$refs['form-create-folder'].checkValidity();
+      if (!valid) {
+        this.newFolder.invalidFeedback = 'Folder name cannot be empty';
+      }
       this.directions.data.forEach((item) => {
         if (item.isDirectory && item.name === this.newFolder.name) {
           valid = false;
+          this.newFolder.invalidFeedback = 'Folder name can not be a duplicate';
         }
       });
       this.newFolder.state = valid;
@@ -276,23 +315,43 @@ export default {
             });
         })
         .catch((er) => {
-          this.error = {
-            has: true,
-            message: er.toString(),
-          };
+          this.newFolder.state = false;
+          this.newFolder.invalidFeedback = er.toString();
         });
     },
 
-    onCreateProblemClick() {
-      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId)
+    checkFormValidityProblem() {
+      const valid = this.$refs['form-create-problem'].checkValidity();
+      this.newProblem.state = valid;
+      if (!valid) {
+        this.newProblem.invalidFeedback = 'Problem name cannot be empty';
+      }
+      return valid;
+    },
+    resetModalProblem() {
+      this.newProblem = {
+        name: '',
+        state: null,
+      };
+    },
+    handleOkProblem(bvModalEvt) {
+      bvModalEvt.preventDefault();
+      this.handleSubmitProblem();
+    },
+    async handleSubmitProblem() {
+      if (!this.checkFormValidityProblem()) {
+        return;
+      }
+      Backend.addEmptyProblem(this.routeUserId, this.routeFolderId, this.newProblem.name)
         .then((id) => {
+          this.$nextTick(() => {
+            this.$bvModal.hide('modal-create-folder');
+          });
           this.$router.push({ path: `/profile/${this.routeUserId}/problem-edit/${id}` });
         })
         .catch((er) => {
-          this.error = {
-            has: true,
-            message: er.toString(),
-          };
+          this.newProblem.state = false;
+          this.newProblem.invalidFeedback = er.toString();
         });
     },
   },

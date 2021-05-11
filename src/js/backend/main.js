@@ -18,6 +18,24 @@ const Backend = {
         }
       },
     );
+    db.teams.forEach(
+      (user) => {
+        if (user.id === userid) {
+          userFound = true;
+          userData = user;
+          accessGranted = user.password === password;
+        }
+      },
+    );
+    db.systems.forEach(
+      (user) => {
+        if (user.id === userid) {
+          userFound = true;
+          userData = user;
+          accessGranted = user.password === password;
+        }
+      },
+    );
     if (!userFound) {
       throw new Error('User not found');
     }
@@ -233,7 +251,7 @@ const Backend = {
   },
 
   async getUserActivity(userId) {
-    sleep();
+    await sleep();
     return this.getUserActivityImpl(userId);
   },
 
@@ -247,7 +265,7 @@ const Backend = {
   },
 
   async getUserFeed(userId) {
-    sleep();
+    await sleep();
     return this.getUserFeedImpl(userId);
   },
 
@@ -283,7 +301,7 @@ const Backend = {
   },
 
   async createFolder(parentFolderId, folderName) {
-    sleep();
+    await sleep();
     return this.createFolderImpl(parentFolderId, folderName);
   },
 
@@ -307,7 +325,7 @@ const Backend = {
   },
 
   async editProblem(userId, problemId, problem) {
-    sleep();
+    await sleep();
     return this.editProblemImpl(userId, problemId, problem);
   },
 
@@ -325,12 +343,12 @@ const Backend = {
   },
 
   async addProblem(userId, parentFolderId, newProblem) {
-    sleep();
+    await sleep();
     return this.addProblemImpl(userId, parentFolderId, newProblem);
   },
 
-  async addEmptyProblem(userId, parentFolderId) {
-    return this.addProblem(userId, parentFolderId, { name: 'New Problem', statement: 'Print sum of two numbers.' });
+  async addEmptyProblem(userId, parentFolderId, name) {
+    return this.addProblem(userId, parentFolderId, { name, statement: 'Print sum of two numbers.' });
   },
 
   getContentGeneratorTypeImpl(profileId) {
@@ -350,14 +368,11 @@ const Backend = {
         type = 'system';
       }
     });
-    if (type === null) {
-      throw new Error(`Content generator does not exist: ${profileId}`);
-    }
     return type;
   },
 
   async getContentGeneratorType(profileId) {
-    sleep();
+    await sleep();
     return this.getContentGeneratorTypeImpl(profileId);
   },
 
@@ -377,8 +392,184 @@ const Backend = {
   },
 
   async canEdit(editorId, ownerId) {
-    sleep();
+    await sleep();
     return this.canEditImpl(editorId, ownerId);
+  },
+
+  deleteProblemImpl(ownerId, problemId) {
+    db.folders.forEach((folder) => {
+      let itemIndex = -1;
+      let curIndex = 0;
+      folder.items.forEach((item) => {
+        if (item.id === problemId) {
+          itemIndex = curIndex;
+        }
+        curIndex += 1;
+      });
+      if (itemIndex !== -1) {
+        folder.items.splice(itemIndex, 1);
+      }
+    });
+    return true;
+  },
+
+  async deleteProblem(ownerId, problemId) {
+    await sleep();
+    this.deleteProblemImpl(ownerId, problemId);
+  },
+
+  createProfileImpl(profile) {
+    const newId = this.makeid(6);
+    const folderId = this.makeid(6);
+    if (profile.type === 'user') {
+      db.users.push({
+        id: newId,
+        type: 'user',
+        registrationDate: new Date(),
+        name: profile.name,
+        password: profile.password,
+        avatarPath: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        bio: null,
+        contacts: [],
+        following: [],
+        followers: [],
+        teams: [],
+        root: folderId,
+        activity: [],
+        problems: [],
+      });
+    } else if (profile.type === 'team') {
+      db.teams.push(
+        {
+          id: newId,
+          type: 'team',
+          registrationDate: new Date(),
+          name: profile.name,
+          password: profile.password,
+          avatarPath: 'https://cdn.raceroster.com/assets/images/team-placeholder.png',
+          members: [],
+          bio: null,
+          followers: [],
+          root: folderId,
+          activity: [],
+          problems: [],
+        },
+      );
+    } else if (profile.type === 'system') {
+      db.systems.push({
+        id: newId,
+        type: 'system',
+        registrationDate: new Date(),
+        name: profile.name,
+        avatarPath: 'https://i.kym-cdn.com/photos/images/newsfeed/001/996/641/bc2.jpg',
+        origin: null,
+        root: folderId,
+        activity: [],
+        problems: [],
+      });
+    } else {
+      throw Error(`Unknown profile type: ${profile.type}`);
+    }
+    db.folders.push({
+      id: folderId,
+      parent: null,
+      name: profile.name,
+      owner: newId,
+      items: [],
+    });
+    return { id: newId, root: folderId };
+  },
+
+  async createProfile(profile) {
+    await sleep();
+    return this.createProfileImpl(profile);
+  },
+
+  editProfileImpl(profileId, profile) {
+    let success = false;
+    db.users.forEach(
+      (user) => {
+        if (user.id === profileId) {
+          Object.assign(user, profile);
+          success = true;
+        }
+      },
+    );
+    db.teams.forEach(
+      (team) => {
+        if (team.id === profileId) {
+          Object.assign(team, profile);
+          success = true;
+        }
+      },
+    );
+    db.systems.forEach(
+      (system) => {
+        if (system.id === profileId) {
+          Object.assign(system, profile);
+          success = true;
+        }
+      },
+    );
+    if (!success) {
+      throw Error(`Profile with id ${profileId} not found`);
+    }
+  },
+
+  async editProfile(profileId, profile) {
+    await sleep();
+    return this.editProfileImpl(profileId, profile);
+  },
+
+  searchContentImpl(query, contentTypes) {
+    const result = [];
+    contentTypes.forEach((contentType) => {
+      if (contentType === 'user') {
+        db.users.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+      if (contentType === 'team') {
+        db.teams.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+      if (contentType === 'system') {
+        db.systems.forEach((user) => {
+          if (user.name.startsWith(query) || user.id.startsWith(query)) {
+            result.push({ id: user.id, name: user.name });
+          }
+        });
+      }
+    });
+    return result;
+  },
+
+  async searchContent(query, contentTypes) {
+    await sleep();
+    return this.searchContentImpl(query, contentTypes);
+  },
+
+  getTeamMembersImpl(teamId) {
+    const members = [];
+    const user = this.getUserImpl(teamId);
+    if (user.type !== 'team') {
+      throw Error(`Not a team: ${teamId}`);
+    }
+    const membersIds = this.getUserImpl(teamId).members;
+    membersIds.forEach((memberId) => {
+      members.push(this.getUserImpl(memberId));
+    });
+    return members;
+  },
+
+  async getTeamMembers(teamId) {
+    await sleep();
+    return this.getTeamMembersImpl(teamId);
   },
 };
 

@@ -59,13 +59,15 @@
                 v-if="canClone"
                 variant="outline-success"
                 @click.prevent="onClickClone"
+                size="sm"
               >
                 <span> Clone </span>
               </b-button>
               <b-button
                 v-else-if="canEdit"
-                variant="outline-primary"
+                variant="link"
                 @click.prevent="onClickEdit"
+                size="sm"
               >
                 Edit
               </b-button>
