@@ -1,8 +1,5 @@
 <template>
   <div class="text-center">
-    <b-icon icon="arrow-clockwise" animation="spin" class="secondary"></b-icon>
+    <b-spinner small variant="secondary" label="Spinning"></b-spinner>
   </div>
 </template>
-
-<script>
-</script>

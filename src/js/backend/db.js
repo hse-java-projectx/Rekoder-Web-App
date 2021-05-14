@@ -16,6 +16,9 @@ const users = [
     problems: [
       {
         id: 'problemid1',
+        tests: [],
+        inputFormat: '',
+        outputFormat: '',
         name: 'Сортировка матрицы',
         statement: `
         Даны две таблицы A и B размера n×m.
@@ -79,6 +82,9 @@ int main(){
       },
       {
         id: 'problemid2',
+        tests: [],
+        inputFormat: '',
+        outputFormat: '',
         name: 'A - B problem',
         statement: 'print difference of two given numbers.',
         submissions: [
@@ -100,6 +106,9 @@ int main(){
       },
       {
         id: 'problemid3',
+        tests: [],
+        inputFormat: '',
+        outputFormat: '',
         name: 'Random',
         statement: 'print random number.',
         submissions: [
@@ -128,6 +137,9 @@ int main(){
       },
       {
         id: 'problemid4',
+        tests: [],
+        inputFormat: '',
+        outputFormat: '',
         name: 'A * B problem',
         statement: 'print product of two given numbers.',
         submissions: [
