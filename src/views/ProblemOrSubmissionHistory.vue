@@ -53,6 +53,7 @@
             :owner="routeUserId"
             :name="problem.data.name"
             :statement="problem.data.statement"
+            :problem="problem.data"
           >
             <template #under-solve>
               <b-button

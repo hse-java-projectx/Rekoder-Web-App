@@ -1,9 +1,11 @@
 <template>
   <b-container fluid class="p-0 p-md-2">
-    <slot name="header" />
+    <b-container class="mt-4">
+      <slot name="header" />
+    </b-container>
     <div class="sw-container mt-3">
       <div class="p-2">
-      <slot name="subheader" />
+        <slot name="subheader" />
       </div>
       <b-container fluid class="">
         <b-row>

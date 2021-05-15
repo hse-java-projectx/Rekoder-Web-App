@@ -9,24 +9,86 @@
         <div class="page-item-container m-0 m-md-3">
           <HorCylon v-if="!problemRecieved" />
           <b-form v-else @submit="onSubmit">
-            <b-form-group label="Name" label-for="form-input-name">
+            <b-form-group label="Name" label-cols-md="2">
               <b-form-input
-                id="form-input-name"
                 v-model="problem.name"
                 placeholder="Enter problem name"
-                :state="validation"
                 required
               ></b-form-input>
             </b-form-group>
-            <b-form-group label="Statement" label-for="form-input-statement">
+            <b-form-group label="Statement" label-cols-md="2">
               <b-form-textarea
-                id="form-input-statement"
                 v-model="problem.statement"
                 placeholder="Enter statement"
-                :state="validation"
                 required
+                debounce="100"
               ></b-form-textarea>
             </b-form-group>
+            <b-form-group label="Input format" label-cols-md="2">
+              <b-form-textarea
+                v-model="problem.inputFormat"
+                placeholder="Enter input format"
+                required
+                debounce="100"
+              ></b-form-textarea>
+            </b-form-group>
+            <b-form-group label="Output format" label-cols-md="2">
+              <b-form-textarea
+                v-model="problem.outputFormat"
+                placeholder="Enter output format"
+                required
+                debounce="100"
+              ></b-form-textarea>
+            </b-form-group>
+
+            <div class="mb-4">
+              <b-row>
+                <b-col md="2" class="my-auto"> Examples </b-col>
+                <b-col>
+                  <b-row>
+                    <b-col cols="1">
+                      <b-button
+                        size="sm"
+                        variant="outline-success"
+                        pill
+                        @click.prevent="onClickAddTest"
+                      >
+                        +
+                      </b-button></b-col
+                    >
+                    <b-col col> Input </b-col>
+                    <b-col col> Output </b-col>
+                  </b-row>
+                  <div
+                    v-for="(test, index) in problem.tests"
+                    :key="index"
+                    style="white-space: pre-wrap"
+                  >
+                    <hr class="m-2" />
+                    <b-row>
+                      <b-col cols="1">
+                        <b-button
+                          size="sm"
+                          variant="outline-danger"
+                          pill
+                          @click.prevent="onClickRemoveTest(index)"
+                        >
+                          -
+                        </b-button>
+                      </b-col>
+                      <b-col col>
+                        <b-textarea v-model="test.input" />
+                      </b-col>
+                      <b-col col>
+                        <b-textarea v-model="test.output" />
+                      </b-col>
+                    </b-row>
+                  </div>
+                  <b-row> </b-row>
+                </b-col>
+              </b-row>
+            </div>
+
             <b-row v-if="user.recieved">
               <b-col cols="auto">
                 <b-button type="submit" variant="success"
@@ -49,12 +111,7 @@
         </div>
         <span class="big-font"> <b> Preview </b> </span>
         <div class="page-item-container m-0 m-md-3">
-          <Problem
-            v-if="user.recieved"
-            :owner="userId"
-            :name="problem.name"
-            :statement="problem.statement"
-          />
+          <Problem v-if="user.recieved" :owner="userId" :problem="problem" />
         </div>
       </template>
     </SingleView>
@@ -101,9 +158,23 @@ export default {
         message: null,
       },
 
+      trash: {
+        tests: [
+          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
+          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
+        ],
+      },
+
       problem: {
         name: null,
         statement: null,
+        inputFormat: null,
+        outputFormat: null,
+        tests: [
+          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
+          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
+        ],
+        newTest: { input: null, output: null },
       },
 
       validation: undefined,
@@ -128,6 +199,14 @@ export default {
     HorCylon,
   },
   methods: {
+    onClickAddTest() {
+      this.problem.tests.push({ input: null, output: null });
+    },
+
+    onClickRemoveTest(index) {
+      this.problem.tests.splice(index, 1);
+    },
+
     onProblemDelete() {
       Backend.deleteProblem(this.userId, this.problemId)
         .then(() => {
