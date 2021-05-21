@@ -1,29 +1,32 @@
 <template>
-  <SplitView>
-    <template #subheader>
+  <SingleView>
+    <template #header>
       <b class="big-font"> Teams </b>
     </template>
     <template #content>
       <HorCylon v-if="!teams.recieved" />
-      <b-list-group v-else-if="!error.hasError">
+      <NotFound v-else-if="error.hasError" :message="error.message" />
+      <NothingToShow v-else-if="teams.data.length === 0" message="Teams list is empty" />
+      <b-list-group v-else>
         <b-list-group-item v-for="team in teams.data" :key="team.id">
           <ListItem :team="getTeamObjectFromTeam(team)" />
         </b-list-group-item>
       </b-list-group>
-      <NotFound v-else :message="error.message" />
     </template>
     <template #additional>
       <ProfileCardLayout :userId="routeUserId" />
     </template>
-  </SplitView>
+  </SingleView>
 </template>
 <script>
+
 import Backend from '@/js/backend/main';
 import ListItem from '@/views/lists/ListItem.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
-import SplitView from '@/components/SplitView.vue';
+import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 export default {
   data() {
@@ -43,9 +46,10 @@ export default {
   components: {
     ListItem,
     HorCylon,
-    SplitView,
+    SingleView,
     NotFound,
     ProfileCardLayout,
+    NothingToShow,
   },
 
   created() {

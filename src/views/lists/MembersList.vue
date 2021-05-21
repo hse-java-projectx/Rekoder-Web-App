@@ -5,7 +5,12 @@
     </template>
     <template #content>
       <HorCylon v-if="!teamMembersRequest.recieved" />
-      <b-list-group v-else-if="!error.hasError">
+      <NotFound v-else-if="error.hasError" :message="error.message" />
+      <NothingToShow
+        v-else-if="teamMembersRequest.data.length === 0"
+        message="Teams list is empty"
+      />
+      <b-list-group v-else>
         <b-list-group-item
           v-for="member in teamMembersRequest.data"
           :key="member.id"
@@ -13,7 +18,6 @@
           <ListItem :team="getObject(member)" />
         </b-list-group-item>
       </b-list-group>
-      <NotFound v-else :message="error.message" />
     </template>
     <template #additional>
       <ProfileCardLayout :userId="routeUserId" />
@@ -27,6 +31,7 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import SplitView from '@/components/SplitView.vue';
 import NotFound from '@/views/NotFound.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
+import NothingToShow from '@/components/NothingToShow.vue';
 
 export default {
   data() {
@@ -49,6 +54,7 @@ export default {
     SplitView,
     NotFound,
     ProfileCardLayout,
+    NothingToShow,
   },
 
   created() {

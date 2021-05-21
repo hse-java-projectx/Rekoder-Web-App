@@ -29,11 +29,13 @@ export default {
 </style>
 
 <style lang="sass">
-@import "src/style/bootstrap-custom.scss"
 @import "../node_modules/bootstrap/scss/bootstrap"
 @import "../node_modules/bootstrap-vue/src/index.scss"
+@import "src/style/bootstrap-custom.scss"
 
 .app-wrapper
   background-color: $white
   min-height: 100vh
+  max-width: 100vw
+  overflow: hidden
 </style>

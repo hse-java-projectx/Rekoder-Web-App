@@ -1,6 +1,6 @@
 <template>
   <div>
-    <SplitView>
+    <SingleView>
       <template #header>
         <NotFound v-if="error.has" :message="error.message" />
       </template>
@@ -8,86 +8,99 @@
       <template #content>
         <div class="page-item-container">
           <div class="big-font">
-            <FolderLink
-              v-if="owner.recieved"
-              :name="owner.data.name"
-              :userId="routeUserId"
-              :folderId="owner.data.root"
+            <ProfileLink
+              v-if="submission.recieved"
+              :id="submission.data.authorId.toString()"
             />
             <b-icon icon="chevron-right" scale="0.7" />
             <ProblemLink
-              :profile="routeUserId"
-              :problem="routeProblemId"
-              :name="submission.recieved ? submission.data.problem : ''"
+              v-if="submission.recieved"
+              :problem="submission.data.problemId.toString()"
+              :name="submission.data.problemId.toString()"
               view="submissions"
-            /><b-icon icon="chevron-right" scale="0.7" />
-            <SubmissionLink
-              :profile="routeUserId"
-              :problem="routeProblemId"
-              :id="routeSubmissionId"
-            />
+            /><b-icon icon="chevron-right" scale="0.7" /> #
+            {{ routeSubmissionId }}
           </div>
 
           <hr class="mt-1 w-100" />
-          <div v-if="submission.recieved">
+          <HorCylon v-if="!submission.recieved" />
+          <div v-else>
             <b-list-group class="information mb-3">
               <b-list-group-item class="d-flex justify-content-between">
                 <span> Problem </span>
-                <span>{{ submission.data.problem }}</span>
+                <span
+                  ><ProblemLink
+                    :problem="submission.data.problemId.toString()"
+                    :name="submission.data.problemId.toString()"
+                    view="submissions"
+                /></span>
+              </b-list-group-item>
+              <b-list-group-item class="d-flex justify-content-between">
+                <span> Author </span>
+                <ProfileLink :id="submission.data.authorId" />
               </b-list-group-item>
               <b-list-group-item class="d-flex justify-content-between">
                 <span> Date </span>
-                <span> {{ submission.data.date.toLocaleString() }} </span>
+                <span>
+                  {{
+                    new Date(submission.data.submissionTime).toLocaleString()
+                  }}
+                </span>
               </b-list-group-item>
               <b-list-group-item class="d-flex justify-content-between">
-                <span> Verdict </span>
+                <span> Feedback </span>
                 <div>
-                  <b>{{ submission.data.comment }}</b>
+                  <b>{{ submission.data.feedback }}</b>
                 </div>
               </b-list-group-item>
             </b-list-group>
-            <code-highlight :class="submission.data.language">
-              {{ submission.data.source }}
+            <code-highlight :class="submission.data.compiler">
+              <span>{{ submission.data.sourceCode }}</span>
             </code-highlight>
           </div>
-          <HorCylon v-else />
         </div>
       </template>
-
-      <template #additional>
-        <ProfileCardLayout :userId="routeUserId"
-      /></template>
-    </SplitView>
+    </SingleView>
   </div>
 </template>
 <script>
 import CodeHighlight from 'vue-code-highlight/src/CodeHighlight.vue';
 import NotFound from '@/views/NotFound.vue';
-import SubmissionLink from '@/components/links/SubmissionLink.vue';
-import FolderLink from '@/components/links/FolderLink.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
-import SplitView from '@/components/SplitView.vue';
-import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
+import SingleView from '@/components/SingleView.vue';
 import ProblemLink from '@/components/links/ProblemLink.vue';
+import ProfileLink from '@/components/links/ProfileLink.vue';
 
 import Backend from '@/js/backend/main';
 
 import 'vue-code-highlight/themes/prism.css';
 
 export default {
+  data() {
+    return {
+      routeSubmissionId: this.$route.params.submissionId,
+      submission: {
+        recieved: false,
+        data: null,
+      },
+      error: {
+        has: false,
+        message: null,
+      },
+    };
+  },
+
   components: {
     CodeHighlight,
     NotFound,
-    SubmissionLink,
     HorCylon,
-    FolderLink,
-    SplitView,
-    ProfileCardLayout,
+    SingleView,
     ProblemLink,
+    ProfileLink,
   },
 
   created() {
-    Backend.getSubmission(this.routeUserId, this.routeProblemId, this.routeSubmissionId)
+    Backend.getSubmission(this.routeSubmissionId)
       .then((submission) => {
         this.submission = {
           recieved: true,
@@ -100,39 +113,6 @@ export default {
           message: er.toString(),
         };
       });
-    Backend.getUser(this.routeUserId)
-      .then((user) => {
-        this.owner = {
-          recieved: true,
-          data: user,
-        };
-      })
-      .catch((er) => {
-        this.error = {
-          has: true,
-          message: er.toString(),
-        };
-      });
-  },
-
-  data() {
-    return {
-      routeUserId: this.$route.params.userId,
-      routeSubmissionId: this.$route.params.submissionId,
-      routeProblemId: this.$route.params.problemId,
-      submission: {
-        recieved: false,
-        data: null,
-      },
-      error: {
-        has: false,
-        message: null,
-      },
-      owner: {
-        recieved: false,
-        data: null,
-      },
-    };
   },
 };
 </script>

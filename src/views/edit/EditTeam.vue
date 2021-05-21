@@ -2,8 +2,8 @@
   <div>
     <HorCylon v-if="!teamRequest.recieved" />
     <div v-else>
-      <!-- Name -->
       <b-form @submit="onFormSubmit">
+        <!-- Name -->
         <b-form-group label="Name" label-cols-sm="2">
           <b-form-input
             trim
@@ -164,7 +164,7 @@ export default {
   },
 
   created() {
-    Backend.getUser(this.teamId)
+    Backend.getUser('team', this.teamId)
       .then((team) => {
         this.teamRequest = {
           recieved: true,
@@ -194,11 +194,11 @@ export default {
         valid: null,
         feedback: null,
       };
-      Backend.editProfile(this.teamId, {
+      Backend.editProfile('team', this.teamId, {
         name: this.form.name.value,
         avatarPath: this.form.avatarPath.path,
         bio: this.form.bio.value,
-        members: this.form.members.value,
+        membersId: this.form.members.value,
       })
         .then(() => {
           this.form.submitRequest = {

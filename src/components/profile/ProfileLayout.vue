@@ -10,8 +10,11 @@
                   <PictureIcon :alt="avatarAlt" :src="avatarPath" />
                 </b-col>
                 <b-col cols="9" md="12">
-                  <div class="big-font text-center my-1">
+                  <div class="text-dark big-font text-center mt-1">
                     <b>{{ name }}</b>
+                  </div>
+                  <div class="text-secondary text-center mb-1">
+                    {{ subname }}
                   </div>
                   <b-container class="text-center my-1">
                     <slot name="undername" />
@@ -62,6 +65,7 @@ export default {
     statRefs: Array[Object], // name, num, ref
     contacts: Array[Object], // key, value, ref
     name: String,
+    subname: String,
     avatarAlt: String,
     avatarPath: String,
     bio: String,

@@ -1,20 +1,12 @@
 <template>
   <div>
-    <SplitView>
+    <SingleView>
       <template #header>
         <NotFound v-if="error.has" :message="error.message" />
       </template>
       <template #subheader>
         <div class="big-font">
-          <FolderLink
-            v-if="problemOwner.recieved"
-            :name="problemOwner.data.name"
-            :userId="routeUserId"
-            :folderId="problemOwner.data.root"
-          />
-          <b-icon icon="chevron-right" scale="0.7" />
           <ProblemLink
-            :profile="routeUserId"
             :problem="routeProblemId"
             :name="problem.recieved ? problem.data.name : ''"
             view="statement"
@@ -39,22 +31,13 @@
               </b-form-group>
             </b-col>
           </b-row>
-          <hr class="mt-1 w-100" />
-          <HorCylon v-if="!(problem.recieved && problemOwner.recieved)" />
+          <br />
           <SubmissionHistory
-            v-else-if="viewingSubmissions"
-            :owner="routeUserId"
-            :problem="problem.data.name"
+            v-if="viewingSubmissions"
             :problemId="routeProblemId"
-            :submissions="problem.data.submissions"
           />
-          <Problem
-            v-else
-            :owner="routeUserId"
-            :name="problem.data.name"
-            :statement="problem.data.statement"
-            :problem="problem.data"
-          >
+          <HorCylon v-else-if="!problem.recieved" />
+          <Problem v-else :problem="problem.data">
             <template #under-solve>
               <b-button
                 v-if="canClone"
@@ -76,10 +59,7 @@
           </Problem>
         </div>
       </template>
-      <template #additional>
-        <ProfileCardLayout :userId="routeUserId" />
-      </template>
-    </SplitView>
+    </SingleView>
   </div>
 </template>
 <script>
@@ -90,9 +70,7 @@ import SubmissionHistory from '@/views/SubmissionHistory.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import Backend from '@/js/backend/main';
 import ProblemLink from '@/components/links/ProblemLink.vue';
-import SplitView from '@/components/SplitView.vue';
-import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
-import FolderLink from '@/components/links/FolderLink.vue';
+import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
 
 export default {
@@ -100,16 +78,13 @@ export default {
     Problem,
     SubmissionHistory,
     HorCylon,
-    FolderLink,
-    SplitView,
-    ProfileCardLayout,
+    SingleView,
     ProblemLink,
     NotFound,
   },
 
   data() {
     return {
-      routeUserId: this.$route.params.userId,
       routeProblemId: this.$route.params.problemId,
       view: this.$route.query.view, // submissions, statement
       problem: {
@@ -126,10 +101,6 @@ export default {
           { text: 'Statement', value: 'statement' },
           { text: 'Submissions', value: 'submissions' },
         ],
-      },
-      problemOwner: {
-        recieved: false,
-        data: null,
       },
       editRequest: {
         recieved: false,
@@ -152,24 +123,11 @@ export default {
           message: er.toString(),
         };
       });
-    Backend.getProblem(this.routeUserId, this.routeProblemId)
+    Backend.getProblem(this.routeProblemId)
       .then((problem) => {
         this.problem = {
           recieved: true,
           data: problem,
-        };
-      })
-      .catch((er) => {
-        this.error = {
-          has: true,
-          message: er.toString(),
-        };
-      });
-    Backend.getUser(this.routeUserId)
-      .then((user) => {
-        this.problemOwner = {
-          recieved: true,
-          data: user,
         };
       })
       .catch((er) => {
@@ -190,7 +148,7 @@ export default {
     },
 
     onClickEdit() {
-      this.$router.push(`/profile/${this.routeUserId}/problem-edit/${this.routeProblemId}`);
+      this.$router.push(`/problem-edit/${this.routeProblemId}`);
     },
 
     onClickClone() {},
@@ -216,10 +174,10 @@ export default {
       return this.view === 'statement';
     },
     statementLink() {
-      return `/profile/${this.routeUserId}/problem/${this.routeProblemId}/?view=statement`;
+      return `/problem/${this.routeProblemId}/?view=statement`;
     },
     submissionsLink() {
-      return `/profile/${this.routeUserId}/problem/${this.routeProblemId}/?view=submissions`;
+      return `/problem/${this.routeProblemId}/?view=submissions`;
     },
     canClone() {
       return !this.canEdit && this.isSigned;

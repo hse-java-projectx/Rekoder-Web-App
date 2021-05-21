@@ -1,15 +1,18 @@
 <template>
   <div>
-    <b-table :items="submissions" :fields="fields" :responsive="true">
+    <NotFound v-if="error.has" :message="error.message" />
+    <HorCylon v-else-if="!submissions.recieved" />
+    <b-table
+      v-else
+      :items="submissions.data"
+      :fields="fields"
+      :responsive="true"
+    >
       <template #cell(id)="data">
-        <SubmissionLink
-          :profile="owner"
-          :problem="problemId"
-          :id="data.value"
-        />
+        <SubmissionLink :id="data.value.toString()" />
       </template>
       <template #cell(date)="data">
-        {{ data.value.toLocaleString() }}
+        {{ new Date(data.value).toLocaleString() }}
       </template>
       <template #cell(comment)="data">
         <div>
@@ -21,19 +24,16 @@
 </template>
 <script>
 import SubmissionLink from '@/components/links/SubmissionLink.vue';
+import NotFound from '@/views/NotFound.vue';
+import HorCylon from '@/components/animated/HorCylon.vue';
+
+import Backend from '@/js/backend/main';
 
 export default {
-  components: { SubmissionLink },
-  data() {
-    return {
-      fields: ['id', 'comment', 'date', 'language'],
-    };
-  },
+  components: { SubmissionLink, NotFound, HorCylon },
+
   props: {
-    owner: String,
-    problem: String,
     problemId: String,
-    submissions: Array[Object],
     /*
       Object: {
         id: String,
@@ -43,15 +43,50 @@ export default {
       }
     */
   },
+
+  data() {
+    return {
+      fields: ['id', 'date', 'language', 'feedback'],
+      error: {
+        has: false,
+        message: null,
+      },
+      submissions: {
+        recieved: false,
+        data: null,
+      },
+    };
+  },
+
+  created() {
+    Backend.getProblemSubmissions(this.problemId)
+      .then((submissions) => {
+        const cutted = [];
+        submissions.forEach((s) => {
+          cutted.push({
+            id: s.id,
+            language: s.compiler,
+            date: s.submissionTime,
+            feedback: s.feedback,
+          });
+        });
+        cutted.sort((a, b) => a.date - b.date);
+        this.submissions = {
+          recieved: true,
+          data: cutted,
+        };
+      })
+      .catch((er) => {
+        this.error = {
+          has: true,
+          message: er.toString(),
+        };
+      });
+  },
 };
 </script>
 
 <style lang="sass">
-@import "src/style/bootstrap-custom.scss"
-
-.ver-ok
-  color: $green
-
-.ver-nok
-  color: $red
+@import src/style/bootstrap-custom.scss
+@import bootstrap/scss/bootstrap
 </style>

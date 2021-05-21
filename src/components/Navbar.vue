@@ -1,5 +1,5 @@
 <template>
-  <b-navbar toggleable="md" type="light" variant="light" class="shadow-sm">
+  <b-navbar toggleable="md" type="light" variant="white" class="shadow-sm">
     <b-navbar-brand>
       <router-link to="/feed" class="navbar-brand-text">
         <b>Rekoder</b>
@@ -54,12 +54,12 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isSigned', 'userid', 'archiveRoot']),
+    ...mapGetters(['isSigned', 'userid', 'archiveRoot', 'storeProfileType']),
     profileLink() {
-      return `/profile/${this.userid}`;
+      return '/profile';
     },
     archiveLink() {
-      return `/profile/${this.userid}/archive/${this.archiveRoot}`;
+      return `/archive/${this.archiveRoot}`;
     },
   },
 };

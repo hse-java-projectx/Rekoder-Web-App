@@ -4,7 +4,6 @@
 <script>
 export default {
   props: {
-    profile: String,
     problem: String,
     name: String,
     view: String,
@@ -12,7 +11,7 @@ export default {
 
   computed: {
     link() {
-      return `/profile/${this.profile}/problem/${this.problem}?view=${this.view}`;
+      return `/problem/${this.problem}?view=${this.view}`;
     },
   },
 };

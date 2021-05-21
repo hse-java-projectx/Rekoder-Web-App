@@ -5,36 +5,44 @@
         <b class="big-font"> Sign in </b>
       </template>
       <template #content>
-        <div class="page-item-container">
-          <b-form @submit="onSubmit">
-            <b-form-group label="Username" label-for="form-input-userId">
-              <b-form-input
-                id="form-input-userId"
-                v-model="form.userId"
-                placeholder="Enter userId"
-                :state="validation"
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-form-group label="Password" label-for="form-input-password">
-              <b-form-input
-                id="form-input-password"
-                v-model="form.password"
-                type="password"
-                placeholder="Enter password"
-                :state="validation"
-                required
-              ></b-form-input>
-            </b-form-group>
-            <b-button type="submit" variant="primary">Sign In</b-button>
-            <b-form-invalid-feedback :state="validation">
-              {{ signinError }}
-            </b-form-invalid-feedback>
-          </b-form>
-          <div class="my-3 text-secondary">
-            Don't have a profile yet? Create one on
-            <router-link to="/signup">Sign up</router-link> page
+        <b-overlay :show="showOverlay" rounded="sm">
+          <div class="page-item-container">
+            <b-form @submit="onSubmit">
+              <b-form-group label="Username">
+                <b-form-input
+                  v-model="form.userId"
+                  placeholder="Enter username"
+                  :state="validation"
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group label="Password">
+                <b-form-input
+                  v-model="form.password"
+                  type="password"
+                  placeholder="Enter password"
+                  :state="validation"
+                  required
+                ></b-form-input>
+              </b-form-group>
+              <b-form-group label="Profile type">
+                <b-form-select
+                  v-model="form.profileType"
+                  :options="profileOptions"
+                  :state="validation"
+                  required
+                />
+              </b-form-group>
+              <b-button type="submit" variant="primary">Sign In</b-button>
+              <b-form-invalid-feedback :state="validation">
+                {{ signinError }}
+              </b-form-invalid-feedback>
+            </b-form>
           </div>
+        </b-overlay>
+        <div class="my-3 text-secondary">
+          Don't have a profile yet? Create one on
+          <router-link to="/signup">Sign up</router-link> page
         </div>
       </template>
     </SingleView>
@@ -52,10 +60,20 @@ export default {
       form: {
         userId: '',
         password: '',
+        profileType: null,
       },
       validation: null,
       signinError: '',
       prevRoute: { path: '/' },
+
+      profileOptions: [
+        { value: null, text: 'Select profile type' },
+        { value: 'user', text: 'Personal profile' },
+        { value: 'team', text: 'Team' },
+        { value: 'system', text: 'Judge Mirror' },
+      ],
+
+      showOverlay: false,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -67,11 +85,14 @@ export default {
   methods: {
     onSubmit(event) {
       event.preventDefault();
-      Backend.getUserAccess(this.form.userId, this.form.password)
+      this.showOverlay = true;
+      Backend.getUserAccess(this.form.profileType, this.form.userId, this.form.password)
         .then((user) => {
+          this.showOverlay = false;
           this.commitSignin(user);
         })
         .catch((er) => {
+          this.showOverlay = false;
           this.signinError = er.toString();
           this.validation = false;
           this.onReset();
@@ -81,10 +102,16 @@ export default {
     onReset() {
       this.form.userId = '';
       this.form.password = '';
+      this.form.profileType = null;
     },
 
     commitSignin(userData) {
-      this.$store.commit('signin', userData);
+      this.$store.commit({
+        type: 'signin',
+        profileType: this.form.profileType,
+        id: this.form.userId,
+        data: userData,
+      });
       this.$router.push({ path: this.prevRoute.path });
     },
   },

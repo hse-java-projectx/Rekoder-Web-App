@@ -6,13 +6,19 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: null,
+    profileType: null,
+    id: null,
   },
   mutations: {
-    signin(state, user) {
-      state.user = user;
+    signin(state, info) {
+      state.user = info.data;
+      state.profileType = info.profileType;
+      state.id = info.id;
     },
-    signout() {
-      this.state.user = null;
+    signout(state) {
+      state.user = null;
+      state.profileType = null;
+      state.id = null;
     },
   },
   actions: {
@@ -21,17 +27,13 @@ export default new Vuex.Store({
   },
   getters: {
     isSigned: (state) => !(state.user === undefined || state.user === null),
-    userid: (state) => {
-      if (state.user === null) {
-        return null;
-      }
-      return state.user.id;
-    },
+    userid: (state) => state.id,
     archiveRoot: (state) => {
       if (state.user === null) {
         return null;
       }
-      return state.user.root;
+      return state.user.rootFolderId;
     },
+    storeProfileType: (state) => state.profileType,
   },
 });

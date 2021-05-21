@@ -46,10 +46,11 @@
                 <b-col md="2" class="my-auto"> Examples </b-col>
                 <b-col>
                   <b-row>
-                    <b-col cols="1">
+                    <b-col cols="auto">
                       <b-button
                         size="sm"
                         variant="outline-success"
+                        class="rounded-circle"
                         pill
                         @click.prevent="onClickAddTest"
                       >
@@ -66,21 +67,21 @@
                   >
                     <hr class="m-2" />
                     <b-row>
-                      <b-col cols="1">
+                      <b-col cols="auto">
                         <b-button
                           size="sm"
                           variant="outline-danger"
-                          pill
+                          class="rounded-circle"
                           @click.prevent="onClickRemoveTest(index)"
                         >
                           -
                         </b-button>
                       </b-col>
                       <b-col col>
-                        <b-textarea v-model="test.input" />
+                        <b-textarea required v-model="test.input" />
                       </b-col>
                       <b-col col>
-                        <b-textarea v-model="test.output" />
+                        <b-textarea required v-model="test.output" />
                       </b-col>
                     </b-row>
                   </div>
@@ -89,14 +90,20 @@
               </b-row>
             </div>
 
-            <b-row v-if="user.recieved">
+            <b-row>
               <b-col cols="auto">
-                <b-button type="submit" variant="success"
+                <b-button
+                  type="submit"
+                  variant="success"
+                  :disabled="currentlySaving"
                   >Save changes</b-button
                 >
               </b-col>
               <b-col cols="auto">
-                <b-button variant="outline-danger" v-b-modal.modal-delete
+                <b-button
+                  variant="outline-danger"
+                  v-b-modal.modal-delete
+                  :disabled="currentlySaving"
                   >Delete problem</b-button
                 >
               </b-col>
@@ -111,7 +118,7 @@
         </div>
         <span class="big-font"> <b> Preview </b> </span>
         <div class="page-item-container m-0 m-md-3">
-          <Problem v-if="user.recieved" :owner="userId" :problem="problem" />
+          <Problem :problem="problem" />
         </div>
       </template>
     </SingleView>
@@ -148,6 +155,8 @@ export default {
       problemId: this.$route.params.problemId,
       userId: this.$route.params.userId,
 
+      currentlySaving: false,
+
       user: {
         recieved: false,
         data: null,
@@ -158,22 +167,12 @@ export default {
         message: null,
       },
 
-      trash: {
-        tests: [
-          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
-          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
-        ],
-      },
-
       problem: {
         name: null,
         statement: null,
         inputFormat: null,
         outputFormat: null,
-        tests: [
-          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
-          { input: 'sdfasdfasdfasdfa', output: 'sdfasdfasdfasdfa' },
-        ],
+        tests: [],
         newTest: { input: null, output: null },
       },
 
@@ -208,11 +207,14 @@ export default {
     },
 
     onProblemDelete() {
-      Backend.deleteProblem(this.userId, this.problemId)
+      this.currentlySaving = true;
+      Backend.deleteProblem(this.problemId)
         .then(() => {
-          this.$router.push(`/profile/${this.userId}/archive/${this.user.data.root}`);
+          this.currentlySaving = false;
+          this.$router.push('/profile');
         })
         .catch((er) => {
+          this.currentlySaving = false;
           this.error = {
             has: true,
             message: er.toString(),
@@ -221,8 +223,10 @@ export default {
     },
     onSubmit(event) {
       event.preventDefault();
-      Backend.editProblem(this.userId, this.problemId, this.problem)
+      this.currentlySaving = true;
+      Backend.editProblem(this.problemId, this.problem)
         .then(() => {
+          this.currentlySaving = false;
           this.submissionValidFeedback = {
             has: true,
             message: 'All changes have been saved',
@@ -230,6 +234,7 @@ export default {
           this.validation = true;
         })
         .catch((er) => {
+          this.currentlySaving = false;
           this.submissionInvalidFeedback = {
             has: true,
             message: er.toString(),
@@ -239,17 +244,7 @@ export default {
     },
   },
   created() {
-    Backend.getUser(this.userId)
-      .then((user) => {
-        this.user = { recieved: true, data: user };
-      })
-      .catch((er) => {
-        this.error = {
-          has: true,
-          message: er.toString(),
-        };
-      });
-    Backend.getProblem(this.userId, this.problemId)
+    Backend.getProblem(this.problemId)
       .then((problem) => {
         this.problem = problem;
         this.problemRecieved = true;
