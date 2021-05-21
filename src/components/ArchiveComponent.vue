@@ -6,7 +6,23 @@
       <HeaderPath v-else :path="path.data" />
       <br />
     </div>
-    <b-row>
+    <b-container
+      v-if="!subfolders.recieved || !problems.recieved"
+      class="text-center"
+    >
+      <HorCylon />
+    </b-container>
+    <NothingToShow
+      v-else-if="
+        subfolders.recieved &&
+        problems.recieved &&
+        subfoldersEmpty &&
+        problemsEmpty &&
+        !isFolderEditable
+      "
+      message="This folder is empty"
+    />
+    <b-row v-else>
       <b-col cols="12" :md="foldersShow.cols" :class="foldersShow.type">
         <div class="page-item-container">
           <b-row>
@@ -306,6 +322,9 @@ export default {
       if (this.problemsEmpty) {
         return { cols: 0, type: 'hide' };
       }
+      if (this.subfoldersEmpty && this.problemsEmpty) {
+        return { cols: 12, type: 'no-hide' };
+      }
       return this.subfoldersEmpty ? { cols: 12, type: 'no-hide' } : { cols: 6, type: 'no-hide' };
     },
 
@@ -409,5 +428,5 @@ export default {
 
 .scroll
   overflow-y: auto
-  max-height: 60vh
+  max-height: 55vh
 </style>

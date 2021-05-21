@@ -49,7 +49,7 @@
               </b-button>
               <b-button
                 v-else-if="canEdit"
-                variant="link"
+                variant="outline-primary"
                 @click.prevent="onClickEdit"
                 size="sm"
               >

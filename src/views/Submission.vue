@@ -48,10 +48,19 @@
                 </span>
               </b-list-group-item>
               <b-list-group-item class="d-flex justify-content-between">
-                <span> Feedback </span>
-                <div>
-                  <b>{{ submission.data.feedback }}</b>
-                </div>
+                <b-form-group class="w-100" label="Feedback" label-cols="6">
+                  <b-form-select
+                    v-if="submission.recieved"
+                    v-model="submission.data.feedback.verdict"
+                    :options="feedbackOptions"
+                    :state="form.valid"
+                    :disabled="form.disabled"
+                    @change="onFeedbackSelect"
+                  />
+                  <b-form-invalid-feedback :state="form.valid">
+                    {{ form.feedback }}
+                  </b-form-invalid-feedback>
+                </b-form-group>
               </b-list-group-item>
             </b-list-group>
             <code-highlight :class="submission.data.compiler">
@@ -87,6 +96,23 @@ export default {
         has: false,
         message: null,
       },
+
+      form: {
+        disabled: false,
+        valid: null,
+        feedback: null,
+      },
+
+      feedbackOptions: [
+        { value: 'na', text: 'Choose Feedback' },
+        { value: 'ok', text: 'Accepted' },
+        { value: 'wa', text: 'Wrong Answer' },
+        { value: 'tl', text: 'Time Limit' },
+        { value: 'ml', text: 'Memory Limit' },
+        { value: 'pe', text: 'Presentation Error' },
+        { value: 'ce', text: 'Compile Error' },
+        { value: 'pe', text: 'Presentation Error' },
+      ],
     };
   },
 
@@ -106,6 +132,9 @@ export default {
           recieved: true,
           data: submission,
         };
+        if (submission.feedback === null) {
+          this.submission.data.feedback = { verdict: 'na' };
+        }
       })
       .catch((er) => {
         this.error = {
@@ -113,6 +142,24 @@ export default {
           message: er.toString(),
         };
       });
+  },
+
+  methods: {
+    onFeedbackSelect() {
+      this.form.disabled = true;
+      Backend.editSubmission(this.routeSubmissionId, this.submission.data)
+        .then((submission) => {
+          this.submission.data = submission;
+          this.form.valid = true;
+        })
+        .catch((er) => {
+          this.form.valid = false;
+          this.form.feedback = er.toString();
+        })
+        .finally(() => {
+          this.form.disabled = false;
+        });
+    },
   },
 };
 </script>

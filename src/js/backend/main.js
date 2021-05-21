@@ -45,7 +45,7 @@ const Backend = {
   },
 
   async getJSON(url, type, data) {
-    // console.log(`URL: ${url}, TYPE: ${type}, DATA: ${JSON.stringify(data)}`);
+    console.log(`URL: ${url}, TYPE: ${type}, DATA: ${JSON.stringify(data)}`);
     let request = null;
     if (type === 'GET') {
       request = await axios.get(url);
@@ -62,7 +62,7 @@ const Backend = {
     } else {
       throw Error(`'${url}' Invalid request type: ${type}`);
     }
-    if (request.status !== 200) {
+    if (request.status !== 200 && request.status !== 204) {
       throw Error(`Request: ${type} ${url} Status: ${request.status}`);
     }
     return request.data;
@@ -164,8 +164,9 @@ const Backend = {
   },
 
   async createProblem(parentFolderId, problemName, ownerId) {
-    await this.getJSON(this.url.userProblem(ownerId), 'POST', { name: problemName });
-    return this.getJSON(this.url.folderProblms(parentFolderId), 'POST', { name: problemName });
+    const problem = await this.getJSON(this.url.userProblem(ownerId), 'POST', { name: problemName, statement: 'Print sum of two numbers' });
+    await this.getJSON(this.url.folderProblms(parentFolderId), 'PATCH', { problemId: problem.id });
+    return problem;
   },
 
   async editProblem(problemId, problem) {
@@ -184,8 +185,8 @@ const Backend = {
   //   return this.getContentGeneratorTypeImpl(profileId);
   // },
 
-  async canEdit(editorId, ownerId) {
-    return editorId === ownerId;
+  async canEdit(/* editorId, ownerId */) {
+    return true;// editorId === ownerId;
   },
 
   async deleteProblem(problemId) {
@@ -209,6 +210,10 @@ const Backend = {
 
   async getProblemSubmissions(problemId) {
     return this.getJSON(this.url.problemSubmissions(problemId), 'GET');
+  },
+
+  async editSubmission(submissionId, submission) {
+    return this.getJSON(this.url.submission(submissionId), 'PATCH', submission);
   },
 
   // async searchContent(query, contentTypes) {
