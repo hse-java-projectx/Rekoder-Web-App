@@ -1,5 +1,6 @@
 <template>
   <div>
+    <SearchLocationRegister entity="folder" :id="archiveFolderId" />
     <NotFound v-if="error.has" :message="error.message" />
     <div v-if="showPath" class="big-font">
       <HorCylon v-if="!path.recieved" />
@@ -186,6 +187,7 @@ import HeaderPath from '@/components/HeaderPath.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import NotFound from '@/views/NotFound.vue';
 import NothingToShow from '@/components/NothingToShow.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
 
 export default {
   props: {
@@ -250,6 +252,7 @@ export default {
     HorCylon,
     NotFound,
     NothingToShow,
+    SearchLocationRegister,
   },
 
   created() {

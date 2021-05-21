@@ -22,6 +22,7 @@
                 placeholder="Enter statement"
                 required
                 debounce="100"
+                rows="5"
               ></b-form-textarea>
             </b-form-group>
             <b-form-group label="Input format" label-cols-md="2">
@@ -78,7 +79,7 @@
                         </b-button>
                       </b-col>
                       <b-col col>
-                        <b-textarea required v-model="test.input" />
+                        <b-textarea required v-model="test.input"  />
                       </b-col>
                       <b-col col>
                         <b-textarea required v-model="test.output" />

@@ -1,5 +1,10 @@
 <template>
   <div>
+    <SearchLocationRegister entity="user" :id="pageProfileId" />
+    <SearchEntityRegister entity="submission" />
+    <SearchEntityRegister entity="problem" />
+    <SearchEntityRegister entity="team" />
+    <SearchEntityRegister entity="folder" />
     <b-container v-if="notSignedAndNotQualified" class="mt-4 big-font">
       Please <router-link to="/signin">sign in</router-link> to see profile
     </b-container>
@@ -80,6 +85,8 @@ import NotFound from '@/views/NotFound.vue';
 import ActivityFeed from '@/components/feed/ActivityFeed.vue';
 import FeedBlock from '@/components/feed/FeedBlock.vue';
 import ArchiveComponent from '@/components/ArchiveComponent.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
+import SearchEntityRegister from '@/components/search/registers/Entity.vue';
 
 import Backend from '@/js/backend/main';
 import { mapGetters } from 'vuex';
@@ -94,6 +101,8 @@ export default {
     ActivityFeed,
     FeedBlock,
     ArchiveComponent,
+    SearchLocationRegister,
+    SearchEntityRegister,
   },
   data() {
     return {

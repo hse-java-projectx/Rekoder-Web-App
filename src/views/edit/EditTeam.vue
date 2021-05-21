@@ -107,7 +107,7 @@
 import Backend from '@/js/backend/main';
 
 import HorCylon from '@/components/animated/HorCylon.vue';
-import Search from '@/components/input/Search.vue';
+import Search from '@/components/search/SearchInput.vue';
 
 export default {
   components: { HorCylon, Search },

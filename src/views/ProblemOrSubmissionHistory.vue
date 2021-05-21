@@ -1,5 +1,7 @@
 <template>
   <div>
+    <SearchLocationRegister entity="problem" :id="routeProblemId" />
+    <SearchEntityRegister entity="submission" />
     <SingleView>
       <template #header>
         <NotFound v-if="error.has" :message="error.message" />
@@ -72,6 +74,8 @@ import Backend from '@/js/backend/main';
 import ProblemLink from '@/components/links/ProblemLink.vue';
 import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
+import SearchEntityRegister from '@/components/search/registers/Entity.vue';
 
 export default {
   components: {
@@ -81,6 +85,8 @@ export default {
     SingleView,
     ProblemLink,
     NotFound,
+    SearchLocationRegister,
+    SearchEntityRegister,
   },
 
   data() {

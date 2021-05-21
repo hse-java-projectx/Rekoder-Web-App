@@ -13,7 +13,11 @@
             <b-col md="7">
               <b-row>
                 <b-col cols="12" md="6" class="my-auto">
-                  <b-form-input size="md" placeholder="Search" />
+                  <Search
+                    v-if="searchEntities.length !== 0"
+                    :contentTypes="searchEntities"
+                    :locations="searchLocations"
+                  />
                 </b-col>
               </b-row>
             </b-col>
@@ -46,21 +50,34 @@
 
 <script>
 import NavbarLink from '@/components/links/NavbarLink.vue';
+import Search from '@/components/search/SearchInput.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     NavbarLink,
+    Search,
   },
 
   computed: {
-    ...mapGetters(['isSigned', 'userid', 'archiveRoot', 'storeProfileType']),
+    ...mapGetters([
+      'isSigned',
+      'userid',
+      'archiveRoot',
+      'storeProfileType',
+      'searchEntities',
+      'searchLocations',
+    ]),
     profileLink() {
       return '/profile';
     },
     archiveLink() {
       return `/archive/${this.archiveRoot}`;
     },
+  },
+
+  data() {
+    return {};
   },
 };
 </script>

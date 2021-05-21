@@ -1,5 +1,7 @@
 <template>
   <div>
+    <SearchRegister entity="folder" />
+    <SearchRegister entity="problem" />
     <SingleView>
       <template #content>
         <ArchiveComponent showPath />
@@ -11,6 +13,7 @@
 <script>
 import SingleView from '@/components/SingleView.vue';
 import ArchiveComponent from '@/components/ArchiveComponent.vue';
+import SearchRegister from '@/components/search/registers/Entity.vue';
 
 export default {
   name: 'Archive',
@@ -18,6 +21,7 @@ export default {
   components: {
     SingleView,
     ArchiveComponent,
+    SearchRegister,
   },
 };
 </script>

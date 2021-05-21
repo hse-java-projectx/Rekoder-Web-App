@@ -216,6 +216,59 @@ const Backend = {
     return this.getJSON(this.url.submission(submissionId), 'PATCH', submission);
   },
 
+  async searchContent(
+    // query, // String
+    // contentType, // ['user', 'problem', 'submission', 'team', 'judge', 'folder']
+    // locations // [{ entity: 'user', id: 'Glebanister' }, { entity: 'judge', id: 'Glebanister' }]
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return [
+      {
+        entity: 'submission',
+        id: '5',
+      },
+      {
+        entity: 'user',
+        id: 'Glebanister',
+        avatarPath: 'https://i.pinimg.com/originals/60/99/f3/6099f305983371dadaceae99f5c905bf.png',
+        name: 'Gleb Marin',
+      },
+      {
+        entity: 'user',
+        id: 'Glebanister 12',
+        avatarPath: 'https://i.pinimg.com/originals/60/99/f3/6099f305983371dadaceae99f5c905bf.png',
+        name: 'Gleb Marin 2',
+      },
+      {
+        entity: 'problem',
+        id: '4',
+        name: 'A + B Problem',
+      },
+      {
+        entity: 'folder',
+        id: '5',
+        name: 'My Collection',
+      },
+      {
+        entity: 'folder',
+        id: '1',
+        name: 'My Collection',
+      },
+      {
+        entity: 'team',
+        id: 'Ample',
+        avatarPath: 'https://i.pinimg.com/originals/60/99/f3/6099f305983371dadaceae99f5c905bf.png',
+        name: 'Ample',
+      },
+      {
+        entity: 'team',
+        id: 'Project X',
+        avatarPath: 'https://i.pinimg.com/originals/60/99/f3/6099f305983371dadaceae99f5c905bf.png',
+        name: 'Project X',
+      },
+    ];
+  },
+
   // async searchContent(query, contentTypes) {
   //   await sleep();
   //   return this.searchContentImpl(query, contentTypes);
