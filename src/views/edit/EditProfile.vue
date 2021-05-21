@@ -17,19 +17,18 @@
         >
           {{ canEditRequest.message }}
         </div>
-        <HorCylon v-else-if="!profile.recieved" />
         <EditSystem
-          v-else-if="profile.type === 'system'"
+          v-else-if="routeProfileType === 'judge'"
           :systemId="routeProfileId"
           @editError="onEditError"
         />
         <EditTeam
-          v-else-if="profile.type === 'team'"
+          v-else-if="routeProfileType === 'team'"
           :teamId="routeProfileId"
           @editError="onEditError"
         />
         <EditUser
-          v-else-if="profile.type === 'user'"
+          v-else-if="routeProfileType === 'user'"
           :userId="routeProfileId"
           @editError="onEditError"
         />
@@ -70,11 +69,7 @@ export default {
   data() {
     return {
       routeProfileId: this.$route.params.profileId,
-
-      profile: {
-        recieved: false,
-        type: null,
-      },
+      routeProfileType: this.$route.params.profileType,
 
       error: {
         has: false,
@@ -101,26 +96,6 @@ export default {
           canEdit: response,
           message: 'You don\'t have permission to edit this profile',
         };
-      })
-      .catch((er) => {
-        this.error = {
-          has: true,
-          message: er.toString(),
-        };
-      });
-    Backend.getContentGeneratorType(this.routeProfileId)
-      .then((type) => {
-        if (type === null) {
-          this.error = {
-            has: true,
-            message: `Profile ${this.routeProfileId} does not exist`,
-          };
-        } else {
-          this.profile = {
-            recieved: true,
-            type,
-          };
-        }
       })
       .catch((er) => {
         this.error = {

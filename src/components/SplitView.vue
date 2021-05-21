@@ -9,11 +9,11 @@
       </div>
       <b-container fluid class="">
         <b-row>
-          <b-col cols="12" lg="9" class="px-0 pr-lg-1">
-            <slot name="content" />
+          <b-col cols="12" lg="4" class="px-0 pr-lg-1">
+            <slot name="left" />
           </b-col>
-          <b-col cols="12" lg="3" class="d-none d-lg-inline-block px-0 pl-0">
-            <slot name="additional" />
+          <b-col cols="12" lg="8" class="d-lg-inline-block px-0 pl-0">
+            <slot name="right" />
           </b-col>
         </b-row>
       </b-container>

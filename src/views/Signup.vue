@@ -5,67 +5,72 @@
         <b class="big-font"> Create new profile </b>
       </template>
       <template #content>
-        <div class="page-item-container">
-          <b-form @submit="onSubmit">
-            <b-form-group label="Profile Name" label-for="profile-name">
-              <b-form-input
-                id="profile-name"
-                v-model="form.profileName.value"
-                placeholder="Enter new profile name"
-                :state="form.profileName.valid"
-                required
-              ></b-form-input>
-              <b-form-invalid-feedback :state="form.profileName.valid">
-                {{ form.profileName.invalidFeedback }}
+        <b-overlay :show="showOverlay" rounded="sm">
+          <div class="page-item-container" :show="showOverlay">
+            <b-form @submit="onSubmit">
+              <b-form-group label="Profile Name" label-for="profile-name">
+                <b-form-input
+                  id="profile-name"
+                  v-model="form.profileName.value"
+                  placeholder="Enter new profile name"
+                  :state="form.profileName.valid"
+                  required
+                ></b-form-input>
+                <b-form-invalid-feedback :state="form.profileName.valid">
+                  {{ form.profileName.invalidFeedback }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="Password" label-for="password">
+                <b-form-input
+                  id="password"
+                  v-model="form.password.value"
+                  placeholder="Enter strong password"
+                  :state="form.password.valid"
+                  type="password"
+                  required
+                ></b-form-input>
+                <b-form-invalid-feedback :state="form.password.valid">
+                  {{ form.password.invalidFeedback }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group
+                label="Confirm password"
+                label-for="password-confirm"
+              >
+                <b-form-input
+                  id="password-confirm"
+                  v-model="form.password.confirm"
+                  placeholder="Enter same password"
+                  :state="form.password.valid"
+                  type="password"
+                  required
+                ></b-form-input>
+                <b-form-invalid-feedback :state="form.password.valid">
+                  {{ form.password.invalidFeedback }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+              <b-form-group label="Profile type" label-for="profile-type">
+                <b-form-select
+                  id="profile-type"
+                  v-model="form.profileType.value"
+                  :options="profileOptions"
+                  :state="form.profileType.valid"
+                  required
+                />
+                <b-form-invalid-feedback :state="form.profileType.valid">
+                  {{ form.profileType.invalidFeedback }}
+                </b-form-invalid-feedback>
+              </b-form-group>
+              <b-button type="submit" variant="primary">Continue</b-button>
+              <b-form-invalid-feedback :state="form.sentRequest.valid">
+                {{ form.sentRequest.invalidFeedback }}
               </b-form-invalid-feedback>
-            </b-form-group>
-            <b-form-group label="Password" label-for="password">
-              <b-form-input
-                id="password"
-                v-model="form.password.value"
-                placeholder="Enter strong password"
-                :state="form.password.valid"
-                type="password"
-                required
-              ></b-form-input>
-              <b-form-invalid-feedback :state="form.password.valid">
-                {{ form.password.invalidFeedback }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-            <b-form-group label="Confirm password" label-for="password-confirm">
-              <b-form-input
-                id="password-confirm"
-                v-model="form.password.confirm"
-                placeholder="Enter same password"
-                :state="form.password.valid"
-                type="password"
-                required
-              ></b-form-input>
-              <b-form-invalid-feedback :state="form.password.valid">
-                {{ form.password.invalidFeedback }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-            <b-form-group label="Profile type" label-for="profile-type">
-              <b-form-select
-                id="profile-type"
-                v-model="form.profileType.value"
-                :options="profileOptions"
-                :state="form.profileType.valid"
-                required
-              />
-              <b-form-invalid-feedback :state="form.profileType.valid">
-                {{ form.profileType.invalidFeedback }}
-              </b-form-invalid-feedback>
-            </b-form-group>
-            <b-button type="submit" variant="primary">Continue</b-button>
-            <b-form-invalid-feedback :state="form.sentRequest.valid">
-              {{ form.sentRequest.invalidFeedback }}
-            </b-form-invalid-feedback>
-          </b-form>
-          <div class="my-3 text-secondary">
-            Already have a profile? Then
-            <router-link to="/signin">Sign in</router-link>
+            </b-form>
           </div>
+        </b-overlay>
+        <div class="my-3 text-secondary">
+          Already have a profile? Then
+          <router-link to="/signin">Sign in</router-link>
         </div>
       </template>
     </SingleView>
@@ -80,6 +85,7 @@ export default {
   components: { SingleView },
   data() {
     return {
+      showOverlay: false,
       form: {
         profileName: {
           valid: null,
@@ -107,7 +113,7 @@ export default {
         { value: null, text: 'Select profile type' },
         { value: 'user', text: 'Personal profile' },
         { value: 'team', text: 'Team' },
-        { value: 'system', text: 'Judge Mirror' },
+        { value: 'judge', text: 'Judge Mirror' },
       ],
     };
   },
@@ -120,7 +126,7 @@ export default {
       let allValid = true;
       if (this.form.password.value !== this.form.password.confirm) {
         this.form.password.valid = false;
-        this.form.password.invalidFeedback = 'Passwords didn\'t match';
+        this.form.password.invalidFeedback = "Passwords didn't match";
         allValid = false;
       }
       if (this.form.password.value.length < 6) {
@@ -138,16 +144,26 @@ export default {
 
     onValidForm() {
       this.form.sentRequest.valid = null;
+      this.showOverlay = true;
       Backend.createProfile({
         name: this.form.profileName.value,
         type: this.form.profileType.value,
         password: this.form.password.value,
       })
         .then((profile) => {
-          this.$store.commit('signin', profile);
-          this.$router.push({ path: `/profile-edit/${profile.id}` });
+          this.showOverlay = false;
+          this.$store.commit({
+            type: 'signin',
+            profileType: this.form.profileType.value,
+            id: this.form.profileName.value,
+            data: profile,
+          });
+          this.$router.push({
+            path: `/edit/${this.form.profileType.value}/${this.form.profileName.value}`,
+          });
         })
         .catch((er) => {
+          this.showOverlay = false;
           this.form.sentRequest.valid = false;
           this.form.sentRequest.invalidFeedback = er.toString();
         });

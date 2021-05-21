@@ -42,8 +42,6 @@ import Math from 'vue-mathjax/src/components/vue-mathjax.vue';
 
 export default {
   props: {
-    ownerName: String,
-    owner: String,
     problem: Object,
     /*
     name: String,

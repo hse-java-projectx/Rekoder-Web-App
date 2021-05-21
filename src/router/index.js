@@ -6,98 +6,122 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('../views/Home.vue'),
+    name: 'home',
+    component: () => import('../views/About.vue'),
+    meta: { title: 'Home' },
   },
   {
     path: '/about',
     name: 'about',
     component: () => import('../views/About.vue'),
+    meta: { title: 'About' },
   },
   {
     path: '/signin',
     name: 'signin',
     component: () => import('../views/Signin.vue'),
+    meta: { title: 'Sign in' },
   },
   {
     path: '/signup',
     name: 'signup',
     component: () => import('../views/Signup.vue'),
+    meta: { title: 'Sign up' },
   },
   {
     path: '/feed',
     name: 'feed',
     component: () => import('../views/Feed.vue'),
+    meta: { title: 'Feed' },
   },
   {
     path: '/explore',
     name: 'explore',
     component: () => import('../views/Explore.vue'),
+    meta: { title: 'Explore' },
   },
   {
-    path: '/profile/:userId',
+    path: '/profile/:profileType/:userId',
     name: 'profile',
     component: () => import('../views/UserProfile.vue'),
+    meta: { title: 'Submission' },
   },
   {
-    path: '/profile-edit/:profileId',
+    path: '/profile',
+    name: 'anonProfile',
+    component: () => import('../views/UserProfile.vue'),
+    meta: { title: 'Profile' },
+  },
+  {
+    path: '/edit/:profileType/:profileId',
     name: 'profileEdit',
     component: () => import('../views/edit/EditProfile.vue'),
+    meta: { title: 'Edit Profile' },
   },
   {
-    path: '/profile/:userId/archive/:folderId',
+    path: '/archive/:folderId',
     name: 'archive',
     component: () => import('../views/Archive.vue'),
+    meta: { title: 'Archive' },
   },
   {
-    path: '/profile/:userId/problem/:problemId',
+    path: '/problem/:problemId',
     name: 'problemOrSubmissionHistory',
     component: () => import('../views/ProblemOrSubmissionHistory.vue'),
+    meta: { title: 'Problem' },
   },
   {
-    path: '/profile/:userId/problem/:problemId/submission/:submissionId',
+    path: '/submission/:submissionId',
     name: 'submission',
     component: () => import('../views/Submission.vue'),
+    meta: { title: 'Submission' },
   },
   {
-    path: '/profile/:userId/teams',
+    path: '/teams/:userId',
     name: 'teamList',
     component: () => import('../views/lists/TeamList.vue'),
+    meta: { title: 'Teams' },
   },
   {
-    path: '/profile/:userId/members',
+    path: '/team-members/:teamId',
     name: 'membersList',
     component: () => import('../views/lists/MembersList.vue'),
   },
   {
-    path: '/profile/:userId/following',
+    path: '/following/:userId',
     name: 'followingList',
     component: () => import('../views/lists/FollowingList.vue'),
+    meta: { title: 'Following' },
   },
   {
-    path: '/profile/:userId/followers',
+    path: '/followers/:userId',
     name: 'followersList',
     component: () => import('../views/lists/FollowersList.vue'),
+    meta: { title: 'Followers' },
   },
   {
-    path: '/profile/:userId/problem-edit/:problemId',
+    path: '/problem-edit/:problemId',
     name: 'problemEdit',
     component: () => import('../views/EditProblem.vue'),
+    meta: { title: 'Edit Problem' },
   },
   {
     path: '/help',
     name: 'help',
     component: () => import('../views/Help.vue'),
+    meta: { title: 'Help' },
   },
   {
     path: '/contact',
     name: 'contact',
     component: () => import('../views/Contact.vue'),
+    meta: { title: 'Contact us' },
   },
   {
     path: '/report',
     name: 'report',
     component: () => import('../views/Report.vue'),
+    meta: { title: 'Report' },
   },
 ];
 
@@ -105,6 +129,15 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+});
+
+const DEFAULT_TITLE = 'Rekoder';
+router.afterEach((to) => {
+  // Use next tick to handle router history correctly
+  // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
+  Vue.nextTick(() => {
+    document.title = to.meta.title || DEFAULT_TITLE;
+  });
 });
 
 export default router;

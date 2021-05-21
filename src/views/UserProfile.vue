@@ -1,78 +1,71 @@
 <template>
   <div>
-    <NotFound v-if="error.has" :message="error.message" />
-    <HorCylon v-if="!userRequest.recieved" />
-    <ProfileLayout
-      v-else
-      :statRefs="processedUserInformation.statRefs"
-      :contacts="userRequest.data.contacts"
-      :name="userRequest.data.name"
-      :avatarAlt="`${userRequest.data.name} profile avatar`"
-      :avatarPath="userRequest.data.avatarPath"
-      :bio="userRequest.data.bio"
-    >
-      <template #feed>
-        <FeedBlock name="Archive">
-          <template #content>
-            <HorCylon v-if="!directionsRequest.recieved" />
-            <NothingToShow
-              v-else-if="directionsRequest.data.length === 0"
-              message="Archive is empty"
-            />
-            <b-list-group v-else>
-              <DirectoryItem
-                v-for="item in directionsRequest.data"
-                :key="item.link"
-                :name="item.name"
-                :isDirectory="item.isDirectory"
-                :link="item.link"
-                :solved="item.solved"
+    <b-container v-if="notSignedAndNotQualified" class="mt-4 big-font">
+      Please <router-link to="/signin">sign in</router-link> to see profile
+    </b-container>
+    <div v-else>
+      <NotFound v-if="error.has" :message="error.message" />
+      <HorCylon v-if="!userRequest.recieved" />
+      <ProfileLayout
+        v-else
+        :statRefs="processedUserInformation.statRefs"
+        :contacts="userRequest.data.contacts"
+        :name="userRequest.data.name"
+        :subname="userRequest.data.name"
+        :avatarAlt="`${userRequest.data.name} profile avatar`"
+        :avatarPath="userRequest.data.avatarPath"
+        :bio="userRequest.data.bio"
+      >
+        <template #feed>
+          <FeedBlock name="Archive">
+            <template #content>
+              <HorCylon v-if="!userRequest.recieved" />
+              <ArchiveComponent v-else :showPath="false" />
+            </template>
+          </FeedBlock>
+          <FeedBlock name="Recent activity">
+            <template #content>
+              <HorCylon v-if="!activitiesRequest.recieved" />
+              <ActivityFeed
+                v-else
+                :activities="activitiesRequest.data"
+                :anon="true"
               />
-            </b-list-group>
-          </template>
-        </FeedBlock>
-        <FeedBlock name="Recent activity">
-          <template #content>
-            <HorCylon v-if="!activitiesRequest.recieved" />
-            <ActivityFeed
-              v-else
-              :activities="activitiesRequest.data"
-              :anon="true"
-            />
-          </template>
-        </FeedBlock>
-      </template>
-      <template #undername v-if="isSigned">
-        <b-row>
-          <b-col v-if="canEdit">
-            <b-button
-              variant="outline-primary"
-              size="sm"
-              class="w-100"
-              @click.prevent="onClickEdit"
-              >Edit
-            </b-button>
-          </b-col>
-          <b-col v-if="canSignout">
-            <b-button
-              variant="outline-primary"
-              size="sm"
-              class="w-100"
-              @click.prevent="onClickSignOut"
-              >Sign out
-            </b-button>
-          </b-col>
-        </b-row>
-        <b-button
-          v-if="canFollow"
-          variant="outline-primary"
-          size="sm"
-          class="w-100"
-          @click.prevent="onClickFollow"
-          >Follow</b-button
-        >
-      </template>
-    </ProfileLayout>
+            </template>
+          </FeedBlock>
+        </template>
+        <template #undername v-if="isSigned">
+          <b-row>
+            <b-col v-if="canEdit">
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                class="w-100"
+                @click.prevent="onClickEdit"
+                >Edit
+              </b-button>
+            </b-col>
+            <b-col v-if="canSignout">
+              <b-button
+                variant="outline-primary"
+                size="sm"
+                class="w-100"
+                @click.prevent="onClickSignOut"
+                >Sign out
+              </b-button>
+            </b-col>
+          </b-row>
+          <b-button
+            v-if="canFollow"
+            variant="outline-primary"
+            size="sm"
+            class="w-100"
+            @click.prevent="onClickFollow"
+            >Follow</b-button
+          >
+        </template>
+      </ProfileLayout>
+    </div>
   </div>
 </template>
 
@@ -82,8 +75,7 @@ import HorCylon from '@/components/animated/HorCylon.vue';
 import NotFound from '@/views/NotFound.vue';
 import ActivityFeed from '@/components/feed/ActivityFeed.vue';
 import FeedBlock from '@/components/feed/FeedBlock.vue';
-import DirectoryItem from '@/components/archive/DirectoryItem.vue';
-import NothingToShow from '@/components/NothingToShow.vue';
+import ArchiveComponent from '@/components/ArchiveComponent.vue';
 
 import Backend from '@/js/backend/main';
 import { mapGetters } from 'vuex';
@@ -97,12 +89,12 @@ export default {
     NotFound,
     ActivityFeed,
     FeedBlock,
-    DirectoryItem,
-    NothingToShow,
+    ArchiveComponent,
   },
   data() {
     return {
-      routeUserId: this.$route.params.userId,
+      routeProfileType: this.$route.params.profileType,
+      rotueProfileId: this.$route.params.userId,
 
       error: {
         has: false,
@@ -137,7 +129,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userid', 'isSigned']),
+    ...mapGetters(['userid', 'isSigned', 'storeProfileType']),
 
     canEdit() {
       return this.canEditRequest.recieved && this.canEditRequest.data;
@@ -148,32 +140,29 @@ export default {
     },
 
     canSignout() {
-      return this.userid === this.routeUserId;
+      return this.userid === this.pageProfileId;
+    },
+
+    notSignedAndNotQualified() {
+      return (this.routeUserId === null || this.routeUserId === undefined) && !this.isSigned;
+    },
+
+    pageProfileType() {
+      return this.routeProfileType === undefined || this.routeProfileType === null
+        ? this.storeProfileType
+        : this.routeProfileType;
+    },
+
+    pageProfileId() {
+      return this.rotueProfileId === null || this.rotueProfileId === undefined
+        ? this.userid
+        : this.rotueProfileId;
     },
   },
 
   methods: {
-    async getDirections() {
-      const dirs = [];
-      const folderContent = await Backend.getFolderContent(
-        this.routeUserId,
-        this.userRequest.data.root,
-      );
-      folderContent.forEach((dir) => {
-        dirs.push({
-          name: dir.name,
-          isDirectory: dir.isDirectory,
-          solved: dir.solved,
-          link: dir.isDirectory
-            ? `/profile/${this.routeUserId}/archive/${dir.id}`
-            : `/profile/${this.routeUserId}/problem/${dir.id}/?view=statement`,
-        });
-      });
-      return dirs;
-    },
-
     onClickEdit() {
-      this.$router.push({ path: `/profile-edit/${this.routeUserId}` });
+      this.$router.push({ path: `/edit/${this.pageProfileType}/${this.pageProfileId}` });
     },
 
     onClickFollow() {},
@@ -185,7 +174,10 @@ export default {
   },
 
   created() {
-    Backend.getUserActivity(this.routeUserId)
+    if (this.notSignedAndNotQualified) {
+      return;
+    }
+    Backend.getUserActivity(this.pageProfileId)
       .then((feed) => {
         this.activitiesRequest = {
           recieved: true,
@@ -198,28 +190,28 @@ export default {
           message: err.toString(),
         };
       });
-    Backend.getUser(this.routeUserId)
+    Backend.getUser(this.pageProfileType, this.pageProfileId)
       .then((user) => {
         this.userRequest = {
           recieved: true,
           data: { ...user },
         };
-        if (user.type === 'user') {
+        if (this.pageProfileType === 'user') {
           this.processedUserInformation.statRefs.push(
             {
               name: 'following',
               num: user.following.length,
-              ref: `/profile/${this.routeUserId}/following`,
+              ref: `/following/${this.pageProfileId}`,
             },
             {
               name: 'followers',
               num: user.followers.length,
-              ref: `/profile/${this.routeUserId}/followers`,
+              ref: `/followers/${this.pageProfileId}`,
             },
             {
               name: 'teams',
               num: user.teams.length,
-              ref: `/profile/${this.routeUserId}/teams`,
+              ref: `/teams/${this.pageProfileId}`,
             },
           );
           user.contacts.forEach((contact) => {
@@ -229,24 +221,17 @@ export default {
               ref: contact.ref,
             });
           });
-        } else if (user.type === 'team') {
+        } else if (this.pageProfileType === 'team') {
           this.processedUserInformation.statRefs.push({
             name: 'members',
             num: user.members.length,
-            ref: `/profile/${this.routeUserId}/members`,
+            ref: `/members/${this.pageProfileId}`,
           });
         }
         this.userRequest.data.contacts = [];
-        if (user.type === 'system') {
+        if (this.pageProfileType === 'judge') {
           this.userRequest.data.contacts.push({ name: 'origin', ref: user.origin });
         }
-        this.getDirections()
-          .then((dirs) => {
-            this.directionsRequest = { recieved: true, data: dirs };
-          })
-          .catch((er) => {
-            this.error = { has: true, message: er.toString() };
-          });
       })
       .catch((er) => {
         this.error = {
@@ -254,7 +239,7 @@ export default {
           message: er.toString(),
         };
       });
-    Backend.canEdit(this.userid, this.routeUserId)
+    Backend.canEdit(this.userid, this.pageProfileId)
       .then((can) => {
         this.canEditRequest = {
           recieved: true,

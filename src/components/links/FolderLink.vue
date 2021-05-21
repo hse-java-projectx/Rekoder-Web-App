@@ -5,13 +5,12 @@
 export default {
   props: {
     name: String,
-    userId: String,
     folderId: String,
   },
 
   computed: {
     link() {
-      return `/profile/${this.userId}/archive/${this.folderId}`;
+      return `/archive/${this.folderId}`;
     },
   },
 };

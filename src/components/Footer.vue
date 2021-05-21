@@ -6,16 +6,20 @@
     <b-container class="footer my-3">
       <b-row class="justify-content-md-center text-center">
         <b-col cols="12" md="2">
-          <router-link to="/about"> About </router-link>
+          <router-link to="/about" class="text-secondary"> About </router-link>
         </b-col>
         <b-col cols="12" md="2">
-          <router-link to="/help"> Help </router-link>
+          <router-link to="/help" class="text-secondary"> Help </router-link>
         </b-col>
         <b-col cols="12" md="2">
-          <router-link to="/contact"> Contact us </router-link>
+          <router-link to="/contact" class="text-secondary">
+            Contact us
+          </router-link>
         </b-col>
         <b-col cols="12" md="2">
-          <router-link to="/report"> Report issue </router-link>
+          <router-link to="/report" class="text-secondary">
+            Report issue
+          </router-link>
         </b-col>
       </b-row>
     </b-container>

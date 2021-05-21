@@ -176,7 +176,7 @@ export default {
   },
 
   created() {
-    Backend.getUser(this.userId)
+    Backend.getUser('user', this.userId)
       .then((user) => {
         this.userRequest = {
           recieved: true,
@@ -206,11 +206,15 @@ export default {
         valid: null,
         feedback: null,
       };
-      Backend.editProfile(this.userId, {
+      const submittingContacts = {};
+      this.form.contacts.value.forEach((c) => {
+        submittingContacts[c.name] = c.ref;
+      });
+      Backend.editProfile('user', this.userId, {
         name: this.form.name.value,
         avatarPath: this.form.avatarPath.path,
         bio: this.form.bio.value,
-        contacts: this.form.contacts.value,
+        contacts: submittingContacts,
       })
         .then(() => {
           this.form.submitRequest = {

@@ -1,576 +1,225 @@
-import db from '@/js/backend/db';
-
-function sleep() {
-  return new Promise((resolve) => setTimeout(resolve, 1000));
-}
+import axios from 'axios';
 
 const Backend = {
-  getUserAccessImpl(userid, password) {
-    let accessGranted = false;
-    let userFound = false;
-    let userData = null;
-    db.users.forEach(
-      (user) => {
-        if (user.id === userid) {
-          userFound = true;
-          userData = user;
-          accessGranted = user.password === password;
-        }
-      },
-    );
-    db.teams.forEach(
-      (user) => {
-        if (user.id === userid) {
-          userFound = true;
-          userData = user;
-          accessGranted = user.password === password;
-        }
-      },
-    );
-    db.systems.forEach(
-      (user) => {
-        if (user.id === userid) {
-          userFound = true;
-          userData = user;
-          accessGranted = user.password === password;
-        }
-      },
-    );
-    if (!userFound) {
-      throw new Error('User not found');
+  url: {
+    domain: 'https://rekoderback.cfapps.eu10.hana.ondemand.com',
+    user(userId) {
+      return `${this.domain}/users/${userId}`;
+    },
+    userProblem(userId) {
+      return `${this.domain}/users/${userId}/problems`;
+    },
+    team(teamId) {
+      return `${this.domain}/teams/${teamId}`;
+    },
+    judge(judgeId) {
+      return `${this.domain}/judges/${judgeId}`;
+    },
+    newUser() {
+      return `${this.domain}/users`;
+    },
+    newTeam() {
+      return `${this.domain}/teams`;
+    },
+    newJudge() {
+      return `${this.domain}/judges`;
+    },
+    problem(problemId) {
+      return `${this.domain}/problems/${problemId}`;
+    },
+    problemSubmissions(problemId) {
+      return `${this.domain}/problems/${problemId}/submissions`;
+    },
+    folder(folderId) {
+      return `${this.domain}/folders/${folderId}`;
+    },
+    folderFolders(folderId) {
+      return `${this.domain}/folders/${folderId}/folders`;
+    },
+    folderProblms(folderId) {
+      return `${this.domain}/folders/${folderId}/problems`;
+    },
+    submission(submissionId) {
+      return `${this.domain}/submissions/${submissionId}`;
+    },
+  },
+
+  async getJSON(url, type, data) {
+    // console.log(`URL: ${url}, TYPE: ${type}, DATA: ${JSON.stringify(data)}`);
+    let request = null;
+    if (type === 'GET') {
+      request = await axios.get(url);
+    } else if (type === 'POST') {
+      request = await axios.post(url, data);
+    } else if (type === 'PATCH') {
+      request = await axios.patch(url, data, {
+        headers: {
+          'Content-Type': 'application/merge-patch+json',
+        },
+      });
+    } else if (type === 'DELETE') {
+      request = await axios.delete(url);
+    } else {
+      throw Error(`'${url}' Invalid request type: ${type}`);
     }
-    if (!accessGranted) {
-      throw new Error('Invalid password');
+    if (request.status !== 200) {
+      throw Error(`Request: ${type} ${url} Status: ${request.status}`);
     }
-    return userData;
+    return request.data;
   },
 
-  async getUserAccess(userid, password) {
-    await sleep();
-    return this.getUserAccessImpl(userid, password);
-  },
-
-  getUserImpl(userId) {
-    let userFound = null;
-    db.users.forEach(
-      (user) => {
-        if (user.id === userId) {
-          userFound = user;
-        }
-      },
-    );
-    db.teams.forEach(
-      (user) => {
-        if (user.id === userId) {
-          userFound = user;
-        }
-      },
-    );
-    db.systems.forEach(
-      (user) => {
-        if (user.id === userId) {
-          userFound = user;
-        }
-      },
-    );
-    if (userFound == null) {
-      throw new Error(`Profile not found: ${userId}`);
+  async queryProfile(userType, userId, request, data) {
+    let user;
+    if (userType === 'user') {
+      user = await this.getJSON(this.url.user(userId), request, data);
+    } else if (userType === 'team') {
+      user = await this.getJSON(this.url.team(userId), request, data);
+    } else if (userType === 'judge') {
+      user = await this.getJSON(this.url.judge(userId), request, data);
+    } else {
+      throw Error(`Undefined profile type: ${userType}`);
     }
-    return userFound;
+    return user;
   },
 
-  async getUser(userId) {
-    await sleep();
-    return this.getUserImpl(userId);
+  async getUserAccess(userType, userId) {
+    return this.getUser(userType, userId);
   },
 
-  getSubmissionImpl(userId, problemId, submissionId) {
-    let foundSubmission = null;
-    const problem = this.getProblemImpl(userId, problemId);
-    problem.submissions.forEach((submission) => {
-      if (submission.id === submissionId) {
-        foundSubmission = submission;
-      }
-    });
-    if (foundSubmission == null) {
-      throw new Error('Submission not found');
+  async getUser(userType, userId) {
+    if (userType === 'user') {
+      const user = await this.getJSON(this.url.user(userId), 'GET');
+      const contacts = [];
+      Object.keys(user.contacts).forEach((c) => {
+        contacts.push({ name: c, ref: user.contacts[c] });
+      });
+      return {
+        ...user,
+        following: [],
+        followers: [],
+        teams: user.teamIds,
+        contacts,
+        avatarPath: 'https://i.pinimg.com/originals/60/99/f3/6099f305983371dadaceae99f5c905bf.png',
+      };
+    } if (userType === 'team') {
+      const team = await this.getJSON(this.url.team(userId), 'GET');
+      return {
+        ...team,
+        avatarPath: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/FBK_logo_new.svg/1200px-FBK_logo_new.svg.png',
+        members: team.membersId,
+      };
+    } if (userType === 'judge') {
+      return this.getJSON(this.url.judge(userId), 'GET');
     }
-    foundSubmission.problem = problem.name;
-    return foundSubmission;
+    throw Error(`Unknown user type: ${userType}`);
   },
 
-  async getSubmission(userId, problemId, submissionId) {
-    await sleep();
-    return this.getSubmissionImpl(userId, problemId, submissionId);
+  async getSubmission(submissionId) {
+    return this.getJSON(this.url.submission(submissionId), 'GET');
   },
 
-  getProblemImpl(userId, problemId) {
-    let problemFound = null;
-    db.users.forEach(
-      (user) => {
-        if (user.id === userId) {
-          user.problems.forEach((problem) => {
-            if (problem.id === problemId) {
-              problemFound = problem;
-            }
-          });
-        }
-      },
-    );
-    if (problemFound == null) {
-      throw new Error('Problem not found');
-    }
-    return problemFound;
-  },
-
-  async getProblem(userId, problemId) {
-    await sleep();
-    return this.getProblemImpl(userId, problemId);
-  },
-
-  getFolderImpl(folderId) {
-    let foundFolder = null;
-    db.folders.forEach(
-      (folder) => {
-        if (folder.id === folderId) {
-          foundFolder = folder;
-        }
-      },
-    );
-    if (foundFolder == null) {
-      throw new Error(`Folder not found${folderId}`);
-    }
-    return foundFolder;
+  async getProblem(problemId) {
+    return this.getJSON(this.url.problem(problemId), 'GET');
   },
 
   async getFolder(folderId) {
-    await sleep();
-    return this.getFolderImpl(folderId);
+    return this.getJSON(this.url.folder(folderId), 'GET');
   },
 
-  getFolderContentImpl(userId, folderId) {
-    const items = []; // { name, isDirectory, solved, id }
-    this.getFolderImpl(folderId).items.forEach((dir) => {
-      let name = 'undefinedName';
-      if (dir.isFolder) {
-        name = this.getFolderImpl(dir.id).name;
-      } else {
-        const problem = this.getProblemImpl(userId, dir.id);
-        name = problem.name;
-      }
-      items.push({
-        name,
-        isDirectory: dir.isFolder,
-        id: dir.id,
-      });
-    });
-    return items;
+  async getFolderSubfolders(folderId) {
+    return this.getJSON(this.url.folderFolders(folderId), 'GET');
   },
 
-  async getFolderContent(userId, folderId) {
-    await sleep();
-    return this.getFolderContentImpl(userId, folderId);
+  async getFolderProblems(folderId) {
+    return this.getJSON(this.url.folderProblms(folderId), 'GET');
   },
 
-  getPathToRootImpl(folderId) {
-    let curFolder = this.getFolderImpl(folderId);
-    const path = [];
-    while (curFolder.parent != null) {
-      path.push({ name: curFolder.name, id: curFolder.id });
-      curFolder = this.getFolderImpl(curFolder.parent);
-    }
-    path.push({ name: curFolder.name, id: curFolder.id });
-    return path.reverse();
+  async getPathToRoot(/* folderId */) {
+    return [{ link: '/', name: 'Path' }, { link: '/', name: 'To' }, { link: '/', name: 'Folder' }];
   },
 
-  async getPathToRoot(folderId) {
-    await sleep();
-    return this.getPathToRootImpl(folderId);
+  async getUserTeams(/* userId */) {
+    return [];
   },
 
-  getUserTeamsImpl(userId) {
-    const user = this.getUserImpl(userId);
-    const teams = [];
-    db.teams.forEach((team) => {
-      if (user.teams.indexOf(team.id) !== -1) {
-        teams.push(team);
-      }
-    });
-    return teams;
+  async getUserFollowers(/* userId */) {
+    return [];
   },
 
-  async getUserTeams(userId) {
-    await sleep();
-    return this.getUserTeamsImpl(userId);
+  async getUserFollowing(/* userId */) {
+    return [];
   },
 
-  getUserFollowersImpl(userId) {
-    const user = this.getUserImpl(userId);
-    const followers = [];
-    db.users.forEach((follower) => {
-      if (user.followers.indexOf(follower.id) !== -1) {
-        followers.push(follower);
-      }
-    });
-    return followers;
+  async getUserActivity(/* userId */) {
+    return [];
   },
 
-  async getUserFollowers(userId) {
-    await sleep();
-    return this.getUserFollowersImpl(userId);
-  },
-
-  getUserFollowingImpl(userId) {
-    const user = this.getUserImpl(userId);
-    const followings = [];
-    db.users.forEach((following) => {
-      if (user.following.indexOf(following.id) !== -1) {
-        followings.push(following);
-      }
-    });
-    return followings;
-  },
-
-  async getUserFollowing(userId) {
-    await sleep();
-    return this.getUserFollowingImpl(userId);
-  },
-
-  getUserActivityImpl(userId) {
-    const activity = [];
-    this.getUserImpl(userId).activity.forEach((act) => {
-      activity.push({
-        type: act.type,
-        object: act.object,
-        subject: act.subject,
-        date: act.date,
-        count: act.count,
-      });
-    });
-    return activity;
-  },
-
-  async getUserActivity(userId) {
-    await sleep();
-    return this.getUserActivityImpl(userId);
-  },
-
-  getUserFeedImpl(userId) {
-    const user = this.getUserImpl(userId);
-    let feed = [];
-    user.following.forEach((followee) => {
-      feed = feed.concat(this.getUserActivityImpl(followee));
-    });
-    return feed;
-  },
-
-  async getUserFeed(userId) {
-    await sleep();
-    return this.getUserFeedImpl(userId);
-  },
-
-  makeid(length) {
-    const result = [];
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    for (let i = 0; i < length; i += 1) {
-      result.push(characters.charAt(Math.floor(Math.random()
-        * charactersLength)));
-    }
-    return result.join('');
-  },
-
-  createFolderImpl(parentFolderId, newFolderName) {
-    const parentFolder = this.getFolderImpl(parentFolderId);
-    const newFolderId = `folderid${this.makeid(5)}`;
-    db.folders.forEach((folder) => {
-      if (folder.id === parentFolderId) {
-        folder.items.push({
-          isFolder: true,
-          id: newFolderId,
-        });
-      }
-    });
-    db.folders.push({
-      owner: parentFolder.owner,
-      id: newFolderId,
-      parent: parentFolderId,
-      name: newFolderName,
-      items: [],
-    });
-  },
+  // async getUserFeed(userId) {
+  //   await sleep();
+  //   return this.getUserFeedImpl(userId);
+  // },
 
   async createFolder(parentFolderId, folderName) {
-    await sleep();
-    return this.createFolderImpl(parentFolderId, folderName);
+    return this.getJSON(this.url.folderFolders(parentFolderId), 'POST', { name: folderName });
   },
 
-  editProblemImpl(userId, problemId, changedProblem) {
-    const user = this.getUserImpl(userId);
-    const problemToInsert = changedProblem;
-    problemToInsert.id = problemId;
-    let changed = false;
-    user.problems.forEach((problem) => {
-      if (problem.id === problemToInsert.id) {
-        // eslint-disable-next-line no-param-reassign
-        problem.name = problemToInsert.name;
-        // eslint-disable-next-line no-param-reassign
-        problem.statement = problemToInsert.statement;
-        changed = true;
-      }
-    });
-    if (!changed) {
-      throw new Error(`Unable to find problem of user ${userId} with id ${problemId}`);
-    }
+  async createProblem(parentFolderId, problemName, ownerId) {
+    await this.getJSON(this.url.userProblem(ownerId), 'POST', { name: problemName });
+    return this.getJSON(this.url.folderProblms(parentFolderId), 'POST', { name: problemName });
   },
 
-  async editProblem(userId, problemId, problem) {
-    await sleep();
-    return this.editProblemImpl(userId, problemId, problem);
+  async editProblem(problemId, problem) {
+    return this.getJSON(this.url.problem(problemId), 'PATCH', problem);
   },
 
-  addProblemImpl(userId, parentFolderId, newProblem) {
-    // eslint-disable-next-line no-param-reassign
-    newProblem.id = `problemid${this.makeid(6)}`;
-    const user = this.getUserImpl(userId);
-    user.problems.push(newProblem);
-    db.folders.forEach((folder) => {
-      if (folder.id === parentFolderId) {
-        folder.items.push({ isFolder: false, id: newProblem.id });
-      }
-    });
-    return newProblem.id;
-  },
+  // async addProblem(userId, parentFolderId, newProblem) {
+  //   return this.addProblemImpl(userId, parentFolderId, newProblem);
+  // },
 
-  async addProblem(userId, parentFolderId, newProblem) {
-    await sleep();
-    return this.addProblemImpl(userId, parentFolderId, newProblem);
-  },
+  // async addEmptyProblem(userId, parentFolderId, name) {
+  // },
 
-  async addEmptyProblem(userId, parentFolderId, name) {
-    return this.addProblem(userId, parentFolderId, { name, statement: 'Print sum of two numbers.' });
-  },
+  // async getContentGeneratorType(profileId) {
+  //   await sleep();
+  //   return this.getContentGeneratorTypeImpl(profileId);
+  // },
 
-  getContentGeneratorTypeImpl(profileId) {
-    let type = null;
-    db.users.forEach((user) => {
-      if (user.id === profileId) {
-        type = 'user';
-      }
-    });
-    db.teams.forEach((team) => {
-      if (team.id === profileId) {
-        type = 'team';
-      }
-    });
-    db.systems.forEach((system) => {
-      if (system.id === profileId) {
-        type = 'system';
-      }
-    });
-    return type;
-  },
-
-  async getContentGeneratorType(profileId) {
-    await sleep();
-    return this.getContentGeneratorTypeImpl(profileId);
-  },
-
-  canEditImpl(editorId, ownerId) {
-    if (editorId === null || editorId === undefined) {
-      return false;
-    }
-
-    const editorType = this.getContentGeneratorTypeImpl(editorId);
-    const ownerType = this.getContentGeneratorTypeImpl(ownerId);
-
-    if (editorType === 'user' && ownerType === 'team') {
-      return this.getUserImpl(ownerId).members.indexOf(editorType) !== -1;
-    }
-
+  async canEdit(editorId, ownerId) {
     return editorId === ownerId;
   },
 
-  async canEdit(editorId, ownerId) {
-    await sleep();
-    return this.canEditImpl(editorId, ownerId);
-  },
-
-  deleteProblemImpl(ownerId, problemId) {
-    db.folders.forEach((folder) => {
-      let itemIndex = -1;
-      let curIndex = 0;
-      folder.items.forEach((item) => {
-        if (item.id === problemId) {
-          itemIndex = curIndex;
-        }
-        curIndex += 1;
-      });
-      if (itemIndex !== -1) {
-        folder.items.splice(itemIndex, 1);
-      }
-    });
-    return true;
-  },
-
-  async deleteProblem(ownerId, problemId) {
-    await sleep();
-    this.deleteProblemImpl(ownerId, problemId);
-  },
-
-  createProfileImpl(profile) {
-    const newId = this.makeid(6);
-    const folderId = this.makeid(6);
-    if (profile.type === 'user') {
-      db.users.push({
-        id: newId,
-        type: 'user',
-        registrationDate: new Date(),
-        name: profile.name,
-        password: profile.password,
-        avatarPath: 'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-        bio: null,
-        contacts: [],
-        following: [],
-        followers: [],
-        teams: [],
-        root: folderId,
-        activity: [],
-        problems: [],
-      });
-    } else if (profile.type === 'team') {
-      db.teams.push(
-        {
-          id: newId,
-          type: 'team',
-          registrationDate: new Date(),
-          name: profile.name,
-          password: profile.password,
-          avatarPath: 'https://cdn.raceroster.com/assets/images/team-placeholder.png',
-          members: [],
-          bio: null,
-          followers: [],
-          root: folderId,
-          activity: [],
-          problems: [],
-        },
-      );
-    } else if (profile.type === 'system') {
-      db.systems.push({
-        id: newId,
-        type: 'system',
-        registrationDate: new Date(),
-        name: profile.name,
-        avatarPath: 'https://i.kym-cdn.com/photos/images/newsfeed/001/996/641/bc2.jpg',
-        origin: null,
-        root: folderId,
-        activity: [],
-        problems: [],
-      });
-    } else {
-      throw Error(`Unknown profile type: ${profile.type}`);
-    }
-    db.folders.push({
-      id: folderId,
-      parent: null,
-      name: profile.name,
-      owner: newId,
-      items: [],
-    });
-    return { id: newId, root: folderId };
+  async deleteProblem(problemId) {
+    return this.getJSON(this.url.problem(problemId), 'DELETE');
   },
 
   async createProfile(profile) {
-    await sleep();
-    return this.createProfileImpl(profile);
-  },
-
-  editProfileImpl(profileId, profile) {
-    let success = false;
-    db.users.forEach(
-      (user) => {
-        if (user.id === profileId) {
-          Object.assign(user, profile);
-          success = true;
-        }
-      },
-    );
-    db.teams.forEach(
-      (team) => {
-        if (team.id === profileId) {
-          Object.assign(team, profile);
-          success = true;
-        }
-      },
-    );
-    db.systems.forEach(
-      (system) => {
-        if (system.id === profileId) {
-          Object.assign(system, profile);
-          success = true;
-        }
-      },
-    );
-    if (!success) {
-      throw Error(`Profile with id ${profileId} not found`);
+    if (profile.type === 'user') {
+      return this.getJSON(this.url.newUser(), 'POST', profile);
+    } if (profile.type === 'team') {
+      return this.getJSON(this.url.newTeam(), 'POST', profile);
+    } if (profile.type === 'judge') {
+      return this.getJSON(this.url.newJudge(), 'POST', profile);
     }
+    throw Error(`Unknown profile type: ${profile.type}`);
   },
 
-  async editProfile(profileId, profile) {
-    await sleep();
-    return this.editProfileImpl(profileId, profile);
+  async editProfile(profileType, profileId, profile) {
+    return this.queryProfile(profileType, profileId, 'PATCH', profile);
   },
 
-  searchContentImpl(query, contentTypes) {
-    const result = [];
-    contentTypes.forEach((contentType) => {
-      if (contentType === 'user') {
-        db.users.forEach((user) => {
-          if (user.name.startsWith(query) || user.id.startsWith(query)) {
-            result.push({ id: user.id, name: user.name });
-          }
-        });
-      }
-      if (contentType === 'team') {
-        db.teams.forEach((user) => {
-          if (user.name.startsWith(query) || user.id.startsWith(query)) {
-            result.push({ id: user.id, name: user.name });
-          }
-        });
-      }
-      if (contentType === 'system') {
-        db.systems.forEach((user) => {
-          if (user.name.startsWith(query) || user.id.startsWith(query)) {
-            result.push({ id: user.id, name: user.name });
-          }
-        });
-      }
-    });
-    return result;
+  async getProblemSubmissions(problemId) {
+    return this.getJSON(this.url.problemSubmissions(problemId), 'GET');
   },
 
-  async searchContent(query, contentTypes) {
-    await sleep();
-    return this.searchContentImpl(query, contentTypes);
-  },
+  // async searchContent(query, contentTypes) {
+  //   await sleep();
+  //   return this.searchContentImpl(query, contentTypes);
+  // },
 
-  getTeamMembersImpl(teamId) {
-    const members = [];
-    const user = this.getUserImpl(teamId);
-    if (user.type !== 'team') {
-      throw Error(`Not a team: ${teamId}`);
-    }
-    const membersIds = this.getUserImpl(teamId).members;
-    membersIds.forEach((memberId) => {
-      members.push(this.getUserImpl(memberId));
-    });
-    return members;
-  },
-
-  async getTeamMembers(teamId) {
-    await sleep();
-    return this.getTeamMembersImpl(teamId);
-  },
+  // async getTeamMembers(teamId) {
+  //   await sleep();
+  //   return this.getTeamMembersImpl(teamId);
+  // },
 };
 
 export default Backend;

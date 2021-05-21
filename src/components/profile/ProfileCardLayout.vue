@@ -9,7 +9,7 @@
               <b>{{ user.data.name }}</b>
             </router-link>
             <b-icon icon="chevron-right" scale="0.8" />
-            <router-link :to="`/profile/${userId}/archive/${user.data.root}`"
+            <router-link :to="`/profile/${userId}/archive/${user.data.rootFolderId}`"
               >Archive</router-link
             >
           </div>

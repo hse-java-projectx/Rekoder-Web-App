@@ -106,7 +106,7 @@ export default {
   },
 
   created() {
-    Backend.getUser(this.systemId)
+    Backend.getUser(this.systemId, 'judge')
       .then((user) => {
         this.userRequest = {
           recieved: true,
@@ -132,7 +132,7 @@ export default {
         valid: null,
         feedback: null,
       };
-      Backend.editProfile(this.systemId, {
+      Backend.editProfile('judge', this.systemId, {
         name: this.form.name.value,
         avatarPath: this.form.avatarPath.path,
         origin: this.form.origin.value,

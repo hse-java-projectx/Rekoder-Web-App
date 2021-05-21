@@ -1,12 +1,10 @@
 <template>
-  <b-list-group-item class="d-flex justify-content-between dir-item">
-    <div>
-      <span class="mr-2">
-        <b-icon v-if="isDirectory" icon="folder"></b-icon>
-        <b-icon v-else icon="file-earmark-code"></b-icon>
-      </span>
-      <router-link :to="link"> {{ name }} </router-link>
-    </div>
+  <b-list-group-item class="dir-item">
+    <span>
+      <b-icon v-if="isDirectory" icon="folder" class="mr-2" />
+      <b-icon v-else icon="file-earmark-code" class="mr-2" />
+      <router-link class="hide-overflow" :to="link"> {{ name }} </router-link>
+    </span>
   </b-list-group-item>
 </template>
 
