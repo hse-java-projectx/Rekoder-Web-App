@@ -25,7 +25,7 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!subfolders.recieved" />
-          <b-list-group v-else>
+          <b-list-group class="scroll" v-else>
             <b-form
               v-if="newFolder.showInput"
               class="my-2"
@@ -100,13 +100,13 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!problems.recieved" />
-          <b-list-group v-else>
+          <b-list-group class="scroll" v-else>
             <b-form
               v-if="newProblem.showInput"
               class="my-2"
               @reset.prevent="onResetNew('newProblem')"
               @submit.prevent="
-                onSubmitNew('newProblem', 'createProblem', 'newProblem')
+                onSubmitNew('newProblem', 'createProblem', 'problems')
               "
             >
               <b-input-group>
@@ -152,7 +152,7 @@
               :key="item.id"
               :name="item.name"
               :isDirectory="false"
-              :link="`/problem/${item.id}`"
+              :link="`/problem/${item.id}?view=statement`"
             />
           </b-list-group>
         </div>
@@ -406,4 +406,8 @@ export default {
 
 .no-hide
   display: inline-block
+
+.scroll
+  overflow-y: auto
+  max-height: 60vh
 </style>

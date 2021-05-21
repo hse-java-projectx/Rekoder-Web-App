@@ -9,29 +9,55 @@
           <slot name="under-solve" />
         </div>
         <hr />
-        <span class="big-font"> <b> Statement </b> </span>
-        <div class="statement p-0 p-md-3">
-          <Math :safe="false" :formula="problem.statement" :options="mathJaxOptions" />
-        </div>
-        <span class="big-font"> <b> Input format </b> </span>
         <div class="statement p-0 p-md-3">
           <Math
             :safe="false"
-            :formula="problem.inputFormat"
+            :formula="problem.statement"
             :options="mathJaxOptions"
           />
         </div>
-        <span class="big-font"> <b> Output format </b> </span>
-        <div class="statement p-0 p-md-3">
-          <Math
-            :safe="false"
-            :formula="problem.outputFormat"
-            :options="mathJaxOptions"
-          />
+        <div
+          v-if="
+            !(problem.inputFormat === undefined || problem.inputFormat === null)
+          "
+        >
+          <span class="big-font"> <b> Input format </b> </span>
+          <div class="statement p-0 p-md-3">
+            <Math
+              :safe="false"
+              :formula="problem.inputFormat"
+              :options="mathJaxOptions"
+            />
+          </div>
         </div>
-        <span class="big-font"> <b> Examples </b> </span>
-        <div class="statement p-0 p-md-3">
-          <b-table hover :items="problem.tests" />
+        <div
+          v-if="
+            !(
+              problem.outputFormat === undefined ||
+              problem.outputFormat === null
+            )
+          "
+        >
+          <span class="big-font"> <b> Output format </b> </span>
+          <div class="statement p-0 p-md-3">
+            <Math
+              :safe="false"
+              :formula="problem.outputFormat"
+              :options="mathJaxOptions"
+            />
+          </div>
+        </div>
+        <div
+          v-if="
+            problem.tests !== null &&
+            problem.tests !== undefined &&
+            problem.tests.length !== 0
+          "
+        >
+          <span class="big-font"> <b> Examples </b> </span>
+          <div class="statement monospace p-0 p-md-3">
+            <b-table hover :items="problem.tests" />
+          </div>
         </div>
       </div>
     </div>
@@ -66,6 +92,9 @@ export default {
 <style lang="sass">
 @import "@/style/bootstrap-custom.scss"
 @import "@/../node_modules/bootstrap/scss/bootstrap.scss"
+
+.monospace
+  font-family: monospace
 
 .problem-name
   font-size: 20pt
