@@ -7,7 +7,7 @@
       <br />
     </div>
     <b-row>
-      <b-col cols="12" md="5">
+      <b-col cols="12" :md="foldersShow.cols" :class="foldersShow.type">
         <div class="page-item-container">
           <b-row>
             <b-col cols="auto" class="mr-auto">
@@ -82,7 +82,7 @@
           </b-list-group>
         </div>
       </b-col>
-      <b-col cols="12" md="7">
+      <b-col cols="12" :md="problemsShow.cols" :class="problemsShow.type">
         <div class="page-item-container">
           <b-row>
             <b-col cols="auto" class="mr-auto">
@@ -174,6 +174,7 @@ import NothingToShow from '@/components/NothingToShow.vue';
 export default {
   props: {
     showPath: Boolean,
+    propFolderId: String,
   },
 
   data() {
@@ -279,9 +280,46 @@ export default {
     },
 
     archiveFolderId() {
+      if (!(this.propFolderId === undefined || this.propFolderId === null)) {
+        return this.propFolderId;
+      }
       return this.routeFolderId === undefined || this.routeFolderId === null
         ? this.archiveRoot
         : this.routeFolderId;
+    },
+
+    problemsEmpty() {
+      return this.problems.recieved ? this.problems.data.length === 0 : true;
+    },
+
+    subfoldersEmpty() {
+      return this.subfolders.recieved ? this.subfolders.data.length === 0 : true;
+    },
+
+    problemsShow() {
+      if (this.isFolderEditable) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (!this.problems.recieved) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (this.problemsEmpty) {
+        return { cols: 0, type: 'hide' };
+      }
+      return this.subfoldersEmpty ? { cols: 12, type: 'no-hide' } : { cols: 6, type: 'no-hide' };
+    },
+
+    foldersShow() {
+      if (this.isFolderEditable) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (!this.subfolders.recieved) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (this.subfoldersEmpty) {
+        return { cols: 0, type: 'hide' };
+      }
+      return this.problemsEmpty ? { cols: 12, type: 'no-hide' } : { cols: 6, type: 'no-hide' };
     },
   },
 
@@ -362,4 +400,10 @@ export default {
 <style lang="sass" scoped>
 @import "@/style/bootstrap-custom.scss"
 @import "@/../node_modules/bootstrap/scss/bootstrap.scss"
+
+.hide
+  display: none
+
+.no-hide
+  display: inline-block
 </style>

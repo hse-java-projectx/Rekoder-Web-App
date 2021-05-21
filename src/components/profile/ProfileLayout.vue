@@ -23,11 +23,11 @@
                     <i>{{ bio }}</i>
                   </div>
                   <div class="my-3">
-                    <div v-for="{ key, value, ref } in contacts" :key="key">
-                      <b> {{ key }}: </b>
-                      <router-link :to="ref" class="text-primary">
-                        <span class="profile-bio"> {{ value }} </span>
-                      </router-link>
+                    <div v-for="contact in contacts" :key="contact.name">
+                      <strong> {{ contact.name }} </strong>:
+                      <b-link :href="contact.ref">
+                        {{ contact.short }}
+                      </b-link>
                     </div>
                   </div>
                 </b-col>

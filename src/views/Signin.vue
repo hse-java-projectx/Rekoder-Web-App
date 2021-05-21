@@ -13,6 +13,7 @@
                   v-model="form.userId"
                   placeholder="Enter username"
                   :state="validation"
+                  autocomplete="username"
                   required
                 ></b-form-input>
               </b-form-group>
@@ -22,6 +23,7 @@
                   type="password"
                   placeholder="Enter password"
                   :state="validation"
+                  autocomplete="current-password"
                   required
                 ></b-form-input>
               </b-form-group>

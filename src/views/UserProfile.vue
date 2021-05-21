@@ -9,7 +9,7 @@
       <ProfileLayout
         v-else
         :statRefs="processedUserInformation.statRefs"
-        :contacts="userRequest.data.contacts"
+        :contacts="processedUserInformation.contacts"
         :name="userRequest.data.name"
         :subname="userRequest.data.name"
         :avatarAlt="`${userRequest.data.name} profile avatar`"
@@ -20,7 +20,11 @@
           <FeedBlock name="Archive">
             <template #content>
               <HorCylon v-if="!userRequest.recieved" />
-              <ArchiveComponent v-else :showPath="false" />
+              <ArchiveComponent
+                v-else
+                :showPath="false"
+                :propFolderId="userRequest.data.rootFolderId.toString()"
+              />
             </template>
           </FeedBlock>
           <FeedBlock name="Recent activity">
@@ -144,7 +148,7 @@ export default {
     },
 
     notSignedAndNotQualified() {
-      return (this.routeUserId === null || this.routeUserId === undefined) && !this.isSigned;
+      return (this.rotueProfileId === null || this.rotueProfileId === undefined) && !this.isSigned;
     },
 
     pageProfileType() {
@@ -170,6 +174,11 @@ export default {
     onClickSignOut() {
       this.$store.commit('signout');
       this.$router.push({ path: '/signin' });
+    },
+
+    validateEmail(email) {
+      const re = /\S+@\S+\.\S+/;
+      return re.test(email);
     },
   },
 
@@ -214,11 +223,20 @@ export default {
               ref: `/teams/${this.pageProfileId}`,
             },
           );
-          user.contacts.forEach((contact) => {
+          Object.keys(user.contacts).forEach((contact) => {
+            let short = user.contacts[contact].ref;
+            let { ref } = user.contacts[contact];
+            if (this.validateEmail(ref)) {
+              short = ref;
+              ref = `mailto:${ref}`;
+            } else {
+              const parts = ref.split('/');
+              short = `@${parts[parts.length - 1]}`;
+            }
             this.processedUserInformation.contacts.push({
-              key: contact.name,
-              value: contact.ref,
-              ref: contact.ref,
+              name: user.contacts[contact].name,
+              ref,
+              short,
             });
           });
         } else if (this.pageProfileType === 'team') {
@@ -228,9 +246,8 @@ export default {
             ref: `/members/${this.pageProfileId}`,
           });
         }
-        this.userRequest.data.contacts = [];
         if (this.pageProfileType === 'judge') {
-          this.userRequest.data.contacts.push({ name: 'origin', ref: user.origin });
+          this.processedUserInformation.contacts.push({ name: 'origin', ref: user.origin });
         }
       })
       .catch((er) => {
