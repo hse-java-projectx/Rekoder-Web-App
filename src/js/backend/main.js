@@ -69,7 +69,8 @@ const Backend = {
   },
 
   async getHttpResponse(url, type, data, headers) {
-    console.log(`URL: ${url}, TYPE: ${type}, HEADERS: ${JSON.stringify(headers)} DATA: ${JSON.stringify(data)}`);
+    // console.log(`URL: ${url}, TYPE: ${type}, HEADERS:
+    // ${JSON.stringify(headers)} DATA: ${JSON.stringify(data)}`);
     let request = null;
     if (type === 'GET') {
       request = await axios.get(url, { headers });
@@ -90,7 +91,7 @@ const Backend = {
     if (request.status !== 200 && request.status !== 204) {
       throw Error(`Request: ${type} ${url} Status: ${request.status}`);
     }
-    console.log(`Recieved: ${JSON.stringify(request)}`);
+    // console.log(`Recieved: ${JSON.stringify(request)}`);
     return request;
   },
 

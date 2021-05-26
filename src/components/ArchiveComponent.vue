@@ -433,7 +433,6 @@ export default {
     processPromise(promise, field) {
       promise
         .then((data) => {
-          console.log(`Processed promise, field: ${field}, data: ${data}`);
           this[field] = {
             recieved: true,
             data,
