@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 import axios from 'axios';
 
 const Backend = {
@@ -47,6 +49,9 @@ const Backend = {
     },
     folderFolders(folderId) {
       return `${this.domain}/folders/${folderId}/folders`;
+    },
+    folderRootPath(folderId) {
+      return `${this.domain}/folders/${folderId}/path-to-root`;
     },
     folderProblms(folderId) {
       return `${this.domain}/folders/${folderId}/problems`;
@@ -149,8 +154,8 @@ const Backend = {
     return this.getJSON(this.url.folderProblms(folderId), 'GET');
   },
 
-  async getPathToRoot(/* folderId */) {
-    return [{ link: '/', name: 'Path' }, { link: '/', name: 'To' }, { link: '/', name: 'Folder' }];
+  async getPathToRoot(folderId) {
+    return this.getJSON(this.url.folderRootPath(folderId), 'GET');
   },
 
   async getUserFollowers(/* userId */) {
@@ -430,6 +435,22 @@ const Backend = {
       this.withToken(accessToken),
     );
   },
+
+  hashCodeImpl(s) {
+    return s.split('').reduce((a, b) => {
+      /* eslint-disable-next-line no-bitwise */
+      a = (a << 5) - a + b.charCodeAt(0);
+      // eslint-disable-next-line no-bitwise
+      return (a & (a * 123)) % 31;
+    }, 0);
+  },
+
+  variant(handle) {
+    const vars = ['primary', 'info', 'success', 'danger', 'secondary', 'light', 'dark'];
+    const id = this.hashCodeImpl(handle) % vars.length;
+    return vars[id];
+  },
+
 };
 
 export default Backend;

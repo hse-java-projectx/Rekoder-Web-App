@@ -5,8 +5,14 @@
     <div v-if="showPath" class="big-font">
       <b-row>
         <b-col>
-          <HorCylon v-if="!path.recieved" />
-          <HeaderPath v-else :path="path.data" />
+          <b-skeleton-wrapper :loading="!path.recieved">
+            <template #loading>
+              <HorCylon />
+            </template>
+            <div>
+              <HeaderPath :path="path.data" />
+            </div>
+          </b-skeleton-wrapper>
         </b-col>
         <b-col class="text-right">
           <div
@@ -305,9 +311,6 @@ export default {
   },
 
   created() {
-    if (this.showPath) {
-      this.processPromise(Backend.getPathToRoot(this.archiveFolderId), 'path');
-    }
     this.processPromise(Backend.getFolderProblems(this.archiveFolderId), 'problems');
 
     Backend.getFolder(this.archiveFolderId)
@@ -316,6 +319,30 @@ export default {
           recieved: true,
           data: folder,
         };
+        if (this.showPath) {
+          Backend.getPathToRoot(this.archiveFolderId)
+            .then((path) => {
+              // const extendedPath = path;
+              // extendedPath.push(folder);
+              const processedPath = [];
+              path.forEach((pathItem) => {
+                processedPath.push({
+                  link: `/archive/${pathItem.id}`,
+                  name: pathItem.name,
+                });
+              });
+              this.path = {
+                recieved: true,
+                data: processedPath,
+              };
+            })
+            .catch((er) => {
+              this.error = {
+                has: true,
+                message: er.toString(),
+              };
+            });
+        }
         if (this.storageIsSigned) {
           this.processPromise(
             Backend.canEdit(this.storageUserId, {
@@ -433,7 +460,7 @@ export default {
       Backend.deleteFolder(this.archiveFolderId, this.storageAccessToken)
         .then(() => {
           this.deleteFolder.submitted = false;
-          this.$router.push('/profile');
+          this.$router.push(`/archive/${this.folder.data.parentFolderId}`);
         })
         .catch((er) => {
           this.deleteFolder.submitted = false;

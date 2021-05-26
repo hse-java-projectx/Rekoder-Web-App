@@ -20,7 +20,7 @@
             ? userRequest.data.id
             : userRequest.data.name
         "
-        :subname="`@${userRequest.data.id}`"
+        :subname="`${userRequest.data.id}`"
         :avatarAlt="`${userRequest.data.name} profile avatar`"
         :avatarPath="userRequest.data.avatarPath"
         :bio="userRequest.data.bio"

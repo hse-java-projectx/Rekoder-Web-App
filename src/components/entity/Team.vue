@@ -2,9 +2,11 @@
   <span>
     <b-row>
       <b-col cols="auto">
+        <router-link :to="`/profile/team/${data.id}`">
         <b-avatar :variant="variant(data.id)"
                   :text="data.id.substr(0, 2)"
                   :src="data.avatarPath" size="3rem"/>
+          </router-link>
         <div>
         </div>
       </b-col>
@@ -23,10 +25,9 @@
   </span>
 </template>
 <script>
-export default {
-  /* eslint-disable no-bitwise */
-  /* eslint-disable no-param-reassign */
+import Backend from '@/js/backend/main';
 
+export default {
   props: {
     data: { type: Object, required: true },
   },
@@ -42,16 +43,8 @@ export default {
   },
 
   methods: {
-    hashCode(s) {
-      return s.split('').reduce((a, b) => {
-        a = (a << 5) - a + b.charCodeAt(0);
-        return (a & (a * 123)) % 31;
-      }, 0);
-    },
-
-    variant(handle) {
-      const id = this.hashCode(handle);
-      return ['primary', 'info', 'success', 'danger', 'secondary', 'light', 'dark'][id];
+    variant(s) {
+      return Backend.variant(s);
     },
   },
 };

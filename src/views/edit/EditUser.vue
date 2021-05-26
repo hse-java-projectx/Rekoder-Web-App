@@ -88,12 +88,12 @@
                     <b-icon icon="plus" scale="1.3" />
                   </b-button>
                 </b-col>
-                <b-col cols="3" md="2" class="my-auto pr-0">
+                <b-col cols="auto" class="my-auto pr-0">
                   <b-input
                     trim
                     v-model="form.newContact.value"
                     size="sm"
-                    placeholder="Enter new contact"
+                    placeholder="Enter new contact name"
                   />
                 </b-col>
               </b-row>
