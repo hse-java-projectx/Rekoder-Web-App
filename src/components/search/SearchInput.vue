@@ -53,8 +53,8 @@ export default {
   components: { HorCylon },
 
   props: {
-    contentTypes: Array[String],
-    locations: Array[Object],
+    contentTypes: { type: Array[String], required: true },
+    locations: { type: Array[Object], required: true },
     inline: {
       type: Boolean,
       default: false,
@@ -94,9 +94,10 @@ export default {
 
     searchPlaceholder() {
       let placeholder = 'Search';
-      console.log(this.contentTypes);
-      console.log(this.locations);
       let anyLeft = this.contentTypes.length;
+      if (anyLeft !== 0) {
+        placeholder += ':';
+      }
       this.contentTypes.forEach((contentType) => {
         placeholder += ` ${contentType}`;
         anyLeft -= 1;
@@ -112,7 +113,7 @@ export default {
     onBlur() {
       setTimeout(() => {
         this.inputFocused = false;
-      }, 100);
+      }, 200);
     },
 
     onClearOption() {
@@ -128,12 +129,17 @@ export default {
       if (this.query.value.length === 0 || this.searchRequest.waiting) {
         return;
       }
-      if (this.locations.length !== 1) {
-        throw Error('Locations length for inline mode must be 1');
+      if (this.locations.length >= 1) {
+        throw Error('Locations length for inline can not be greater than 1');
       }
       this.searchRequest.waiting = true;
       this.searchRequest.recieved = false;
-      Backend.searchContent(this.query.value, this.contentTypes, this.locations[0])
+      Backend.searchContent(
+        this.query.value,
+        this.contentTypes,
+        this.locations.length === 0 ? null : this.locations[0],
+        this.inlineLimit,
+      )
         .then((results) => {
           this.searchRequest.recieved = true;
           this.searchRequest.results = results;
@@ -151,10 +157,11 @@ export default {
     },
 
     searchResult(result) {
-      return this.contentTypes.length === 0 ? result.id : `${result.entity}:${result.id}`;
+      return this.contentTypes.length === 1 ? result.id : `${result.entity}:${result.id}`;
     },
 
     onSelectResult(result) {
+      this.query.value = this.searchResult(result);
       this.$emit('handleSearchResult', result);
     },
 

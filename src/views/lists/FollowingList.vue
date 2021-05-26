@@ -1,25 +1,32 @@
 <template>
-  <SingleView>
-    <template #header>
-      <b class="big-font"> Following </b>
-    </template>
-    <template #content>
-      <HorCylon v-if="!following.recieved" />
-      <NotFound v-else-if="error.hasError" :message="error.message" />
-      <NothingToShow v-else-if="following.data.length === 0" message="Followees list is empty" />
-      <b-list-group v-else>
-        <b-list-group-item
-          v-for="followee in following.data"
-          :key="followee.id"
-        >
-          <ListItem :team="getFollowingObjectFromFollowing(followee)" />
-        </b-list-group-item>
-      </b-list-group>
-    </template>
-    <template #additional>
-      <ProfileCardLayout :userId="routeUserId" />
-    </template>
-  </SingleView>
+  <div>
+    <SearchRegister entity="user" />
+    <SearchLocationRegister entity="user" :id="routeUserId" />
+    <SingleView>
+      <template #header>
+        <b class="big-font"> Following </b>
+      </template>
+      <template #content>
+        <HorCylon v-if="!following.recieved" />
+        <NotFound v-else-if="error.hasError" :message="error.message" />
+        <NothingToShow
+          v-else-if="following.data.length === 0"
+          message="Followees list is empty"
+        />
+        <b-list-group v-else>
+          <b-list-group-item
+            v-for="followee in following.data"
+            :key="followee.id"
+          >
+            <ListItem :team="getFollowingObjectFromFollowing(followee)" />
+          </b-list-group-item>
+        </b-list-group>
+      </template>
+      <template #additional>
+        <ProfileCardLayout :userId="routeUserId" />
+      </template>
+    </SingleView>
+  </div>
 </template>
 <script>
 import Backend from '@/js/backend/main';
@@ -29,6 +36,8 @@ import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
 import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 import NothingToShow from '@/components/NothingToShow.vue';
+import SearchRegister from '@/components/search/registers/Entity.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
 
 export default {
   data() {
@@ -52,6 +61,8 @@ export default {
     NotFound,
     ProfileCardLayout,
     NothingToShow,
+    SearchRegister,
+    SearchLocationRegister,
   },
 
   created() {

@@ -6,9 +6,8 @@
         <!-- Name -->
         <b-form-group label="Name" label-cols-sm="2">
           <b-form-input
-            trim
             v-model="form.name.value"
-            placeholder="Enter your name"
+            placeholder="Enter your team name"
             :state="form.name.valid"
             required
           ></b-form-input>
@@ -33,7 +32,6 @@
         <!-- Bio -->
         <b-form-group label="Bio" label-cols-sm="2">
           <b-form-input
-            trim
             v-model="form.bio.value"
             placeholder="Tell about your team"
             :state="form.bio.valid"
@@ -58,6 +56,7 @@
                     size="sm"
                     class="rounded-circle"
                     @click.prevent="onClickRemoveMember(memberId)"
+                    :disabled="form.newMember.updating"
                   >
                     <b-icon icon="x" scale="1.3" />
                   </b-button>
@@ -75,12 +74,29 @@
                     size="sm"
                     class="rounded-circle"
                     @click.prevent="onClickAddMember"
+                    :disabled="form.newMember.updating"
                   >
                     <b-icon icon="plus" scale="1.3" />
                   </b-button>
                 </b-col>
                 <b-col cols="6" md="4" class="my-auto pr-0">
-                  <Search :contentTypes="['user']" :result="form.newMember" />
+                  <!-- <Search
+                    :contentTypes="['user']"
+                    :locations="[]"
+                    inline
+                    :inlineLimit="5"
+                    v-on:handleSearchResult="onHandleSearchResult"
+                  /> -->
+                  <b-input
+                    :disabled="form.newMember.updating"
+                    autocomplete="username"
+                    v-model="form.newMember.value"
+                    placeholder="Enter new member id"
+                    :state="form.newMember.valid"
+                  />
+                  <b-form-invalid-feedback :state="form.newMember.valid">
+                    {{ form.newMember.feedback }}
+                  </b-form-invalid-feedback>
                 </b-col>
               </b-row>
             </b-list-group-item>
@@ -105,19 +121,18 @@
 </template>
 <script>
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 import HorCylon from '@/components/animated/HorCylon.vue';
-import Search from '@/components/search/SearchInput.vue';
+// import Search from '@/components/search/SearchInput.vue';
 
 export default {
-  components: { HorCylon, Search },
-
-  props: {
-    teamId: String,
-  },
+  components: { HorCylon /* Search */ },
 
   data() {
     return {
+      teamId: this.$route.params.profileId,
+
       form: {
         name: {
           value: null,
@@ -147,6 +162,7 @@ export default {
         newMember: {
           valid: null,
           value: null,
+          updating: false,
         },
 
         submitRequest: {
@@ -164,7 +180,8 @@ export default {
   },
 
   created() {
-    Backend.getUser('team', this.teamId)
+    console.log('This page id: ', this.teamId);
+    Backend.getUser({ type: 'team', id: this.teamId })
       .then((team) => {
         this.teamRequest = {
           recieved: true,
@@ -174,13 +191,17 @@ export default {
         this.form.avatarPath.path = team.avatarPath;
         this.form.bio.value = team.bio;
         this.form.members.value = [];
-        team.members.forEach((memberId) => {
+        team.memberIds.forEach((memberId) => {
           this.form.members.value.push(memberId);
         });
       })
       .catch((er) => {
         this.$emit('editError', er);
       });
+  },
+
+  computed: {
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
   },
 
   methods: {
@@ -194,18 +215,24 @@ export default {
         valid: null,
         feedback: null,
       };
-      Backend.editProfile('team', this.teamId, {
-        name: this.form.name.value,
-        avatarPath: this.form.avatarPath.path,
-        bio: this.form.bio.value,
-        membersId: this.form.members.value,
-      })
+      Backend.editProfile(
+        { type: 'team', id: this.teamId },
+        {
+          name: this.form.name.value,
+          avatarPath: this.form.avatarPath.path,
+          bio: this.form.bio.value,
+        },
+        this.storageAccessToken,
+      )
         .then(() => {
           this.form.submitRequest = {
             recieved: true,
             valid: true,
             feedback: 'All changes has been saved',
           };
+          setTimeout(() => {
+            this.form.submitRequest.feedback = null;
+          }, 3000);
         })
         .catch((er) => {
           this.form.submitRequest = {
@@ -224,17 +251,44 @@ export default {
     },
 
     onClickRemoveMember(memberName) {
-      const index = this.form.members.value.indexOf(memberName);
-      this.form.members.value.splice(index, 1);
+      this.form.newMember.updating = true;
+      Backend.removeTeamMember(this.teamId, memberName, this.storageAccessToken)
+        .then(() => {
+          const index = this.form.members.value.indexOf(memberName);
+          this.form.members.value.splice(index, 1);
+        })
+        .catch((er) => {
+          this.form.newMember.valid = false;
+          this.form.newMember.feedback = er.toString();
+        })
+        .finally(() => {
+          this.form.newMember.updating = false;
+        });
     },
 
     onClickAddMember() {
-      if (this.form.newMember.valid) {
+      if (this.form.newMember.value && this.form.newMember.value.length !== 0) {
         const newMember = this.form.newMember.value;
-        this.form.newMember.value = {};
-        this.form.newMember.valid = false;
-        this.form.members.value.push(newMember.id);
+        this.form.newMember.updating = true;
+        Backend.addTeamMember(this.teamId, newMember, this.storageAccessToken)
+          .then(() => {
+            this.form.newMember.value = null;
+            this.form.newMember.valid = true;
+            this.form.members.value.push(newMember);
+          })
+          .catch((er) => {
+            this.form.newMember.value = null;
+            this.form.newMember.valid = false;
+            this.form.newMember.feedback = er.toString();
+          })
+          .finally(() => {
+            this.form.newMember.updating = false;
+          });
       }
+    },
+
+    onHandleSearchResult(result) {
+      this.form.newMember.value = result;
     },
   },
 };

@@ -57,6 +57,14 @@
               >
                 Edit
               </b-button>
+              <b-button
+                v-else-if="canSolve"
+                variant="outline-info"
+                @click.prevent="onClickSolve"
+                size="sm"
+              >
+                Solve
+              </b-button>
             </template>
           </Problem>
         </div>
@@ -112,29 +120,41 @@ export default {
         recieved: false,
         data: null,
       },
+      solveRequest: {
+        submitted: false,
+        feedback: null,
+      },
     };
   },
 
   created() {
-    Backend.canEdit(this.userid, this.routeUserId)
-      .then((val) => {
-        this.editRequest = {
-          recieved: true,
-          data: val,
-        };
-      })
-      .catch((er) => {
-        this.error = {
-          has: true,
-          message: er.toString(),
-        };
-      });
     Backend.getProblem(this.routeProblemId)
       .then((problem) => {
         this.problem = {
           recieved: true,
           data: problem,
         };
+        if (!this.storageIsSigned) {
+          return;
+        }
+        Backend.canEdit(this.storageUserId, {
+          id: problem.owner.id,
+          type: problem.owner.type.toLowerCase(),
+        }).then((val) => {
+          this.editRequest = {
+            recieved: true,
+            data: val,
+          };
+          if (this.editRequest.data) {
+            return;
+          }
+          Backend.canSolve(this.storageUserId, this.routeProblemId).then((responseCanSolve) => {
+            this.solveRequest = {
+              recieved: true,
+              data: responseCanSolve,
+            };
+          });
+        });
       })
       .catch((er) => {
         this.error = {
@@ -157,7 +177,11 @@ export default {
       this.$router.push(`/problem-edit/${this.routeProblemId}`);
     },
 
-    onClickClone() {},
+    onClickClone() {
+      Backend.copyProblem(this.routeProblemId, this.storageUserId);
+    },
+
+    onClickSolve() {},
   },
 
   watch: {
@@ -171,7 +195,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userid', 'isSigned']),
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser']),
 
     viewingSubmissions() {
       return this.view === 'submissions';
@@ -185,11 +209,14 @@ export default {
     submissionsLink() {
       return `/problem/${this.routeProblemId}/?view=submissions`;
     },
-    canClone() {
-      return !this.canEdit && this.isSigned;
+    canSolve() {
+      return this.solveRequest.recieved && this.solveRequest.data;
     },
     canEdit() {
       return this.editRequest.recieved && this.editRequest.data;
+    },
+    canClone() {
+      return this.storageIsSigned && !this.canSolve && !this.canEdit;
     },
   },
 };

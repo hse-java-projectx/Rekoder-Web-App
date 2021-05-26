@@ -29,7 +29,6 @@
               <b-form-textarea
                 v-model="problem.inputFormat"
                 placeholder="Enter input format"
-                required
                 debounce="100"
               ></b-form-textarea>
             </b-form-group>
@@ -37,7 +36,6 @@
               <b-form-textarea
                 v-model="problem.outputFormat"
                 placeholder="Enter output format"
-                required
                 debounce="100"
               ></b-form-textarea>
             </b-form-group>
@@ -79,7 +77,7 @@
                         </b-button>
                       </b-col>
                       <b-col col>
-                        <b-textarea required v-model="test.input"  />
+                        <b-textarea required v-model="test.input" />
                       </b-col>
                       <b-col col>
                         <b-textarea required v-model="test.output" />
@@ -149,6 +147,7 @@ import Problem from '@/views/Problem.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 export default {
   data() {
@@ -171,8 +170,8 @@ export default {
       problem: {
         name: null,
         statement: null,
-        inputFormat: null,
-        outputFormat: null,
+        inputFormat: '',
+        outputFormat: '',
         tests: [],
         newTest: { input: null, output: null },
       },
@@ -209,7 +208,7 @@ export default {
 
     onProblemDelete() {
       this.currentlySaving = true;
-      Backend.deleteProblem(this.problemId)
+      Backend.deleteProblem(this.problemId, this.storageAccessToken)
         .then(() => {
           this.currentlySaving = false;
           this.$router.push('/profile');
@@ -225,7 +224,7 @@ export default {
     onSubmit(event) {
       event.preventDefault();
       this.currentlySaving = true;
-      Backend.editProblem(this.problemId, this.problem)
+      Backend.editProblem(this.problem, this.storageAccessToken)
         .then(() => {
           this.currentlySaving = false;
           this.submissionValidFeedback = {
@@ -256,6 +255,9 @@ export default {
           message: er.toString(),
         };
       });
+  },
+  computed: {
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
   },
 };
 </script>

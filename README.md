@@ -1,4 +1,4 @@
-# Rekoder web application
+# <span style="color:#007bff"><b> Rekoder</b></span> web application
 
 This web application is the interface for interacting with the Rekoder task submission service.
 

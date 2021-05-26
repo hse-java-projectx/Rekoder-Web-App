@@ -8,12 +8,13 @@
         <b-overlay :show="showOverlay" rounded="sm">
           <div class="page-item-container" :show="showOverlay">
             <b-form @submit="onSubmit">
-              <b-form-group label="Profile Name" label-for="profile-name">
+              <b-form-group label="Username" label-for="profile-name">
                 <b-form-input
                   id="profile-name"
                   v-model="form.profileName.value"
-                  placeholder="Enter new profile name"
+                  placeholder="Enter new username"
                   :state="form.profileName.valid"
+                  autocomplete="username"
                   required
                 ></b-form-input>
                 <b-form-invalid-feedback :state="form.profileName.valid">
@@ -26,6 +27,7 @@
                   v-model="form.password.value"
                   placeholder="Enter strong password"
                   :state="form.password.valid"
+                  autocomplete="new-password"
                   type="password"
                   required
                 ></b-form-input>
@@ -42,23 +44,12 @@
                   v-model="form.password.confirm"
                   placeholder="Enter same password"
                   :state="form.password.valid"
+                  autocomplete="new-password"
                   type="password"
                   required
                 ></b-form-input>
                 <b-form-invalid-feedback :state="form.password.valid">
                   {{ form.password.invalidFeedback }}
-                </b-form-invalid-feedback>
-              </b-form-group>
-              <b-form-group label="Profile type" label-for="profile-type">
-                <b-form-select
-                  id="profile-type"
-                  v-model="form.profileType.value"
-                  :options="profileOptions"
-                  :state="form.profileType.valid"
-                  required
-                />
-                <b-form-invalid-feedback :state="form.profileType.valid">
-                  {{ form.profileType.invalidFeedback }}
                 </b-form-invalid-feedback>
               </b-form-group>
               <b-button type="submit" variant="primary">Continue</b-button>
@@ -98,23 +89,11 @@ export default {
           confirm: '',
           invalidFeedback: null,
         },
-        profileType: {
-          value: null,
-          valid: null,
-          invalidFeedback: null,
-        },
         sentRequest: {
           valid: null,
           invalidFeedback: null,
         },
       },
-
-      profileOptions: [
-        { value: null, text: 'Select profile type' },
-        { value: 'user', text: 'Personal profile' },
-        { value: 'team', text: 'Team' },
-        { value: 'judge', text: 'Judge Mirror' },
-      ],
     };
   },
 
@@ -122,21 +101,15 @@ export default {
     getFormValidation() {
       this.form.password.valid = null;
       this.form.profileName.valid = null;
-      this.form.profileType.valid = null;
       let allValid = true;
       if (this.form.password.value !== this.form.password.confirm) {
         this.form.password.valid = false;
         this.form.password.invalidFeedback = "Passwords didn't match";
         allValid = false;
       }
-      if (this.form.password.value.length < 6) {
+      if (this.form.password.value.length < 8) {
         this.form.password.valid = false;
-        this.form.password.invalidFeedback = 'Password must contain at least 6 characters';
-        allValid = false;
-      }
-      if (this.form.profileType.value === null) {
-        this.form.profileType.valid = false;
-        this.form.profileType.invalidFeedback = 'Select profile type';
+        this.form.password.invalidFeedback = 'Password must contain at least 8 characters';
         allValid = false;
       }
       return allValid;
@@ -145,27 +118,27 @@ export default {
     onValidForm() {
       this.form.sentRequest.valid = null;
       this.showOverlay = true;
-      Backend.createProfile({
-        name: this.form.profileName.value,
-        type: this.form.profileType.value,
-        password: this.form.password.value,
-      })
-        .then((profile) => {
-          this.showOverlay = false;
-          this.$store.commit({
-            type: 'signin',
-            profileType: this.form.profileType.value,
+
+      Backend.createProfile({ id: this.form.profileName.value, password: this.form.password.value })
+        .then((user) => {
+          Backend.getLoginToken({
             id: this.form.profileName.value,
-            data: profile,
-          });
-          this.$router.push({
-            path: `/edit/${this.form.profileType.value}/${this.form.profileName.value}`,
+            password: this.form.password.value,
+          }).then((accessToken) => {
+            this.$store.commit({
+              type: 'signin',
+              user,
+              accessToken,
+            });
+            this.$router.push({ path: `/edit/user/${this.form.profileName.value}` });
           });
         })
         .catch((er) => {
-          this.showOverlay = false;
           this.form.sentRequest.valid = false;
           this.form.sentRequest.invalidFeedback = er.toString();
+        })
+        .finally(() => {
+          this.showOverlay = false;
         });
     },
 

@@ -1,6 +1,6 @@
 <template>
   <div class="circular">
-    <img :src="src" :alt="alt" />
+    <b-avatar :src="src" size="4rem" />
   </div>
 </template>
 <script>
@@ -28,6 +28,4 @@ export default {
     border-radius: 50%
     height: 50pt
     width: 50pt
-    border-style: solid
-    border-color: $primary
 </style>

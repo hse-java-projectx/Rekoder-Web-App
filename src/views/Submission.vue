@@ -81,6 +81,7 @@ import ProblemLink from '@/components/links/ProblemLink.vue';
 import ProfileLink from '@/components/links/ProfileLink.vue';
 
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 import 'vue-code-highlight/themes/prism.css';
 
@@ -125,6 +126,10 @@ export default {
     ProfileLink,
   },
 
+  computed: {
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
+  },
+
   created() {
     Backend.getSubmission(this.routeSubmissionId)
       .then((submission) => {
@@ -147,7 +152,7 @@ export default {
   methods: {
     onFeedbackSelect() {
       this.form.disabled = true;
-      Backend.editSubmission(this.routeSubmissionId, this.submission.data)
+      Backend.editSubmission(this.submission.data, this.storageAccessToken)
         .then((submission) => {
           this.submission.data = submission;
           this.form.valid = true;

@@ -2,7 +2,7 @@
   <SingleView>
     <template #header>
       <NotFound v-if="error.has" :message="error.message" />
-      <span v-if="!isSigned" class="big-font">
+      <span v-if="!storageIsSigned" class="big-font">
         <router-link to="/signin">Sign in</router-link> to edit this profile
       </span>
       <span v-else class="big-font">
@@ -12,16 +12,9 @@
     <template #content>
       <div class="page-item-container">
         <HorCylon v-if="!canEditRequest.recieved" />
-        <div
-          v-else-if="!canEditRequest.canEdit"
-        >
+        <div v-else-if="!canEditRequest.canEdit">
           {{ canEditRequest.message }}
         </div>
-        <EditSystem
-          v-else-if="routeProfileType === 'judge'"
-          :systemId="routeProfileId"
-          @editError="onEditError"
-        />
         <EditTeam
           v-else-if="routeProfileType === 'team'"
           :teamId="routeProfileId"
@@ -42,7 +35,6 @@ import { mapGetters } from 'vuex';
 
 import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
-import EditSystem from '@/views/edit/EditSystem.vue';
 import EditTeam from '@/views/edit/EditTeam.vue';
 import EditUser from '@/views/edit/EditUser.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
@@ -51,7 +43,6 @@ export default {
   components: {
     SingleView,
     NotFound,
-    EditSystem,
     EditTeam,
     EditUser,
     HorCylon,
@@ -85,16 +76,20 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['isSigned', 'userid']),
+    ...mapGetters(['storageIsSigned', 'storageUser']),
   },
 
   created() {
-    Backend.canEdit(this.userid, this.routeProfileId)
+    if (!this.storageIsSigned) {
+      this.canEditRequest = { recieved: true, canEdit: false, message: 'You are not signed' };
+      return;
+    }
+    Backend.canEdit(this.storageUser.id, { id: this.routeProfileId, type: this.routeProfileType })
       .then((response) => {
         this.canEditRequest = {
           recieved: true,
           canEdit: response,
-          message: 'You don\'t have permission to edit this profile',
+          message: "You don't have permission to edit this profile",
         };
       })
       .catch((er) => {

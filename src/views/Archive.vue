@@ -4,7 +4,7 @@
     <SearchRegister entity="problem" />
     <SingleView>
       <template #content>
-        <ArchiveComponent showPath />
+        <ArchiveComponent showPath showRemote />
       </template>
     </SingleView>
   </div>

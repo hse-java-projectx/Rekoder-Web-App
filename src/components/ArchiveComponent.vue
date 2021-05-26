@@ -3,8 +3,26 @@
     <SearchLocationRegister entity="folder" :id="archiveFolderId" />
     <NotFound v-if="error.has" :message="error.message" />
     <div v-if="showPath" class="big-font">
-      <HorCylon v-if="!path.recieved" />
-      <HeaderPath v-else :path="path.data" />
+      <b-row>
+        <b-col>
+          <HorCylon v-if="!path.recieved" />
+          <HeaderPath v-else :path="path.data" />
+        </b-col>
+        <b-col class="text-right">
+          <div
+            v-if="
+              showRemote &&
+              isFolderEditable &&
+              path.recieved &&
+              path.data.length !== 1
+            "
+          >
+            <b-button variant="outline-danger" size="sm" v-b-modal.modal-delete>
+              Delete Folder
+            </b-button>
+          </div>
+        </b-col>
+      </b-row>
       <br />
     </div>
     <b-container
@@ -45,7 +63,7 @@
           <b-list-group class="scroll" v-else>
             <b-form
               v-if="newFolder.showInput"
-              class="my-2"
+              class="my-2 mx-1"
               @reset.prevent="onResetNew('newFolder')"
               @submit.prevent="
                 onSubmitNew('newFolder', 'createFolder', 'subfolders')
@@ -120,7 +138,7 @@
           <b-list-group class="scroll" v-else>
             <b-form
               v-if="newProblem.showInput"
-              class="my-2"
+              class="my-2 mx-1"
               @reset.prevent="onResetNew('newProblem')"
               @submit.prevent="
                 onSubmitNew('newProblem', 'createProblem', 'problems')
@@ -175,6 +193,26 @@
         </div>
       </b-col>
     </b-row>
+    <b-modal
+      id="modal-delete"
+      ref="modal-delete"
+      title="Delete this folder"
+      @ok="onClickDeleteFolder"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      body-text-variant="secondary"
+      :ok-disabled="deleteFolder.submitted"
+    >
+      <b-container>
+        <p>
+          This folder and all internal folders with tasks and submissions will
+          be irretrievably deleted. Are you sure you want to do this?
+        </p>
+      </b-container>
+      <b-form-invalid-feedback :state="deleteFolder.feedback === null">
+        {{ deleteFolder.feedback }}
+      </b-form-invalid-feedback>
+    </b-modal>
   </div>
 </template>
 
@@ -193,6 +231,10 @@ export default {
   props: {
     showPath: Boolean,
     propFolderId: String,
+    showRemote: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -244,6 +286,13 @@ export default {
       },
 
       submittedNewProblem: false,
+
+      submittedDelete: false,
+
+      deleteFolder: {
+        submitted: false,
+        feedback: null,
+      },
     };
   },
   components: {
@@ -267,7 +316,15 @@ export default {
           recieved: true,
           data: folder,
         };
-        this.processPromise(Backend.canEdit(this.userid, folder.ownerId), 'requestIsEditable');
+        if (this.storageIsSigned) {
+          this.processPromise(
+            Backend.canEdit(this.storageUserId, {
+              id: folder.owner.id,
+              type: folder.owner.type.toLowerCase(),
+            }),
+            'requestIsEditable',
+          );
+        }
       })
       .catch((er) => {
         this.error = {
@@ -292,7 +349,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userid', 'archiveRoot']),
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
 
     isFolderEditable() {
       return this.requestIsEditable.recieved && this.requestIsEditable.data;
@@ -303,7 +360,7 @@ export default {
         return this.propFolderId;
       }
       return this.routeFolderId === undefined || this.routeFolderId === null
-        ? this.archiveRoot
+        ? this.storageUser.rootFolderId
         : this.routeFolderId;
     },
 
@@ -349,6 +406,7 @@ export default {
     processPromise(promise, field) {
       promise
         .then((data) => {
+          console.log(`Processed promise, field: ${field}, data: ${data}`);
           this[field] = {
             recieved: true,
             data,
@@ -368,6 +426,19 @@ export default {
 
     onClickCreateProblem() {
       this.newProblem.showInput = true;
+    },
+
+    onClickDeleteFolder() {
+      this.deleteFolder.submitted = true;
+      Backend.deleteFolder(this.archiveFolderId, this.storageAccessToken)
+        .then(() => {
+          this.deleteFolder.submitted = false;
+          this.$router.push('/profile');
+        })
+        .catch((er) => {
+          this.deleteFolder.submitted = false;
+          this.deleteFolder.feedback = er.toString();
+        });
     },
 
     onResetNew(field) {
@@ -390,7 +461,12 @@ export default {
       }
       this[field].valid = true;
       this[field].submitted = true;
-      Backend[backendMethod](this.archiveFolderId, this[field].name, this.userid)
+      Backend[backendMethod](
+        this.archiveFolderId,
+        this[field].name,
+        this.storageUserId,
+        this.storageAccessToken,
+      )
         .then((created) => {
           this.onResetNew(field);
           this[field].submitted = false;

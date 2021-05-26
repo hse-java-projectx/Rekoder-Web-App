@@ -27,14 +27,6 @@
                   required
                 ></b-form-input>
               </b-form-group>
-              <b-form-group label="Profile type">
-                <b-form-select
-                  v-model="form.profileType"
-                  :options="profileOptions"
-                  :state="validation"
-                  required
-                />
-              </b-form-group>
               <b-button type="submit" variant="primary">Sign In</b-button>
               <b-form-invalid-feedback :state="validation">
                 {{ signinError }}
@@ -62,19 +54,10 @@ export default {
       form: {
         userId: '',
         password: '',
-        profileType: null,
       },
       validation: null,
       signinError: '',
       prevRoute: { path: '/' },
-
-      profileOptions: [
-        { value: null, text: 'Select profile type' },
-        { value: 'user', text: 'Personal profile' },
-        { value: 'team', text: 'Team' },
-        { value: 'system', text: 'Judge Mirror' },
-      ],
-
       showOverlay: false,
     };
   },
@@ -82,22 +65,29 @@ export default {
     next((vm) => {
       // eslint-disable-next-line no-param-reassign
       vm.prevRoute = from;
+      if (from.name === null) {
+        // eslint-disable-next-line no-param-reassign
+        vm.prevRoute = { path: '/profile' };
+      }
     });
   },
   methods: {
     onSubmit(event) {
       event.preventDefault();
       this.showOverlay = true;
-      Backend.getUserAccess(this.form.profileType, this.form.userId, this.form.password)
-        .then((user) => {
-          this.showOverlay = false;
-          this.commitSignin(user);
+      Backend.getLoginToken({ id: this.form.userId, password: this.form.password })
+        .then((accessToken) => {
+          Backend.getUser({ id: this.form.userId, type: 'user' }).then((user) => {
+            this.commitSignin(user, accessToken);
+          });
         })
         .catch((er) => {
-          this.showOverlay = false;
           this.signinError = er.toString();
           this.validation = false;
           this.onReset();
+        })
+        .finally(() => {
+          this.showOverlay = false;
         });
     },
 
@@ -107,14 +97,18 @@ export default {
       this.form.profileType = null;
     },
 
-    commitSignin(userData) {
+    commitSignin(user, accessToken) {
+      console.log('Commiting signin', user, accessToken);
       this.$store.commit({
         type: 'signin',
-        profileType: this.form.profileType,
-        id: this.form.userId,
-        data: userData,
+        accessToken,
+        user,
       });
-      this.$router.push({ path: this.prevRoute.path });
+      try {
+        this.$router.push({ path: this.prevRoute.path });
+      } catch (e) {
+        this.$router.push({ path: '/profile' });
+      }
     },
   },
 };
