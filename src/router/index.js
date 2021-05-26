@@ -6,9 +6,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: () => import('../views/About.vue'),
-    meta: { title: 'Home' },
+    redirect: '/signin',
   },
   {
     path: '/about',
@@ -123,6 +121,12 @@ const routes = [
     component: () => import('../views/Report.vue'),
     meta: { title: 'Report' },
   },
+  {
+    path: '/search/:entity/:id',
+    name: 'search',
+    component: () => import('../components/search/SearchResults.vue'),
+    meta: { title: 'Report' },
+  },
 ];
 
 const router = new VueRouter({
@@ -133,8 +137,6 @@ const router = new VueRouter({
 
 const DEFAULT_TITLE = 'Rekoder';
 router.afterEach((to) => {
-  // Use next tick to handle router history correctly
-  // see: https://github.com/vuejs/vue-router/issues/914#issuecomment-384477609
   Vue.nextTick(() => {
     document.title = to.meta.title || DEFAULT_TITLE;
   });

@@ -3,6 +3,7 @@
     <span class="mr-3">
       <Icon :src="team.avatarPath" :alt="team.avatarAlt" />
     </span>
+    <span class="text-secondary"> {{ team.sname }} </span>
     <router-link :to="team.ref"> {{ team.name }} </router-link>
   </div>
 </template>

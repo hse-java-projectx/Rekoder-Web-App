@@ -14,9 +14,13 @@
       <template #cell(date)="data">
         {{ new Date(data.value).toLocaleString() }}
       </template>
-      <template #cell(comment)="data">
-        <div>
-          <b>{{ data.value }}</b>
+      <template #cell(feedback)="data">
+        <div
+          :class="
+            data.value.verdict === 'ok' ? 'text-success' : 'text-danger'
+          "
+        >
+          <b>{{ data.value.verdict.toUpperCase() }}</b>
         </div>
       </template>
     </b-table>

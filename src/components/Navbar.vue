@@ -5,21 +5,21 @@
         <b>Rekoder</b>
       </router-link>
     </b-navbar-brand>
-    <b-navbar-toggle size="sm" target="nav-collapse" />
+    <b-navbar-toggle size="sm" target="nav-collapse" class="mb-1" />
     <b-collapse id="nav-collapse" is-nav class="w-100">
       <b-container fluid>
         <b-navbar-nav class="w-100">
           <b-row class="w-100">
-            <b-col md="7">
-              <b-row>
-                <b-col cols="12" md="6" class="my-auto">
-                  <b-form-input size="md" placeholder="Search" />
-                </b-col>
-              </b-row>
+            <b-col cols="12" md="7" lg="4" class="my-auto">
+              <Search
+                v-if="searchEntities.length !== 0"
+                :contentTypes="searchEntities"
+                :locations="searchLocations"
+              />
             </b-col>
-            <b-col md="5">
+            <b-col cols="12" md="5" lg="8">
               <b-row align-h="end">
-                <template v-if="isSigned">
+                <template v-if="storageIsSigned">
                   <b-col cols="auto">
                     <NavbarLink name="Feed" link="/feed" />
                   </b-col>
@@ -46,21 +46,27 @@
 
 <script>
 import NavbarLink from '@/components/links/NavbarLink.vue';
+import Search from '@/components/search/SearchInput.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
     NavbarLink,
+    Search,
   },
 
   computed: {
-    ...mapGetters(['isSigned', 'userid', 'archiveRoot', 'storeProfileType']),
+    ...mapGetters(['storageIsSigned', 'storageUser', 'searchEntities', 'searchLocations']),
     profileLink() {
       return '/profile';
     },
     archiveLink() {
-      return `/archive/${this.archiveRoot}`;
+      return this.storageIsSigned ? `/archive/${this.storageUser.rootFolderId}` : '/';
     },
+  },
+
+  data() {
+    return {};
   },
 };
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrapper">
+    <CookieAuth />
     <div class="app-wrapper">
       <Navbar />
       <router-view :key="$route.fullPath" />
@@ -11,11 +12,13 @@
 <script>
 import Navbar from '@/components/Navbar.vue';
 import Footer from '@/components/Footer.vue';
+import CookieAuth from '@/views/CookieAuth.vue';
 
 export default {
   components: {
     Navbar,
     Footer,
+    CookieAuth,
   },
 };
 </script>

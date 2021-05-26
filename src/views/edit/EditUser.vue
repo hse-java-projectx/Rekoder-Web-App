@@ -119,6 +119,7 @@
 </template>
 <script>
 import Backend from '@/js/backend/main';
+import { mapGetters } from 'vuex';
 
 import HorCylon from '@/components/animated/HorCylon.vue';
 
@@ -127,6 +128,10 @@ export default {
 
   props: {
     userId: String,
+  },
+
+  computed: {
+    ...mapGetters(['storageIsSigned', 'storageUser', 'storageAccessToken']),
   },
 
   data() {
@@ -176,7 +181,7 @@ export default {
   },
 
   created() {
-    Backend.getUser('user', this.userId)
+    Backend.getUser({ type: 'user', id: this.userId })
       .then((user) => {
         this.userRequest = {
           recieved: true,
@@ -210,18 +215,25 @@ export default {
       this.form.contacts.value.forEach((c) => {
         submittingContacts[c.name] = c.ref;
       });
-      Backend.editProfile('user', this.userId, {
-        name: this.form.name.value,
-        avatarPath: this.form.avatarPath.path,
-        bio: this.form.bio.value,
-        contacts: submittingContacts,
-      })
+      Backend.editProfile(
+        { type: 'user', id: this.userId },
+        {
+          name: this.form.name.value,
+          // avatarPath: this.form.avatarPath.path,
+          bio: this.form.bio.value,
+          contacts: submittingContacts,
+        },
+        this.storageAccessToken,
+      )
         .then(() => {
           this.form.submitRequest = {
             recieved: true,
             valid: true,
             feedback: 'All changes has been saved',
           };
+          setTimeout(() => {
+            this.form.submitRequest.feedback = null;
+          }, 3000);
         })
         .catch((er) => {
           this.form.submitRequest = {

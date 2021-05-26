@@ -1,13 +1,48 @@
 <template>
   <div>
+    <SearchLocationRegister entity="folder" :id="archiveFolderId" />
     <NotFound v-if="error.has" :message="error.message" />
     <div v-if="showPath" class="big-font">
-      <HorCylon v-if="!path.recieved" />
-      <HeaderPath v-else :path="path.data" />
+      <b-row>
+        <b-col>
+          <HorCylon v-if="!path.recieved" />
+          <HeaderPath v-else :path="path.data" />
+        </b-col>
+        <b-col class="text-right">
+          <div
+            v-if="
+              showRemote &&
+              isFolderEditable &&
+              path.recieved &&
+              path.data.length !== 1
+            "
+          >
+            <b-button variant="outline-danger" size="sm" v-b-modal.modal-delete>
+              Delete Folder
+            </b-button>
+          </div>
+        </b-col>
+      </b-row>
       <br />
     </div>
-    <b-row>
-      <b-col cols="12" md="5">
+    <b-container
+      v-if="!subfolders.recieved || !problems.recieved"
+      class="text-center"
+    >
+      <HorCylon />
+    </b-container>
+    <NothingToShow
+      v-else-if="
+        subfolders.recieved &&
+        problems.recieved &&
+        subfoldersEmpty &&
+        problemsEmpty &&
+        !isFolderEditable
+      "
+      message="This folder is empty"
+    />
+    <b-row v-else>
+      <b-col cols="12" :md="foldersShow.cols" :class="foldersShow.type">
         <div class="page-item-container">
           <b-row>
             <b-col cols="auto" class="mr-auto">
@@ -25,10 +60,10 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!subfolders.recieved" />
-          <b-list-group v-else>
+          <b-list-group class="scroll" v-else>
             <b-form
               v-if="newFolder.showInput"
-              class="my-2"
+              class="my-2 mx-1"
               @reset.prevent="onResetNew('newFolder')"
               @submit.prevent="
                 onSubmitNew('newFolder', 'createFolder', 'subfolders')
@@ -82,7 +117,7 @@
           </b-list-group>
         </div>
       </b-col>
-      <b-col cols="12" md="7">
+      <b-col cols="12" :md="problemsShow.cols" :class="problemsShow.type">
         <div class="page-item-container">
           <b-row>
             <b-col cols="auto" class="mr-auto">
@@ -100,13 +135,13 @@
           </b-row>
           <hr class="mt-1 w-100" />
           <HorCylon v-if="!problems.recieved" />
-          <b-list-group v-else>
+          <b-list-group class="scroll" v-else>
             <b-form
               v-if="newProblem.showInput"
-              class="my-2"
+              class="my-2 mx-1"
               @reset.prevent="onResetNew('newProblem')"
               @submit.prevent="
-                onSubmitNew('newProblem', 'createProblem', 'newProblem')
+                onSubmitNew('newProblem', 'createProblem', 'problems')
               "
             >
               <b-input-group>
@@ -152,12 +187,32 @@
               :key="item.id"
               :name="item.name"
               :isDirectory="false"
-              :link="`/problem/${item.id}`"
+              :link="`/problem/${item.id}?view=statement`"
             />
           </b-list-group>
         </div>
       </b-col>
     </b-row>
+    <b-modal
+      id="modal-delete"
+      ref="modal-delete"
+      title="Delete this folder"
+      @ok="onClickDeleteFolder"
+      header-bg-variant="danger"
+      header-text-variant="light"
+      body-text-variant="secondary"
+      :ok-disabled="deleteFolder.submitted"
+    >
+      <b-container>
+        <p>
+          This folder and all internal folders with tasks and submissions will
+          be irretrievably deleted. Are you sure you want to do this?
+        </p>
+      </b-container>
+      <b-form-invalid-feedback :state="deleteFolder.feedback === null">
+        {{ deleteFolder.feedback }}
+      </b-form-invalid-feedback>
+    </b-modal>
   </div>
 </template>
 
@@ -170,10 +225,16 @@ import HeaderPath from '@/components/HeaderPath.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
 import NotFound from '@/views/NotFound.vue';
 import NothingToShow from '@/components/NothingToShow.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
 
 export default {
   props: {
     showPath: Boolean,
+    propFolderId: String,
+    showRemote: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -225,6 +286,13 @@ export default {
       },
 
       submittedNewProblem: false,
+
+      submittedDelete: false,
+
+      deleteFolder: {
+        submitted: false,
+        feedback: null,
+      },
     };
   },
   components: {
@@ -233,6 +301,7 @@ export default {
     HorCylon,
     NotFound,
     NothingToShow,
+    SearchLocationRegister,
   },
 
   created() {
@@ -247,7 +316,15 @@ export default {
           recieved: true,
           data: folder,
         };
-        this.processPromise(Backend.canEdit(this.userid, folder.ownerId), 'requestIsEditable');
+        if (this.storageIsSigned) {
+          this.processPromise(
+            Backend.canEdit(this.storageUserId, {
+              id: folder.owner.id,
+              type: folder.owner.type.toLowerCase(),
+            }),
+            'requestIsEditable',
+          );
+        }
       })
       .catch((er) => {
         this.error = {
@@ -272,16 +349,56 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userid', 'archiveRoot']),
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
 
     isFolderEditable() {
       return this.requestIsEditable.recieved && this.requestIsEditable.data;
     },
 
     archiveFolderId() {
+      if (!(this.propFolderId === undefined || this.propFolderId === null)) {
+        return this.propFolderId;
+      }
       return this.routeFolderId === undefined || this.routeFolderId === null
-        ? this.archiveRoot
+        ? this.storageUser.rootFolderId
         : this.routeFolderId;
+    },
+
+    problemsEmpty() {
+      return this.problems.recieved ? this.problems.data.length === 0 : true;
+    },
+
+    subfoldersEmpty() {
+      return this.subfolders.recieved ? this.subfolders.data.length === 0 : true;
+    },
+
+    problemsShow() {
+      if (this.isFolderEditable) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (!this.problems.recieved) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (this.problemsEmpty) {
+        return { cols: 0, type: 'hide' };
+      }
+      if (this.subfoldersEmpty && this.problemsEmpty) {
+        return { cols: 12, type: 'no-hide' };
+      }
+      return this.subfoldersEmpty ? { cols: 12, type: 'no-hide' } : { cols: 6, type: 'no-hide' };
+    },
+
+    foldersShow() {
+      if (this.isFolderEditable) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (!this.subfolders.recieved) {
+        return { cols: 6, type: 'no-hide' };
+      }
+      if (this.subfoldersEmpty) {
+        return { cols: 0, type: 'hide' };
+      }
+      return this.problemsEmpty ? { cols: 12, type: 'no-hide' } : { cols: 6, type: 'no-hide' };
     },
   },
 
@@ -289,6 +406,7 @@ export default {
     processPromise(promise, field) {
       promise
         .then((data) => {
+          console.log(`Processed promise, field: ${field}, data: ${data}`);
           this[field] = {
             recieved: true,
             data,
@@ -308,6 +426,19 @@ export default {
 
     onClickCreateProblem() {
       this.newProblem.showInput = true;
+    },
+
+    onClickDeleteFolder() {
+      this.deleteFolder.submitted = true;
+      Backend.deleteFolder(this.archiveFolderId, this.storageAccessToken)
+        .then(() => {
+          this.deleteFolder.submitted = false;
+          this.$router.push('/profile');
+        })
+        .catch((er) => {
+          this.deleteFolder.submitted = false;
+          this.deleteFolder.feedback = er.toString();
+        });
     },
 
     onResetNew(field) {
@@ -330,7 +461,12 @@ export default {
       }
       this[field].valid = true;
       this[field].submitted = true;
-      Backend[backendMethod](this.archiveFolderId, this[field].name, this.userid)
+      Backend[backendMethod](
+        this.archiveFolderId,
+        this[field].name,
+        this.storageUserId,
+        this.storageAccessToken,
+      )
         .then((created) => {
           this.onResetNew(field);
           this[field].submitted = false;
@@ -362,4 +498,14 @@ export default {
 <style lang="sass" scoped>
 @import "@/style/bootstrap-custom.scss"
 @import "@/../node_modules/bootstrap/scss/bootstrap.scss"
+
+.hide
+  display: none
+
+.no-hide
+  display: inline-block
+
+.scroll
+  overflow-y: auto
+  max-height: 55vh
 </style>

@@ -1,5 +1,10 @@
 <template>
   <div>
+    <SearchLocationRegister entity="user" :id="pageProfileId" />
+    <SearchEntityRegister entity="submission" />
+    <SearchEntityRegister entity="problem" />
+    <SearchEntityRegister entity="team" />
+    <SearchEntityRegister entity="folder" />
     <b-container v-if="notSignedAndNotQualified" class="mt-4 big-font">
       Please <router-link to="/signin">sign in</router-link> to see profile
     </b-container>
@@ -9,9 +14,13 @@
       <ProfileLayout
         v-else
         :statRefs="processedUserInformation.statRefs"
-        :contacts="userRequest.data.contacts"
-        :name="userRequest.data.name"
-        :subname="userRequest.data.name"
+        :contacts="processedUserInformation.contacts"
+        :name="
+          userRequest.data.name === null
+            ? userRequest.data.id
+            : userRequest.data.name
+        "
+        :subname="`@${userRequest.data.id}`"
         :avatarAlt="`${userRequest.data.name} profile avatar`"
         :avatarPath="userRequest.data.avatarPath"
         :bio="userRequest.data.bio"
@@ -20,7 +29,11 @@
           <FeedBlock name="Archive">
             <template #content>
               <HorCylon v-if="!userRequest.recieved" />
-              <ArchiveComponent v-else :showPath="false" />
+              <ArchiveComponent
+                v-else
+                :showPath="false"
+                :propFolderId="userRequest.data.rootFolderId.toString()"
+              />
             </template>
           </FeedBlock>
           <FeedBlock name="Recent activity">
@@ -34,7 +47,7 @@
             </template>
           </FeedBlock>
         </template>
-        <template #undername v-if="isSigned">
+        <template #undername v-if="storageIsSigned">
           <b-row>
             <b-col v-if="canEdit">
               <b-button
@@ -76,6 +89,8 @@ import NotFound from '@/views/NotFound.vue';
 import ActivityFeed from '@/components/feed/ActivityFeed.vue';
 import FeedBlock from '@/components/feed/FeedBlock.vue';
 import ArchiveComponent from '@/components/ArchiveComponent.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
+import SearchEntityRegister from '@/components/search/registers/Entity.vue';
 
 import Backend from '@/js/backend/main';
 import { mapGetters } from 'vuex';
@@ -90,6 +105,8 @@ export default {
     ActivityFeed,
     FeedBlock,
     ArchiveComponent,
+    SearchLocationRegister,
+    SearchEntityRegister,
   },
   data() {
     return {
@@ -129,7 +146,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['userid', 'isSigned', 'storeProfileType']),
+    ...mapGetters(['storageIsSigned', 'storageUser', 'storageUserId']),
 
     canEdit() {
       return this.canEditRequest.recieved && this.canEditRequest.data;
@@ -140,22 +157,24 @@ export default {
     },
 
     canSignout() {
-      return this.userid === this.pageProfileId;
+      return this.storageIsSigned && this.storageUserId === this.pageProfileId;
     },
 
     notSignedAndNotQualified() {
-      return (this.routeUserId === null || this.routeUserId === undefined) && !this.isSigned;
+      return (
+        (this.rotueProfileId === null || this.rotueProfileId === undefined) && !this.storageIsSigned
+      );
     },
 
     pageProfileType() {
       return this.routeProfileType === undefined || this.routeProfileType === null
-        ? this.storeProfileType
+        ? 'user'
         : this.routeProfileType;
     },
 
     pageProfileId() {
       return this.rotueProfileId === null || this.rotueProfileId === undefined
-        ? this.userid
+        ? this.storageUserId
         : this.rotueProfileId;
     },
   },
@@ -170,6 +189,11 @@ export default {
     onClickSignOut() {
       this.$store.commit('signout');
       this.$router.push({ path: '/signin' });
+    },
+
+    validateEmail(email) {
+      const re = /\S+@\S+\.\S+/;
+      return re.test(email);
     },
   },
 
@@ -190,47 +214,54 @@ export default {
           message: err.toString(),
         };
       });
-    Backend.getUser(this.pageProfileType, this.pageProfileId)
+    Backend.getUser({ id: this.pageProfileId, type: this.pageProfileType })
       .then((user) => {
         this.userRequest = {
           recieved: true,
           data: { ...user },
         };
         if (this.pageProfileType === 'user') {
-          this.processedUserInformation.statRefs.push(
-            {
-              name: 'following',
-              num: user.following.length,
-              ref: `/following/${this.pageProfileId}`,
-            },
-            {
-              name: 'followers',
-              num: user.followers.length,
-              ref: `/followers/${this.pageProfileId}`,
-            },
-            {
-              name: 'teams',
-              num: user.teams.length,
-              ref: `/teams/${this.pageProfileId}`,
-            },
-          );
-          user.contacts.forEach((contact) => {
-            this.processedUserInformation.contacts.push({
-              key: contact.name,
-              value: contact.ref,
-              ref: contact.ref,
+          Backend.getUserTeams(user.id).then((userTeams) => {
+            this.processedUserInformation.statRefs.push(
+              {
+                name: 'following',
+                num: user.following.length,
+                ref: `/following/${this.pageProfileId}`,
+              },
+              {
+                name: 'followers',
+                num: user.followers.length,
+                ref: `/followers/${this.pageProfileId}`,
+              },
+              {
+                name: 'teams',
+                num: userTeams.length,
+                ref: `/teams/${this.pageProfileId}`,
+              },
+            );
+            Object.keys(user.contacts).forEach((contact) => {
+              let short = user.contacts[contact].ref;
+              let { ref } = user.contacts[contact];
+              if (this.validateEmail(ref)) {
+                short = ref;
+                ref = `mailto:${ref}`;
+              } else {
+                const parts = ref.split('/');
+                short = `@${parts[parts.length - 1]}`;
+              }
+              this.processedUserInformation.contacts.push({
+                name: user.contacts[contact].name,
+                ref,
+                short,
+              });
             });
           });
         } else if (this.pageProfileType === 'team') {
           this.processedUserInformation.statRefs.push({
-            name: 'members',
-            num: user.members.length,
-            ref: `/members/${this.pageProfileId}`,
+            name: user.memberIds.length === 1 ? 'member' : 'members',
+            num: user.memberIds.length,
+            ref: `/team-members/${this.pageProfileId}`,
           });
-        }
-        this.userRequest.data.contacts = [];
-        if (this.pageProfileType === 'judge') {
-          this.userRequest.data.contacts.push({ name: 'origin', ref: user.origin });
         }
       })
       .catch((er) => {
@@ -239,7 +270,10 @@ export default {
           message: er.toString(),
         };
       });
-    Backend.canEdit(this.userid, this.pageProfileId)
+    Backend.canEdit(this.storageUserId, {
+      id: this.pageProfileId,
+      type: this.pageProfileType,
+    })
       .then((can) => {
         this.canEditRequest = {
           recieved: true,

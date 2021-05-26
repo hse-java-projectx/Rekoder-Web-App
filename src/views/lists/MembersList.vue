@@ -1,42 +1,44 @@
 <template>
-  <SplitView>
-    <template #subheader>
-      <b class="big-font"> Team Members </b>
-    </template>
-    <template #content>
-      <HorCylon v-if="!teamMembersRequest.recieved" />
-      <NotFound v-else-if="error.hasError" :message="error.message" />
-      <NothingToShow
-        v-else-if="teamMembersRequest.data.length === 0"
-        message="Teams list is empty"
-      />
-      <b-list-group v-else>
-        <b-list-group-item
-          v-for="member in teamMembersRequest.data"
-          :key="member.id"
-        >
-          <ListItem :team="getObject(member)" />
-        </b-list-group-item>
-      </b-list-group>
-    </template>
-    <template #additional>
-      <ProfileCardLayout :userId="routeUserId" />
-    </template>
-  </SplitView>
+  <div>
+    <SearchRegister entity="user" />
+    <SearchLocationRegister entity="team" :id="routeUserId" />
+    <SingleView>
+      <template #header>
+        <b class="big-font"> Team Members </b>
+      </template>
+      <template #content>
+        <HorCylon v-if="!teamMembersRequest.recieved" />
+        <NotFound v-else-if="error.hasError" :message="error.message" />
+        <NothingToShow
+          v-else-if="teamMembersRequest.data.length === 0"
+          message="Teams list is empty"
+        />
+        <b-list-group v-else>
+          <b-list-group-item
+            v-for="member in teamMembersRequest.data"
+            :key="member.id"
+          >
+            <UserEntity :data="member" />
+          </b-list-group-item>
+        </b-list-group>
+      </template>
+    </SingleView>
+  </div>
 </template>
 <script>
 import Backend from '@/js/backend/main';
-import ListItem from '@/views/lists/ListItem.vue';
+import UserEntity from '@/components/entity/User.vue';
 import HorCylon from '@/components/animated/HorCylon.vue';
-import SplitView from '@/components/SplitView.vue';
+import SingleView from '@/components/SingleView.vue';
 import NotFound from '@/views/NotFound.vue';
-import ProfileCardLayout from '@/components/profile/ProfileCardLayout.vue';
 import NothingToShow from '@/components/NothingToShow.vue';
+import SearchRegister from '@/components/search/registers/Entity.vue';
+import SearchLocationRegister from '@/components/search/registers/Location.vue';
 
 export default {
   data() {
     return {
-      routeUserId: this.$route.params.userId,
+      routeUserId: this.$route.params.teamId,
       teamMembersRequest: {
         recieved: false,
         data: null,
@@ -49,12 +51,13 @@ export default {
   },
 
   components: {
-    ListItem,
+    UserEntity,
     HorCylon,
-    SplitView,
+    SingleView,
     NotFound,
-    ProfileCardLayout,
     NothingToShow,
+    SearchRegister,
+    SearchLocationRegister,
   },
 
   created() {
@@ -71,17 +74,6 @@ export default {
           error: `Unable to get members of team with id ${this.routeUserId}`,
         };
       });
-  },
-
-  methods: {
-    getObject(teamMember) {
-      return {
-        name: teamMember.name,
-        ref: `/profile/${teamMember.id}`,
-        avatarAlt: `${teamMember.name} avatar`,
-        avatarPath: teamMember.avatarPath,
-      };
-    },
   },
 };
 </script>

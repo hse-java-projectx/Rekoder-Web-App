@@ -1,4 +1,4 @@
-# Rekoder web application
+# <span style="color:#007bff"><b> Rekoder</b></span> web application
 
 [![Deploy to Firebase Hosting on merge](https://github.com/hse-java-projectx/web-app/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/hse-java-projectx/web-app/actions/workflows/firebase-hosting-merge.yml)
 
