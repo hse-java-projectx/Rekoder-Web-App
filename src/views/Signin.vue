@@ -98,7 +98,7 @@ export default {
     },
 
     commitSignin(user, accessToken) {
-      console.log('Commiting signin', user, accessToken);
+      // console.log('Commiting signin', user, accessToken);
       this.$store.commit({
         type: 'signin',
         accessToken,

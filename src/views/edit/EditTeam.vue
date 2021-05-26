@@ -180,7 +180,6 @@ export default {
   },
 
   created() {
-    console.log('This page id: ', this.teamId);
     Backend.getUser({ type: 'team', id: this.teamId })
       .then((team) => {
         this.teamRequest = {

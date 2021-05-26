@@ -6,30 +6,31 @@
           <b-col cols="12" md="4" class="p-1">
             <div class="page-item-container">
               <b-row>
-                <b-col cols="3" md="12" class="text-center pr-0 px-md-3">
+                <b-col cols="5" md="12" class="text-center pr-0 px-md-3">
                   <div class="d-none d-md-block">
                     <b-avatar
                       size="10rem"
-                      :text="name.substr(0, 2)"
-                      :variant="variant(name)"
+                      :text="subname.substr(0, 2)"
+                      :variant="variant(subname)"
                       :src="avatarPath"
                     />
                   </div>
                   <div class="d-md-none text-center">
                     <b-avatar
                       size="4rem"
-                      :text="name.substr(0, 2)"
-                      :variant="variant(name)"
+                      :text="subname.substr(0, 2)"
+                      :variant="variant(subname)"
                       :src="avatarPath"
+                      class="mb-2"
                     />
                   </div>
                 </b-col>
-                <b-col cols="9" md="12">
+                <b-col cols="7" md="12">
                   <div class="text-dark big-font text-center mt-1">
                     <b>{{ name }}</b>
                   </div>
                   <div class="text-secondary text-center mb-1">
-                    {{ subname }}
+                    @{{ subname }}
                   </div>
                 </b-col>
               </b-row>
@@ -72,7 +73,8 @@
 </template>
 
 <script>
-/* eslint-disable no-bitwise */
+import Backend from '@/js/backend/main';
+
 import SingleView from '@/components/SingleView.vue';
 
 export default {
@@ -88,17 +90,8 @@ export default {
   components: { SingleView },
 
   methods: {
-    hashCode(s) {
-      return s.split('').reduce((a, b) => {
-        // eslint-disable-next-line no-param-reassign
-        a = (a << 5) - a + b.charCodeAt(0);
-        return (a & (a * 123)) % 31;
-      }, 0);
-    },
-
-    variant(handle) {
-      const id = this.hashCode(handle);
-      return ['primary', 'info', 'success', 'danger', 'secondary', 'light', 'dark'][id];
+    variant(s) {
+      return Backend.variant(s);
     },
   },
 };

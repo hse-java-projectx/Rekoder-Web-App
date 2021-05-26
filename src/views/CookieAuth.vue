@@ -4,10 +4,10 @@
     bg-variant="light"
     header="Cookie Law 🍪"
     header-level="5"
-    lead="By continuing to use this site you agree to the cookie policy"
+    lead="We use cookies to store the login token on your computer. It's okay, everyone does it!"
   >
     <b-button variant="primary" @click.prevent="onClickAgree"
-      >Continue</b-button
+      >Ok, I understand</b-button
     >
   </b-jumbotron>
 </template>
