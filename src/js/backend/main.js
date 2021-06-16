@@ -65,6 +65,9 @@ const Backend = {
     clone(targetUserId) {
       return `${this.domain}/users/${targetUserId}/problems/clone`;
     },
+    password() {
+      return `${this.domain}/change-password`;
+    },
   },
 
   withToken(token) {
@@ -443,6 +446,10 @@ const Backend = {
     return sameProblem;
   },
 
+  async updatePassword(oldPassword, newPassword, accessToken) {
+    await this.getJSON(this.url.password(), 'POST', { oldPassword, newPassword }, this.withToken(accessToken));
+  },
+
   // async searchContent(query, contentTypes) {
   //   await sleep();
   //   return this.searchContentImpl(query, contentTypes);
@@ -484,7 +491,6 @@ const Backend = {
     const id = this.hashCodeImpl(handle) % vars.length;
     return vars[id];
   },
-
 };
 
 export default Backend;
