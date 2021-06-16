@@ -17,57 +17,65 @@
       </template>
       <template #content>
         <div class="page-item-container">
-          <b-row>
-            <b-col class="mr-auto" cols="auto">
-              <b-form-group v-slot="{ ariaDescribedby }" class="m-0">
-                <b-form-radio-group
-                  id="radio-type"
-                  v-model="selected"
-                  :options="radio.options"
-                  :aria-describedby="ariaDescribedby"
-                  button-variant="outline-primary"
-                  name="radio-btn-outline"
-                  size="sm"
-                  buttons
-                ></b-form-radio-group>
-              </b-form-group>
-            </b-col>
-          </b-row>
-          <br />
-          <SubmissionHistory
-            v-if="viewingSubmissions"
-            :problemId="routeProblemId"
-          />
-          <HorCylon v-else-if="!problem.recieved" />
-          <Problem v-else :problem="problem.data">
-            <template #under-solve>
+          <b-button-toolbar justify>
+            <b-button-group>
+              <b-button
+                :variant="viewingStatement ? 'primary' : 'outline-primary'"
+                size="sm"
+                @click.prevent="onClickStatement"
+              >
+                Statement
+              </b-button>
+              <b-button
+                @click.prevent="onClickSubmissions"
+                :variant="viewingSubmissions ? 'primary' : 'outline-primary'"
+                size="sm"
+              >
+                Submissions
+              </b-button>
+              <b-button
+                v-if="problem.recieved && problem.data.problemUrl !== null"
+                :href="problem.data.problemUrl"
+                variant="outline-primary"
+                size="sm"
+              >
+                Go to source
+              </b-button>
               <b-button
                 v-if="canSolve"
-                variant="outline-info"
                 @click.prevent="onClickSolve"
+                variant="outline-primary"
                 size="sm"
               >
                 Solve
               </b-button>
               <b-button
                 v-else-if="canClone"
-                variant="outline-success"
                 @click.prevent="onClickClone"
                 :disabled="cloneRequest.sent"
+                variant="outline-primary"
                 size="sm"
               >
                 <span> Clone </span>
               </b-button>
               <b-button
                 v-else-if="canEdit"
-                variant="outline-primary"
                 @click.prevent="onClickEdit"
+                variant="outline-primary"
                 size="sm"
               >
                 Edit
               </b-button>
-            </template>
-          </Problem>
+            </b-button-group>
+          </b-button-toolbar>
+          <hr />
+          <br />
+          <SubmissionHistory
+            v-if="viewingSubmissions"
+            :problemId="routeProblemId"
+          />
+          <HorCylon v-else-if="!problem.recieved" />
+          <Problem v-else :problem="problem.data" />
         </div>
       </template>
     </SingleView>
@@ -169,11 +177,15 @@ export default {
 
   methods: {
     onClickStatement() {
-      this.$router.push(this.statementLink);
+      if (!this.viewingStatement) {
+        this.$router.push(this.statementLink);
+      }
     },
 
     onClickSubmissions() {
-      this.$router.push(this.submissionsLink);
+      if (!this.viewingSubmissions) {
+        this.$router.push(this.submissionsLink);
+      }
     },
 
     onClickEdit() {
