@@ -119,12 +119,6 @@ export default {
         message: null,
       },
       selected: this.$route.query.view,
-      radio: {
-        options: [
-          { text: 'Statement', value: 'statement' },
-          { text: 'Submissions', value: 'submissions' },
-        ],
-      },
       editRequest: {
         recieved: false,
         data: null,
@@ -158,7 +152,7 @@ export default {
             recieved: true,
             data: val,
           };
-          Backend.canSolve(this.storageUserId, this.routeProblemId)
+          Backend.canSolve(this.storageUserId, this.problem.data)
             .then((responseCanSolve) => {
               this.solveRequest = {
                 recieved: true,

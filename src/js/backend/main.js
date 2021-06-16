@@ -427,13 +427,17 @@ const Backend = {
     return clonedProblem;
   },
 
-  async canSolve(userId, problemIdStr) {
-    const problemId = parseInt(problemIdStr, 10);
+  async canSolve(userId, problem) {
     const userProblems = await this.getProblems({ type: 'user', id: userId });
     let sameProblem = null;
     userProblems.forEach((userProblem) => {
-      if (userProblem.originalProblemId === problemId) {
-        sameProblem = { ...userProblem };
+      if (
+        problem.id === userProblem.originalProblemId
+        || (
+          (problem.owner.id !== userId)
+          && problem.originalProblemId === userProblem.originalProblemId)
+      ) {
+        sameProblem = userProblem;
       }
     });
     return sameProblem;
