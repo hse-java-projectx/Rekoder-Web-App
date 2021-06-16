@@ -48,7 +48,7 @@
       </div>
       <br />
       <div>
-        <h2>Credits</h2>
+        <h2>Credits ❤️</h2>
         <div>
           <p>
             It was developed as part of the coursework for the Java course by

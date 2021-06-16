@@ -42,9 +42,18 @@
           <Problem v-else :problem="problem.data">
             <template #under-solve>
               <b-button
-                v-if="canClone"
+                v-if="canSolve"
+                variant="outline-info"
+                @click.prevent="onClickSolve"
+                size="sm"
+              >
+                Solve
+              </b-button>
+              <b-button
+                v-else-if="canClone"
                 variant="outline-success"
                 @click.prevent="onClickClone"
+                :disabled="cloneRequest.sent"
                 size="sm"
               >
                 <span> Clone </span>
@@ -56,14 +65,6 @@
                 size="sm"
               >
                 Edit
-              </b-button>
-              <b-button
-                v-else-if="canSolve"
-                variant="outline-info"
-                @click.prevent="onClickSolve"
-                size="sm"
-              >
-                Solve
               </b-button>
             </template>
           </Problem>
@@ -124,6 +125,10 @@ export default {
         submitted: false,
         feedback: null,
       },
+      cloneRequest: {
+        sent: false,
+        clonedProblem: null,
+      },
     };
   },
 
@@ -145,15 +150,13 @@ export default {
             recieved: true,
             data: val,
           };
-          if (this.editRequest.data) {
-            return;
-          }
-          Backend.canSolve(this.storageUserId, this.routeProblemId).then((responseCanSolve) => {
-            this.solveRequest = {
-              recieved: true,
-              data: responseCanSolve,
-            };
-          });
+          Backend.canSolve(this.storageUserId, this.routeProblemId)
+            .then((responseCanSolve) => {
+              this.solveRequest = {
+                recieved: true,
+                data: responseCanSolve,
+              };
+            });
         });
       })
       .catch((er) => {
@@ -178,10 +181,26 @@ export default {
     },
 
     onClickClone() {
-      Backend.copyProblem(this.routeProblemId, this.storageUserId);
+      this.cloneRequest.sent = true;
+      Backend.cloneProblem(this.routeProblemId, this.storageUserId, this.storageAccessToken)
+        .then((clonedProblem) => {
+          this.cloneRequest.clonedProblem = clonedProblem;
+          this.$router.push(`/problem/${this.cloneRequest.clonedProblem.id}`);
+        })
+        .catch((e) => {
+          this.error = {
+            has: true,
+            message: e.toString(),
+          };
+        })
+        .finally(() => {
+          this.cloneRequest.sent = false;
+        });
     },
 
-    onClickSolve() {},
+    onClickSolve() {
+      this.$router.push(`/problem/${this.solveRequest.data.id}`);
+    },
   },
 
   watch: {
@@ -195,7 +214,7 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser']),
+    ...mapGetters(['storageUserId', 'storageIsSigned', 'storageUser', 'storageAccessToken']),
 
     viewingSubmissions() {
       return this.view === 'submissions';
@@ -209,14 +228,17 @@ export default {
     submissionsLink() {
       return `/problem/${this.routeProblemId}/?view=submissions`;
     },
+    allReceived() {
+      return this.solveRequest.recieved && this.editRequest.recieved;
+    },
     canSolve() {
-      return this.solveRequest.recieved && this.solveRequest.data;
+      return this.allReceived && this.solveRequest.data !== null;
     },
     canEdit() {
-      return this.editRequest.recieved && this.editRequest.data;
+      return this.allReceived && this.editRequest.data;
     },
     canClone() {
-      return this.storageIsSigned && !this.canSolve && !this.canEdit;
+      return this.allReceived && this.storageIsSigned && !this.canSolve && !this.canEdit;
     },
   },
 };
