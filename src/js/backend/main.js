@@ -62,6 +62,9 @@ const Backend = {
     login() {
       return `${this.domain}/login`;
     },
+    clone(targetUserId) {
+      return `${this.domain}/users/${targetUserId}/problems/clone`;
+    },
   },
 
   withToken(token) {
@@ -88,7 +91,7 @@ const Backend = {
     } else {
       throw Error(`'${url}' Invalid request type: ${type}`);
     }
-    if (request.status !== 200 && request.status !== 204) {
+    if (Math.floor(request.status / 100) !== 2) {
       throw Error(`Request: ${type} ${url} Status: ${request.status}`);
     }
     // console.log(`Recieved: ${JSON.stringify(request)}`);
@@ -112,7 +115,7 @@ const Backend = {
   },
 
   async getUser(user) {
-    if (user.type === 'user') {
+    if (user.type.toLowerCase() === 'user') {
       const userData = await this.getJSON(this.url.user(user.id), 'GET');
       const contacts = [];
       Object.keys(userData.contacts).forEach((c) => {
@@ -125,7 +128,7 @@ const Backend = {
         type: 'user',
         contacts,
       };
-    } if (user.type === 'team') {
+    } if (user.type.toLowerCase() === 'team') {
       const team = await this.getJSON(this.url.team(user.id), 'GET');
       return {
         ...team,
@@ -386,29 +389,55 @@ const Backend = {
     ];
   },
 
-  // async cloneProblem(problemId, targetUserInfo) {
-  //   const problem = await this.getProblem(problemId);
-  //   console.log('Got problem', problem);
-  //   problem.authorId = targetUserInfo.id;
-  //   const targetUser = await this.getUser(targetUserInfo.type, targetUserInfo.id);
-  //   console.log('Got target user', targetUser);
-  // const targetUserRootFolderSubfolders = await this.getFolderSubfolders(targetUser.rootFolderId);
-  //   console.log('Got target user root subfolders', targetUserRootFolderSubfolders);
-  //   let targetFolderId = null;
-  //   targetUserRootFolderSubfolders.forEach((rootSubfolder) => {
-  //     if (rootSubfolder.name === problem.ownerId) {
-  //       targetFolderId = rootSubfolder.id;
-  //     }
-  //   });
-  //   if (targetFolderId === null) {
-  //     targetFolderId = await this.createFolder(targetUser.rootFolderId, problem.ownerId).id;
-  //   }
-  //   const targetFolderProblems = await this.getFolderProblems(targetFolderId);
-  //   targetFolderProblems.forEach((problem) => {
+  async cloneProblem(problemId, targetUserId, accessToken) {
+    const problem = await this.getProblem(problemId);
+    const owner = await this.getUser(problem.owner);
+    const targetUser = await this.getUser({ type: 'user', id: targetUserId });
+    const ownerRootFolders = await this.getFolderSubfolders(targetUser.rootFolderId);
+    let clonedProblemRoot = null;
+    ownerRootFolders.forEach((rootFolder) => {
+      if (rootFolder.name === owner.id) {
+        clonedProblemRoot = rootFolder.id;
+      }
+    });
+    if (clonedProblemRoot === null) {
+      const createdFolder = await this.createFolder(
+        targetUser.rootFolderId,
+        owner.id,
+        targetUser.id,
+        accessToken,
+      );
+      clonedProblemRoot = createdFolder.id;
+    }
 
-  //   });
-  //   return this.getJSON(this.url.folderProblms(targetFolderId), { problemId:  })
-  // },
+    const clonedProblem = await this.getJSON(
+      this.url.clone(targetUserId),
+      'POST',
+      { problemId },
+      this.withToken(accessToken),
+    );
+
+    await this.getJSON(
+      this.url.folderProblms(clonedProblemRoot),
+      'PATCH',
+      { problemId: clonedProblem.id },
+      this.withToken(accessToken),
+    );
+
+    return clonedProblem;
+  },
+
+  async canSolve(userId, problemIdStr) {
+    const problemId = parseInt(problemIdStr, 10);
+    const userProblems = await this.getProblems({ type: 'user', id: userId });
+    let sameProblem = null;
+    userProblems.forEach((userProblem) => {
+      if (userProblem.originalProblemId === problemId) {
+        sameProblem = { ...userProblem };
+      }
+    });
+    return sameProblem;
+  },
 
   // async searchContent(query, contentTypes) {
   //   await sleep();
