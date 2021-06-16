@@ -5,10 +5,12 @@
         <div class="problem-name text-center mt-1 mt-md-3">
           <b>{{ problem.name }}</b>
         </div>
-        <div class="text-center">
-          <slot name="under-solve" />
-        </div>
-        <hr />
+        <b-row>
+          <b-col cols="auto" class="mr-auto ml-4">
+            <slot name="under-solve" />
+          </b-col>
+        </b-row>
+        <br />
         <div class="statement p-0 p-md-3">
           <Math
             :safe="false"
