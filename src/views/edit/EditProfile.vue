@@ -5,12 +5,12 @@
       <span v-if="!storageIsSigned" class="big-font">
         <router-link to="/signin">Sign in</router-link> to edit this profile
       </span>
-      <span v-else class="big-font">
-        <b> Edit Profile </b>
-      </span>
     </template>
     <template #content>
-      <div class="page-item-container">
+      <span class="big-font">
+        <b> Edit Profile </b>
+      </span>
+      <div>
         <HorCylon v-if="!canEditRequest.recieved" />
         <div v-else-if="!canEditRequest.canEdit">
           {{ canEditRequest.message }}

@@ -2,116 +2,165 @@
   <div>
     <HorCylon v-if="!userRequest.recieved" />
     <div v-else>
-      <!-- Name -->
-      <b-form @submit="onFormSubmit">
-        <b-form-group label="Name" label-cols-sm="2">
+      <div class="page-item-container">
+        <!-- Name -->
+        <b-form @submit="onFormSubmit">
+          <b-form-group label="Name" label-cols-sm="2">
+            <b-form-input
+              trim
+              v-model="form.name.value"
+              placeholder="Enter your name"
+              :state="form.name.valid"
+              required
+            ></b-form-input>
+            <b-form-invalid-feedback :state="form.name.valid">
+              {{ form.name.feedback }}
+            </b-form-invalid-feedback>
+          </b-form-group>
+
+          <!-- Avatar -->
+          <b-form-group label="Profile avatar" label-cols-sm="2">
+            <b-form-file
+              v-model="form.avatarPath.value"
+              :state="form.avatarPath.valid"
+              placeholder="Choose a file or drop it here..."
+              drop-placeholder="Drop file here..."
+            />
+            <b-button variant="outline-danger" class="mt-2" size="sm">
+              Delete avatar
+            </b-button>
+          </b-form-group>
+
+          <!-- Bio -->
+          <b-form-group label="Bio" label-cols-sm="2">
+            <b-form-input
+              trim
+              v-model="form.bio.value"
+              placeholder="Tell about yourself"
+              :state="form.bio.valid"
+            ></b-form-input>
+            <b-form-invalid-feedback :state="form.bio.valid">
+              {{ form.bio.feedback }}
+            </b-form-invalid-feedback>
+          </b-form-group>
+
+          <!-- Contacts -->
+          <div>
+            <p>Contact information</p>
+            <b-list-group>
+              <b-list-group-item
+                v-for="(contact, index) in form.contacts.value"
+                :key="index"
+              >
+                <b-row>
+                  <b-col cols="auto" class="my-auto pr-0">
+                    <b-button
+                      variant="outline-danger"
+                      size="sm"
+                      class="rounded-circle"
+                      @click.prevent="onClickRemoveContact(contact.name)"
+                    >
+                      <b-icon icon="x" scale="1.3" />
+                    </b-button>
+                  </b-col>
+                  <b-col cols="3" md="2" class="my-auto">
+                    <span>{{ contact.name }}</span>
+                  </b-col>
+                  <b-col>
+                    <b-input
+                      trim
+                      v-model="contact.ref"
+                      :placeholder="`Enter your ${contact.name}`"
+                      size="sm"
+                      required
+                    />
+                  </b-col>
+                </b-row>
+              </b-list-group-item>
+              <b-list-group-item>
+                <b-row>
+                  <b-col cols="auto" class="my-auto pr-0">
+                    <b-button
+                      variant="outline-success"
+                      size="sm"
+                      class="rounded-circle"
+                      @click.prevent="onClickAddContact"
+                    >
+                      <b-icon icon="plus" scale="1.3" />
+                    </b-button>
+                  </b-col>
+                  <b-col cols="auto" class="my-auto pr-0">
+                    <b-input
+                      trim
+                      v-model="form.newContact.value"
+                      size="sm"
+                      placeholder="Enter new contact name"
+                    />
+                  </b-col>
+                </b-row>
+              </b-list-group-item>
+            </b-list-group>
+            <b-form-invalid-feedback :state="form.contacts.valid">
+              {{ form.contacts.feedback }}
+            </b-form-invalid-feedback>
+          </div>
+
+          <br />
+
+          <b-button type="submit" variant="success"> Save changes </b-button>
+          <b-form-valid-feedback :state="form.submitRequest.valid">
+            {{ form.submitRequest.feedback }}
+          </b-form-valid-feedback>
+          <b-form-invalid-feedback :state="form.submitRequest.valid">
+            {{ form.submitRequest.feedback }}
+          </b-form-invalid-feedback>
+        </b-form>
+      </div>
+    </div>
+    <br />
+    <span class="big-font">
+      <b> Update password </b>
+    </span>
+    <div class="page-item-container">
+      <b-form @submit.prevent="onPasswordSubmit">
+        <!-- Old Password -->
+        <b-form-group label="Old password" label-cols-sm="2">
           <b-form-input
             trim
-            v-model="form.name.value"
-            placeholder="Enter your name"
-            :state="form.name.valid"
+            v-model="formPassword.old.value"
+            placeholder="Enter your old password"
+            :state="formPassword.old.valid"
             required
+            type="password"
+            autocomplete="password"
           ></b-form-input>
-          <b-form-invalid-feedback :state="form.name.valid">
-            {{ form.name.feedback }}
+          <b-form-invalid-feedback :state="formPassword.old.valid">
+            {{ formPassword.old.feedback }}
           </b-form-invalid-feedback>
         </b-form-group>
 
-        <!-- Avatar -->
-        <b-form-group label="Profile avatar" label-cols-sm="2">
-          <b-form-file
-            v-model="form.avatarPath.value"
-            :state="form.avatarPath.valid"
-            placeholder="Choose a file or drop it here..."
-            drop-placeholder="Drop file here..."
-          />
-          <b-button variant="outline-danger" class="mt-2" size="sm">
-            Delete avatar
-          </b-button>
-        </b-form-group>
-
-        <!-- Bio -->
-        <b-form-group label="Bio" label-cols-sm="2">
+        <!-- New Password -->
+        <b-form-group label="New password" label-cols-sm="2">
           <b-form-input
             trim
-            v-model="form.bio.value"
-            placeholder="Tell about yourself"
-            :state="form.bio.valid"
+            v-model="formPassword.new.value"
+            placeholder="Enter your new password"
+            :state="formPassword.new.valid"
+            required
+            type="password"
+            autocomplete="password"
           ></b-form-input>
-          <b-form-invalid-feedback :state="form.bio.valid">
-            {{ form.bio.feedback }}
+          <b-form-invalid-feedback :state="formPassword.new.valid">
+            {{ formPassword.new.feedback }}
           </b-form-invalid-feedback>
         </b-form-group>
 
-        <!-- Contacts -->
-        <div>
-          <p>Contact information</p>
-          <b-list-group>
-            <b-list-group-item
-              v-for="(contact, index) in form.contacts.value"
-              :key="index"
-            >
-              <b-row>
-                <b-col cols="auto" class="my-auto pr-0">
-                  <b-button
-                    variant="outline-danger"
-                    size="sm"
-                    class="rounded-circle"
-                    @click.prevent="onClickRemoveContact(contact.name)"
-                  >
-                    <b-icon icon="x" scale="1.3" />
-                  </b-button>
-                </b-col>
-                <b-col cols="3" md="2" class="my-auto">
-                  <span>{{ contact.name }}</span>
-                </b-col>
-                <b-col>
-                  <b-input
-                    trim
-                    v-model="contact.ref"
-                    :placeholder="`Enter your ${contact.name}`"
-                    size="sm"
-                    required
-                  />
-                </b-col>
-              </b-row>
-            </b-list-group-item>
-            <b-list-group-item>
-              <b-row>
-                <b-col cols="auto" class="my-auto pr-0">
-                  <b-button
-                    variant="outline-success"
-                    size="sm"
-                    class="rounded-circle"
-                    @click.prevent="onClickAddContact"
-                  >
-                    <b-icon icon="plus" scale="1.3" />
-                  </b-button>
-                </b-col>
-                <b-col cols="auto" class="my-auto pr-0">
-                  <b-input
-                    trim
-                    v-model="form.newContact.value"
-                    size="sm"
-                    placeholder="Enter new contact name"
-                  />
-                </b-col>
-              </b-row>
-            </b-list-group-item>
-          </b-list-group>
-          <b-form-invalid-feedback :state="form.contacts.valid">
-            {{ form.contacts.feedback }}
-          </b-form-invalid-feedback>
-        </div>
-
-        <br />
-
-        <b-button type="submit" variant="success"> Save changes </b-button>
-        <b-form-valid-feedback :state="form.submitRequest.valid">
-          {{ form.submitRequest.feedback }}
+        <b-button type="submit" variant="success"> Update password </b-button>
+        <b-form-valid-feedback :state="formPassword.passwordRequest.valid">
+          {{ formPassword.passwordRequest.feedback }}
         </b-form-valid-feedback>
-        <b-form-invalid-feedback :state="form.submitRequest.valid">
-          {{ form.submitRequest.feedback }}
+        <b-form-invalid-feedback :state="formPassword.passwordRequest.valid">
+          {{ formPassword.passwordRequest.feedback }}
         </b-form-invalid-feedback>
       </b-form>
     </div>
@@ -168,6 +217,25 @@ export default {
 
         submitRequest: {
           recieved: false,
+          valid: null,
+          feedback: null,
+        },
+      },
+
+      formPassword: {
+        old: {
+          value: null,
+          valid: null,
+          feedback: null,
+        },
+
+        new: {
+          value: null,
+          valid: null,
+          feedback: null,
+        },
+
+        passwordRequest: {
           valid: null,
           feedback: null,
         },
@@ -262,6 +330,28 @@ export default {
         this.form.newContact.value = null;
         this.form.contacts.value.push({ name: newContactName, ref: null });
       }
+    },
+
+    onPasswordSubmit() {
+      if (this.formPassword.new.value.length < 8) {
+        this.formPassword.new.valid = false;
+        this.formPassword.new.feedback = 'Password must contain at least 8 symbols';
+        return;
+      }
+
+      Backend.updatePassword(this.formPassword.old.value,
+        this.formPassword.new.value,
+        this.storageAccessToken)
+        .then(() => {
+          this.formPassword.old.valid = true;
+          this.formPassword.new.valid = true;
+          this.formPassword.passwordRequest.valid = true;
+          this.formPassword.passwordRequest.feedback = 'Password was updated successfully';
+        })
+        .catch((e) => {
+          this.formPassword.passwordRequest.valid = false;
+          this.formPassword.passwordRequest.feedback = e.toString();
+        });
     },
   },
 };
