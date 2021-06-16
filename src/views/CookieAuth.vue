@@ -12,28 +12,25 @@
   </b-jumbotron>
 </template>
 <script>
-import Backend from '@/js/backend/main';
-
 export default {
   data() {
     return {
       cToken: 'rekoder-access-token',
       cAgeement: 'rekoder-cookie-agreement',
+      cUser: 'rekoder-user',
       hasAgreement: null,
     };
   },
 
   created() {
     this.hasAgreement = this.$cookies.isKey(this.cAgeement);
-    if (this.$cookies.isKey(this.cToken)) {
+    if (this.$cookies.isKey(this.cToken) && this.$cookies.isKey(this.cUser)) {
       const accessToken = this.$cookies.get(this.cToken);
-      const decoded = JSON.parse(atob(accessToken.split(' ')[1].split('.')[1])).sub;
-      Backend.getUser({ type: 'user', id: decoded }).then((user) => {
-        this.$store.commit({
-          type: 'signin',
-          user,
-          accessToken,
-        });
+      const user = this.$cookies.get(this.cUser);
+      this.$store.commit({
+        type: 'signin',
+        user,
+        accessToken,
       });
     }
   },
