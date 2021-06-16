@@ -1,10 +1,14 @@
 <template>
-  <b-list-group-item class="dir-item">
-    <span>
-      <b-icon v-if="isDirectory" icon="folder" class="mr-2" />
-      <b-icon v-else icon="file-earmark-code" class="mr-2" />
-      <router-link class="hide-overflow" :to="link"> {{ name }} </router-link>
-    </span>
+  <b-list-group-item>
+    <b-row class="text-justify">
+      <b-col cols="auto">
+        <b-icon v-if="isDirectory" icon="folder" />
+        <b-icon v-else icon="file-earmark-code" />
+      </b-col>
+      <b-col cols="auto" class="overflow-hidden">
+        <router-link :to="link"> {{ name }} </router-link>
+      </b-col>
+    </b-row>
   </b-list-group-item>
 </template>
 
@@ -22,8 +26,4 @@ export default {
 <style scoped lang="sass">
 @import src/style/bootstrap-custom.scss
 @import bootstrap/scss/bootstrap
-
-@media (max-width: $grid-md)
-  .dir-item
-    font-size: 11pt
 </style>
