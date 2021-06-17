@@ -16,11 +16,13 @@ export default new Vuex.Store({
   mutations: {
     signin(state, args) {
       VueCookies.set('rekoder-access-token', args.accessToken);
+      VueCookies.set('rekoder-user', args.user);
       state.user = args.user;
       state.accessToken = args.accessToken;
     },
     signout(state) {
       VueCookies.remove('rekoder-access-token');
+      VueCookies.remove('rekoder-user');
       state.user = null;
       state.accessToken = null;
     },

@@ -1,7 +1,5 @@
 /* eslint-disable no-param-reassign */
 
-import axios from 'axios';
-
 const Backend = {
   url: {
     domain: 'https://rekoderback.cfapps.eu10.hana.ondemand.com',
@@ -74,39 +72,42 @@ const Backend = {
     return { authorization: token };
   },
 
-  async getHttpResponse(url, type, data, headers) {
-    // console.log(`URL: ${url}, TYPE: ${type}, HEADERS:
-    // ${JSON.stringify(headers)} DATA: ${JSON.stringify(data)}`);
-    let request = null;
-    if (type === 'GET') {
-      request = await axios.get(url, { headers });
-    } else if (type === 'POST') {
-      request = await axios.post(url, data, { headers });
-    } else if (type === 'PATCH') {
-      request = await axios.patch(url, data, {
-        headers: {
-          ...headers,
-          'Content-Type': 'application/merge-patch+json',
-        },
-      });
-    } else if (type === 'DELETE') {
-      request = await axios.delete(url, { headers });
-    } else {
-      throw Error(`'${url}' Invalid request type: ${type}`);
+  async getHttpResponse(url, type, body, headers) {
+    let error = null;
+
+    const response = await fetch(url, {
+      method: type,
+      headers: {
+        ...headers,
+        Accept: 'application/json',
+        'Content-Type': type === 'PATCH' ? 'application/merge-patch+json' : 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
+      .then((r) => r)
+      .catch((e) => { error = e; return new Response(); });
+
+    if (error !== null) {
+      throw Error(error.toString());
     }
-    if (Math.floor(request.status / 100) !== 2) {
-      throw Error(`Request: ${type} ${url} Status: ${request.status}`);
+
+    if (!response.ok) {
+      throw Error((await response.json()).errors[0].message);
     }
-    // console.log(`Recieved: ${JSON.stringify(request)}`);
-    return request;
+
+    if (response.status === 204) {
+      return response;
+    }
+
+    return response.json();
   },
 
   async getJSON(url, type, data, headers) {
-    return (await this.getHttpResponse(url, type, data, headers)).data;
+    return this.getHttpResponse(url, type, data, headers);
   },
 
   async getLoginToken(user) {
-    const { headers } = await this.getHttpResponse(
+    const response = await this.getHttpResponse(
       this.url.login(),
       'POST',
       {
@@ -114,7 +115,7 @@ const Backend = {
         password: user.password,
       },
     );
-    return headers.authorization;
+    return response.headers.get('authorization');
   },
 
   async getUser(user) {
