@@ -47,6 +47,28 @@
                   }}
                 </span>
               </b-list-group-item>
+              <b-list-group-item
+                v-if="submission.recieved && submission.data.feedback !== null"
+                class="d-flex justify-content-between"
+              >
+                <span> Time </span>
+                <span>
+                  {{
+                    submission.data.feedback.timeConsumed
+                  }}
+                </span>
+              </b-list-group-item>
+              <b-list-group-item
+                v-if="submission.recieved && submission.data.feedback !== null"
+                class="d-flex justify-content-between"
+              >
+                <span> Memory </span>
+                <span>
+                  {{
+                    submission.data.feedback.memoryConsumed
+                  }}
+                </span>
+              </b-list-group-item>
               <b-list-group-item class="d-flex justify-content-between">
                 <b-form-group class="w-100" label="Feedback" label-cols="6">
                   <b-form-select
